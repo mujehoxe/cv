@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 )
 
 // App struct
@@ -169,11 +168,6 @@ func (a *App) FetchCV(data string) ([]byte, error) {
 	pdfContent, err := a.getPdfFile(pdfID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get pdf file: %w", err)
-	}
-
-	err = os.WriteFile("cv.pdf", pdfContent, 0644)
-	if err != nil {
-		return nil, fmt.Errorf("failed to export pdf file: %w", err)
 	}
 
 	return pdfContent, nil
