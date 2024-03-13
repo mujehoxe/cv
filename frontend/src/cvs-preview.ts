@@ -1,29 +1,19 @@
 export function renderCvsPreviewSlideOver() {
-  document.querySelector("#cvs-preview")!.innerHTML = `
+  const cvsPreview = document.querySelector("#cvs-preview")!;
+  cvsPreview!.innerHTML = `
 <div class="relative z-10" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
-  <!-- Background backdrop, show/hide based on slide-over state. -->
-  <div class="fixed inset-0"></div>
+  <div class="fixed inset-0 bg-gray-900 opacity-80"></div>
 
   <div class="fixed inset-0 overflow-hidden">
     <div class="absolute inset-0 overflow-hidden">
-      <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
-        <!--
-          Slide-over panel, show/hide based on slide-over state.
-
-          Entering: "transform transition ease-in-out duration-500 sm:duration-700"
-            From: "translate-x-full"
-            To: "translate-x-0"
-          Leaving: "transform transition ease-in-out duration-500 sm:duration-700"
-            From: "translate-x-0"
-            To: "translate-x-full"
-        -->
-        <div class="pointer-events-auto w-screen max-w-2xl">
-          <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+      <div class="pointer-events-none fixed inset-y-0 right-0 flex w pl-10 sm:pl-16 w-full">
+        <div class="pointer-events-auto w-full">
+          <div class="flex h-full flex-col overflow-y-scroll bg-zinc-900 py-6 shadow-xl">
             <div class="px-4 sm:px-6">
               <div class="flex items-start justify-between">
-                <h2 class="text-base font-semibold leading-6 text-gray-900" id="slide-over-title">Panel title</h2>
+                <h2 class="text-base font-semibold leading-6 text-gray-100" id="slide-over-title">Panel title</h2>
                 <div class="ml-3 flex h-7 items-center">
-                  <button type="button" class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                  <button id="close-slide-over-button" type="button" class="rounded-md bg-zinc-700 text-gray-300 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                     <span class="sr-only">Close panel</span>
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -41,7 +31,13 @@ export function renderCvsPreviewSlideOver() {
       </div>
     </div>
   </div>
-</div>`;
+</div>
+`;
+  document
+    .getElementById("close-slide-over-button")
+    ?.addEventListener("click", () => {
+      cvsPreview!.innerHTML = "";
+    });
 }
 
 import { PDFDocumentProxy } from "pdfjs-dist";
