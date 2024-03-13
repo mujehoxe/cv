@@ -1,4 +1,5 @@
 import { FetchCV } from "../wailsjs/go/main/App";
+import { renderCvsPreviewSlideOver, renderPreviewPdf } from "./cvs-preview";
 
 function handleSubmit(e: Event) {
   e.preventDefault();
@@ -6,7 +7,8 @@ function handleSubmit(e: Event) {
   try {
     FetchCV(JSON.stringify(data))
       .then((result) => {
-        console.log(result);
+        renderCvsPreviewSlideOver();
+        renderPreviewPdf(result);
       })
       .catch((err) => {
         console.error(err);
@@ -24,8 +26,10 @@ const data = {
       firstName: "abc",
       lastName: "def",
       personalMottoLine: null,
-      personalDescription: null,
-      sex: "",
+      personalDescription:
+        "dlskfjdsljf dsklfjds lkfj sdjlsjfds lkfjdslk fjlks djfds lkkskl \
+				dfjld skjfk dlskfjdsljf dsklfjds lkfj sdjlsjfds lkfjdslk fjlks djfds lkkskl dfjld skjfk",
+      sex: "male",
       nationalities: [],
       socialMediaWebsites: [],
       emails: [],
@@ -51,7 +55,7 @@ const data = {
   },
 };
 
-export function makeForm() {
+export function renderForm() {
   document.querySelector("#form")!.innerHTML = `
 <form id="form">
 	<div class="space-y-12">
@@ -98,7 +102,7 @@ export function makeForm() {
 						About me
 						<i
 							title="Highlight who you are. Describe your professional and/or personal self. Example 1: I am a professional photographer with five years of experience in photography, portraits and family pictures. I am looking for new exciting projects. Example 2: I am a student majoring in computer science looking for internships to get work experience."
-							class="bg-blue-500 text-center text-slate-900 rounded-full h-3 w-3 fas fa-info">
+							class="bg-blue-500 text-center text-xs text-slate-900 rounded-full h-4 w-4 fas fa-info">
 						</i>
 					</label>
 					<p class="mt-3 text-sm leading-6 text-gray-400">Write a few sentences about yourself.</p>
@@ -133,7 +137,7 @@ export function makeForm() {
 				<div class="sm:col-span-3">
 					<label for="country" class="block text-sm font-medium leading-6 text-white">Country</label>
 					<div class="mt-2">
-						<select id="country" name="country" autocomplete="country-name" class="p-2 block w-full rounded-md border-0 bg-slate-700 py-1.5 text-slate-500 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black">
+						<select id="country" name="country" autocomplete="country-name" class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black">
 							<option>Select</option>
 						</select>
 					</div>
