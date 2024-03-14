@@ -2,21 +2,29 @@ import { FetchCV } from "../wailsjs/go/main/App";
 import { renderCvsPreviewSlideOver, renderPreviewPdf } from "./cvs-preview";
 import { renderError } from "./error";
 
+const languages = ["en", "fr", "de", "es"];
+
 function handleSubmit(e: Event) {
   e.preventDefault();
 
-  try {
-    FetchCV(JSON.stringify(data))
-      .then((result) => {
-        renderCvsPreviewSlideOver();
-        renderPreviewPdf(result);
-      })
-      .catch((err) => {
-        console.error(err);
-        renderError(err);
-      });
-  } catch (err) {
-    console.error(err);
+  const cvs = [];
+
+  renderCvsPreviewSlideOver();
+  for (const language of languages) {
+    data.profile.language = language;
+    try {
+      FetchCV(JSON.stringify(data))
+        .then((result) => {
+          cvs.push(result);
+          renderPreviewPdf(result);
+        })
+        .catch((err) => {
+          console.error(err);
+          renderError(err);
+        });
+    } catch (err) {
+      console.error(err);
+    }
   }
 }
 
