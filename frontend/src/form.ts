@@ -16,7 +16,7 @@ function handleSubmit(e: Event) {
       FetchCV(JSON.stringify(data))
         .then((result) => {
           cvs.push(result);
-          renderPreviewPdf(result);
+          renderPreviewPdf(result, language);
         })
         .catch((err) => {
           console.error(err);

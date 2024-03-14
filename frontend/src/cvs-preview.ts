@@ -23,7 +23,7 @@ export function renderCvsPreviewSlideOver() {
               </div>
             </div>
             <div class="relative mt-6 flex-1 px-4 sm:px-6">
-              <div id="pdf-container" class="flex flex-auto flex-wrap justify-between">
+              <div id="pdfs-container" class="flex flex-auto flex-wrap justify-between">
               </div>
             </div>
           </div>
@@ -48,7 +48,11 @@ const pdfjsLib = window["pdfjs-dist/build/pdf"];
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.js";
 
-export function renderPreviewPdf(pdfContent: number[]) {
+export function renderPreviewPdf(pdfContent: number[], language: string) {
+  const pdfFrame = renderPdfFrame(language);
+  const pdfContainer = document.getElementById("pdfs-container");
+  pdfContainer?.appendChild(pdfFrame);
+
   // @ts-ignore
   var pdfData = atob(pdfContent as string);
   var pdfArray = new Uint8Array(pdfData.length);
@@ -69,8 +73,7 @@ export function renderPreviewPdf(pdfContent: number[]) {
         canvas.width = viewport.width;
         canvas.classList.add("w-72");
 
-        const pdfContainer = document.getElementById("pdf-container");
-        pdfContainer?.appendChild(canvas);
+        pdfFrame?.appendChild(canvas);
 
         const renderContext = {
           canvasContext: context,
@@ -84,4 +87,13 @@ export function renderPreviewPdf(pdfContent: number[]) {
       console.error(reason);
     }
   );
+}
+function renderPdfFrame(language: string) {
+  const pdfFrame = document.createElement("div");
+  pdfFrame.classList.add("rounded-lg", "p-1");
+  pdfFrame.innerHTML = `
+  <h1 class='font-bold text-xl uppercase border-b border-white/10 pb-1 mb-2'>
+    ${language}
+  </h1>`;
+  return pdfFrame;
 }
