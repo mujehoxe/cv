@@ -1,5 +1,6 @@
 import { FetchCV } from "../wailsjs/go/main/App";
 import { renderCvsPreviewSlideOver, renderPreviewPdf } from "./cvs-preview";
+import { renderError } from "./error";
 
 function handleSubmit(e: Event) {
   e.preventDefault();
@@ -12,6 +13,7 @@ function handleSubmit(e: Event) {
       })
       .catch((err) => {
         console.error(err);
+        renderError(err);
       });
   } catch (err) {
     console.error(err);
@@ -102,7 +104,7 @@ export function renderForm() {
 						About me
 						<i
 							title="Highlight who you are. Describe your professional and/or personal self. Example 1: I am a professional photographer with five years of experience in photography, portraits and family pictures. I am looking for new exciting projects. Example 2: I am a student majoring in computer science looking for internships to get work experience."
-							class="bg-blue-500 text-center text-xs text-slate-900 rounded-full h-4 w-4 fas fa-info">
+							class="text-blue-500 text-center text-sm h-4 w-4 fas fa-solid fa-circle-info">
 						</i>
 					</label>
 					<p class="mt-3 text-sm leading-6 text-gray-400">Write a few sentences about yourself.</p>
