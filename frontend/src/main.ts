@@ -1,6 +1,7 @@
 // import { Greet } from "../wailsjs/go/main/App";
 import { renderForm } from "./form";
 import { renderCvsPreviewSlideOver } from "./cvs-preview";
+import { renderPdfDisplay } from "./pdf-display";
 
 document.querySelector("#app")!.innerHTML = `
   <div>
@@ -8,7 +9,7 @@ document.querySelector("#app")!.innerHTML = `
     </div>
     <div id="cvs-preview" class="hidden">
     </div>
-    <div id="pdf-display">
+    <div id="pdf-display" class="hidden">
     </div>
     <div
       id="notification"
@@ -21,6 +22,8 @@ document.querySelector("#app")!.innerHTML = `
 renderForm();
 
 renderCvsPreviewSlideOver();
+
+renderPdfDisplay();
 declare global {
   interface Window {
     greet: () => void;

@@ -1,4 +1,5 @@
 import { PDFDocumentProxy } from "pdfjs-dist";
+import { showPdfDisplay } from "./pdf-display";
 
 // @ts-ignore
 const pdfjsLib = window["pdfjs-dist/build/pdf"];
@@ -121,14 +122,16 @@ function renderPdfFrame(language: string) {
         </button>
       </div>
       <div class="-ml-px flex w-0 flex-1">
-        <button class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-2 text-sm text-gray-300 font-semibold">
+        <button id="display-btn-${language}" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-2 text-sm text-gray-300 font-semibold">
           <i class="text-center text-lg m-0 p-0 fa-solid fa-eye"></i>
-          Preview
+          Display
         </button>
       </div>
     </div>
   </div>
   `;
-
+  document
+    .getElementById(`display-btn-${language}`)
+    ?.addEventListener("click", showPdfDisplay);
   return pdfFrame;
 }
