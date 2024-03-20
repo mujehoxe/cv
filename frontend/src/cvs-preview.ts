@@ -1,5 +1,12 @@
+import { PDFDocumentProxy } from "pdfjs-dist";
+
+// @ts-ignore
+const pdfjsLib = window["pdfjs-dist/build/pdf"];
+
+let cvsPreview = document.querySelector("#cvs-preview");
+
 export function renderCvsPreviewSlideOver() {
-  const cvsPreview = document.querySelector("#cvs-preview")!;
+  cvsPreview = document.querySelector("#cvs-preview");
   cvsPreview!.innerHTML = `
 <div class="relative z-10" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
   <div class="fixed inset-0 bg-gray-900 opacity-80"></div>
@@ -36,21 +43,18 @@ export function renderCvsPreviewSlideOver() {
   document
     .getElementById("close-slide-over-button")
     ?.addEventListener("click", () => {
-      cvsPreview!.innerHTML = "";
+      cvsPreview!.classList.toggle("hidden", true);
     });
 }
 
-import { PDFDocumentProxy } from "pdfjs-dist";
-
-// @ts-ignore
-const pdfjsLib = window["pdfjs-dist/build/pdf"];
+export function showCvsPreviewSlideOver() {
+  cvsPreview!.classList.toggle("hidden", false);
+}
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.js";
 
 export function renderPreviewPdf(pdfContent: number[], language: string) {
-  const pdfFrame = renderPdfFrame(language);
-
   // @ts-ignore
   var pdfData = atob(pdfContent as string);
   var pdfArray = new Uint8Array(pdfData.length);
@@ -75,6 +79,7 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
           "border-white/10"
         );
 
+        const pdfFrame = renderPdfFrame(language);
         pdfFrame?.appendChild(canvas);
 
         const context = canvas.getContext("2d");
@@ -94,12 +99,14 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
 }
 
 function renderPdfFrame(language: string) {
-  const pdfContainer = document.getElementById("pdfs-container");
-  const pdfFrame = document.createElement("div");
-  pdfContainer?.appendChild(pdfFrame);
+  let pdfFrame = document.getElementById(`pdf-${language}`);
+  if (pdfFrame === null) {
+    pdfFrame = document.createElement("div");
+    pdfFrame.id = `pdf-${language}`;
+    pdfFrame.classList.add("relative", "p-2");
+    document.getElementById("pdfs-container")?.appendChild(pdfFrame);
+  }
 
-  pdfFrame.id = `pdf-${language}`;
-  pdfFrame.classList.add("relative", "p-2");
   pdfFrame.innerHTML = `
   <h1 class='font-bold text-xl uppercase p-1'>
     ${language}

@@ -1,5 +1,5 @@
 import { FetchCV } from "../wailsjs/go/main/App";
-import { renderCvsPreviewSlideOver, renderPreviewPdf } from "./cvs-preview";
+import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
 import { renderError } from "./error";
 
 const languages = ["en", "fr", "de", "es"];
@@ -7,16 +7,17 @@ const languages = ["en", "fr", "de", "es"];
 function handleSubmit(e: Event) {
   e.preventDefault();
 
-  const cvs = [];
-
-  renderCvsPreviewSlideOver();
+  const cvs = new Map();
+  showCvsPreviewSlideOver();
   for (const language of languages) {
     data.profile.language = language;
     try {
       FetchCV(JSON.stringify(data))
         .then((result) => {
-          cvs.push(result);
-          renderPreviewPdf(result, language);
+          if (cvs.get(language) !== result) {
+            cvs.set(language, result);
+            renderPreviewPdf(result, language);
+          }
         })
         .catch((err) => {
           console.error(err);
@@ -36,9 +37,7 @@ const data = {
       firstName: "abc",
       lastName: "def",
       personalMottoLine: null,
-      personalDescription:
-        "dlskfjdsljf dsklfjds lkfj sdjlsjfds lkfjdslk fjlks djfds lkkskl \
-				dfjld skjfk dlskfjdsljf dsklfjds lkfj sdjlsjfds lkfjdslk fjlks djfds lkkskl dfjld skjfk",
+      personalDescription: "Hello this is a test.",
       sex: "male",
       nationalities: [],
       socialMediaWebsites: [],
@@ -112,7 +111,7 @@ export function renderForm() {
 						About me
 						<i
 							title="Highlight who you are. Describe your professional and/or personal self. Example 1: I am a professional photographer with five years of experience in photography, portraits and family pictures. I am looking for new exciting projects. Example 2: I am a student majoring in computer science looking for internships to get work experience."
-							class="text-blue-500 text-center text-sm h-4 w-4 fas fa-solid fa-circle-info">
+							class="text-blue-500 text-center text-xs fas fa-solid fa-circle-info">
 						</i>
 					</label>
 					<p class="mt-3 text-sm leading-6 text-gray-400">Write a few sentences about yourself.</p>
