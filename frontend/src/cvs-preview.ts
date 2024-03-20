@@ -50,8 +50,6 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 export function renderPreviewPdf(pdfContent: number[], language: string) {
   const pdfFrame = renderPdfFrame(language);
-  const pdfContainer = document.getElementById("pdfs-container");
-  pdfContainer?.appendChild(pdfFrame);
 
   // @ts-ignore
   var pdfData = atob(pdfContent as string);
@@ -71,7 +69,13 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
         if (!context) return;
         canvas.height = viewport.height;
         canvas.width = viewport.width;
-        canvas.classList.add("w-72");
+        canvas.classList.add(
+          "w-72",
+          "p-1",
+          "border-x",
+          "border-b",
+          "border-white/10"
+        );
 
         pdfFrame?.appendChild(canvas);
 
@@ -88,12 +92,36 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
     }
   );
 }
+
 function renderPdfFrame(language: string) {
+  const pdfContainer = document.getElementById("pdfs-container");
   const pdfFrame = document.createElement("div");
-  pdfFrame.classList.add("rounded-lg", "p-1");
+  pdfContainer?.appendChild(pdfFrame);
+
+  pdfFrame.id = `pdf-${language}`;
+  pdfFrame.classList.add("relative", "p-2");
   pdfFrame.innerHTML = `
-  <h1 class='font-bold text-xl uppercase border-b border-white/10 pb-1 mb-2'>
+  <h1 class='font-bold text-xl uppercase p-1'>
     ${language}
-  </h1>`;
+  </h1>
+  
+  <div>
+    <div class="flex border rounded-t-lg border-white/10 divide-x divide-white/10">
+      <div class="flex w-0 flex-1">
+        <button onclick="window.print()" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-300">
+          <i class="text-center text-lg m-0 p-0 fas fa-solid fa-print"></i>
+          Print
+        </button>
+      </div>
+      <div class="-ml-px flex w-0 flex-1">
+        <button class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm text-gray-300 font-semibold">
+          <i class="text-center text-lg m-0 p-0 fa-solid fa-eye"></i>
+          Preview
+        </button>
+      </div>
+    </div>
+  </div>
+  `;
+
   return pdfFrame;
 }
