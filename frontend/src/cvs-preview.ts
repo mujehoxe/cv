@@ -69,7 +69,7 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
         canvas.width = viewport.width;
         canvas.classList.add(
           "w-72",
-          "p-1",
+          "p-2",
           "border",
           "rounded-b-lg",
           "border-white/10"
@@ -108,13 +108,13 @@ function renderPdfFrame(language: string) {
   <div>
     <div class="w-72 flex border-t border-x rounded-t-lg border-white/10 divide-x divide-white/10">
       <div class="flex w-0 flex-1">
-        <button onclick="window.print()" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-300">
+        <button onclick="window.print()" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-2 text-sm font-semibold text-gray-300">
           <i class="text-center text-lg m-0 p-0 fas fa-solid fa-print"></i>
           Print
         </button>
       </div>
       <div class="-ml-px flex w-0 flex-1">
-        <button class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm text-gray-300 font-semibold">
+        <button class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-2 text-sm text-gray-300 font-semibold">
           <i class="text-center text-lg m-0 p-0 fa-solid fa-eye"></i>
           Preview
         </button>
