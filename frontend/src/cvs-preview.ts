@@ -65,20 +65,20 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
         var viewport = page.getViewport({ scale: scale });
 
         const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        if (!context) return;
         canvas.height = viewport.height;
         canvas.width = viewport.width;
         canvas.classList.add(
           "w-72",
           "p-1",
-          "border-x",
-          "border-b",
+          "border",
+          "rounded-b-lg",
           "border-white/10"
         );
 
         pdfFrame?.appendChild(canvas);
 
+        const context = canvas.getContext("2d");
+        if (!context) return;
         const renderContext = {
           canvasContext: context,
           viewport: viewport,
@@ -106,7 +106,7 @@ function renderPdfFrame(language: string) {
   </h1>
   
   <div>
-    <div class="flex border rounded-t-lg border-white/10 divide-x divide-white/10">
+    <div class="w-72 flex border-t border-x rounded-t-lg border-white/10 divide-x divide-white/10">
       <div class="flex w-0 flex-1">
         <button onclick="window.print()" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-300">
           <i class="text-center text-lg m-0 p-0 fas fa-solid fa-print"></i>
