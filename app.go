@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	translator "github.com/Conight/go-googletrans"
 )
 
 // App struct
@@ -149,7 +151,6 @@ func (a *App) getPdfFile(pdfID string) ([]byte, error) {
 		ContentType("application/json").
 		Accept("application/pdf").
 		Build()
-
 	resp, err := a.makeRequest(reqOps)
 
 	if err != nil {
@@ -182,4 +183,14 @@ func (a *App) FetchCV(data string) ([]byte, error) {
 	}
 
 	return pdfContent, nil
+}
+
+func (a *App) Translate(text string, sourceLanguage string, targetLanguage string) (string, error) {
+	t := translator.New()
+	result, err := t.Translate(text, sourceLanguage, targetLanguage)
+	if err != nil {
+		return "", fmt.Errorf("failed to translate: %w", err)
+	}
+	fmt.Println(result)
+	return result.Text, nil
 }
