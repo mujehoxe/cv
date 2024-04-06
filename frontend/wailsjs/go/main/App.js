@@ -5,3 +5,7 @@
 export function FetchCV(arg1) {
   return window['go']['main']['App']['FetchCV'](arg1);
 }
+
+export function Translate(arg1, arg2, arg3) {
+  return window['go']['main']['App']['Translate'](arg1, arg2, arg3);
+}

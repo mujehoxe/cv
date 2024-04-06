@@ -1,15 +1,32 @@
 import { FetchCV } from "../wailsjs/go/main/App";
 import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
 import { renderError } from "./error";
+import { getAndRenderTranslations } from "./getAndRenderTranslations";
 
-const languages = ["en", "fr", "de", "es"];
+export type Language = {
+  short: string;
+  long: string;
+};
+
+type Languages = {
+  [key: string]: Language;
+};
+
+export const languages: Languages = {
+  EN: { short: "EN", long: "English" },
+  FR: { short: "FR", long: "French" },
+  DE: { short: "DE", long: "German" },
+  ES: { short: "ES", long: "Spanish" },
+};
+
+export let selectedLanguage: Language = { short: "EN", long: "English" };
 
 function handleSubmit(e: Event) {
   e.preventDefault();
 
   const cvs = new Map();
   showCvsPreviewSlideOver();
-  for (const language of languages) {
+  for (const language in languages) {
     data.profile.language = language;
     try {
       FetchCV(JSON.stringify(data))
@@ -68,6 +85,11 @@ export function renderForm() {
   document.querySelector("#form")!.innerHTML = `
 <form id="form">
 	<div class="space-y-12">
+		<div class="mt-6 flex items-center justify-end gap-x-6">
+			<button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
+			<button type="submit" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Submit</button>
+		</div>
+
 		<div class="border-b border-white/10 pb-12">
 				<div class="col-span-full">
 					<label for="photo" class="block text-sm font-medium leading-6 text-white">Photo</label>
@@ -80,7 +102,12 @@ export function renderForm() {
 				</div>
 			</div>
 		</div>
-
+		<div class="flex flex-row gap-4 justify-center items-center mt-4 w-1/3 min-w-64 m-auto">
+			<label for="photo" class="text-sm font-medium leading-6 text-white">Language</label>
+			<select id="language-select" name="gender" autocomplete="gender" class="p-2 w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black">
+				<option>Select from list</option>
+			</select>
+		</div>
 		<div class="border-b mt-4 border-white/10 pb-12">
 			<h2 class="text-base font-semibold leading-7 text-white">Personal Information</h2>
 			<p class="mt-1 text-sm leading-6 text-gray-400">Use a permanent address where you can receive mail.</p>
@@ -115,16 +142,17 @@ export function renderForm() {
 						</i>
 					</label>
 					<p class="mt-3 text-sm leading-6 text-gray-400">Write a few sentences about yourself.</p>
-					<div class="mt-2">
-						<textarea
-							id="about"
-							name="about"
+					<div id='about' class="mt-2">
+						<div
+							id="about-original-lang"
 							rows="3"
+							contenteditable="true"
 							placeholder="You can provide a description of yourself here..."
-							class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"></textarea>
+							class="p-2 block w-full h-max min-h-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+						</div>
+						<div id="about-other-langs"></div>
 					</div>
 				</div>
-
 				<div class="sm:col-span-4">
 					<label for="birthday" class="block text-sm font-medium leading-6 text-white">Date of birth</label>
 					<div class="mt-2">
@@ -215,6 +243,25 @@ export function renderForm() {
 `;
   const form = document.getElementById("form");
   form?.addEventListener("submit", (e) => handleSubmit(e));
+
+  document
+    .getElementById("about-original-lang")
+    ?.addEventListener("blur", getAndRenderTranslations);
+
+  const languageSelect = document.getElementById("language-select")!;
+  languageSelect.innerHTML = generateLanguageOptions(languages);
+
+  languageSelect?.addEventListener("change", (e) => {
+    selectedLanguage = languages[(e.target as HTMLSelectElement).value];
+    console.log(selectedLanguage);
+  });
+}
+
+function generateLanguageOptions(languages: Languages) {
+  // prettier-ignore
+  return Object.entries(languages).map(
+      ([key, language]) => `<option value="${key}">${language.long}</option>`
+  ).join("");
 }
 
 interface Country {
