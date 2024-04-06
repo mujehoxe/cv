@@ -142,7 +142,9 @@ func (a *App) getPdfId(profileID string) (string, error) {
 
 // getPdfFile retrieves the PDF file given its ID.
 func (a *App) getPdfFile(pdfID string) ([]byte, error) {
-	reqOps := NewRequestOptionsBuilder("GET", fmt.Sprintf("https://europa.eu/europass/eportfolio/api/office/download/pdf/%s", pdfID)).
+	reqOps := NewRequestOptionsBuilder(
+		"GET",
+		fmt.Sprintf("https://europa.eu/europass/eportfolio/api/office/download/pdf/%s", pdfID)).
 		ExpectedStatusCode(http.StatusOK).
 		ContentType("application/json").
 		Accept("application/pdf").
