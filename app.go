@@ -6,7 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
+	"strings"
+	"time"
 
 	translator "github.com/Conight/go-googletrans"
 )
@@ -144,26 +147,42 @@ func (a *App) getPdfId(profileID string) (string, error) {
 
 // getPdfFile retrieves the PDF file given its ID.
 func (a *App) getPdfFile(pdfID string) ([]byte, error) {
-	reqOps := NewRequestOptionsBuilder(
-		"GET",
-		fmt.Sprintf("https://europa.eu/europass/eportfolio/api/office/download/pdf/%s", pdfID)).
-		ExpectedStatusCode(http.StatusOK).
-		ContentType("application/json").
-		Accept("application/pdf").
-		Build()
-	resp, err := a.makeRequest(reqOps)
+	maxRetries := 10
+	initialDelay := 100 * time.Millisecond
+	maxDelay := 2 * time.Second
 
-	if err != nil {
-		return nil, err
+	for i := 0; i < maxRetries; i++ {
+		reqOps := NewRequestOptionsBuilder(
+			"GET",
+			fmt.Sprintf("https://europa.eu/europass/eportfolio/api/office/download/pdf/%s", pdfID)).
+			ExpectedStatusCode(http.StatusOK).
+			ContentType("application/json").
+			Accept("application/pdf").
+			Build()
+		resp, err := a.makeRequest(reqOps)
+
+		if err != nil {
+			if strings.Contains(err.Error(), fmt.Sprint(http.StatusNoContent)) {
+				delay := initialDelay * time.Duration(math.Pow(2, float64(i)))
+				if delay > maxDelay {
+					delay = maxDelay
+				}
+				time.Sleep(delay)
+				continue
+			}
+			return nil, err
+		}
+		defer resp.Body.Close()
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+
+		return body, nil
 	}
-	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
-	}
-
-	return body, nil
+	return nil, fmt.Errorf("failed to get pdf file with id %s after %d retries", pdfID, maxRetries)
 }
 
 func (a *App) FetchCV(data string) ([]byte, error) {
