@@ -179,7 +179,7 @@ func (a *App) FetchCV(data string) ([]byte, error) {
 
 	pdfContent, err := a.getPdfFile(pdfID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get pdf file: %w", err)
+		return nil, fmt.Errorf("failed to get pdf file whith id %s: %w", pdfID, err)
 	}
 
 	return pdfContent, nil
@@ -187,10 +187,11 @@ func (a *App) FetchCV(data string) ([]byte, error) {
 
 func (a *App) Translate(text string, sourceLanguage string, targetLanguage string) (string, error) {
 	t := translator.New()
+
 	result, err := t.Translate(text, sourceLanguage, targetLanguage)
 	if err != nil {
 		return "", fmt.Errorf("failed to translate: %w", err)
 	}
-	fmt.Println(result)
+
 	return result.Text, nil
 }
