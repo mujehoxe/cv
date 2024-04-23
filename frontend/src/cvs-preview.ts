@@ -1,5 +1,4 @@
 import { PDFDocumentProxy } from "pdfjs-dist";
-import { showPdfDisplay } from "./pdf-display";
 
 // @ts-ignore
 const pdfjsLib = window["pdfjs-dist/build/pdf"];
@@ -66,14 +65,14 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
   pdfjsLib.getDocument({ data: pdfArray }).promise.then(
     function (pdf: PDFDocumentProxy) {
       pdf.getPage(1).then(function (page) {
-        var scale = 0.7;
+        var scale = 1.2;
         var viewport = page.getViewport({ scale: scale });
 
         const canvas = document.createElement("canvas");
         canvas.height = viewport.height;
         canvas.width = viewport.width;
         canvas.classList.add(
-          "w-72",
+          "w-[30rem]",
           "p-2",
           "border",
           "rounded-b-lg",
@@ -81,6 +80,14 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
         );
 
         const pdfFrame = renderPdfFrame(language);
+        document.getElementById("print-btn")?.addEventListener("click", () => {
+          printJS({
+            printable: URL.createObjectURL(
+              new Blob([pdfArray], { type: "application/pdf" })
+            ),
+            type: "pdf",
+          });
+        });
         pdfFrame?.appendChild(canvas);
 
         const context = canvas.getContext("2d");
@@ -99,6 +106,8 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
   );
 }
 
+import printJS from "print-js";
+
 function renderPdfFrame(language: string) {
   let pdfFrame = document.getElementById(`pdf-${language}`);
   if (pdfFrame === null) {
@@ -114,9 +123,9 @@ function renderPdfFrame(language: string) {
   </h1>
   
   <div>
-    <div class="w-72 flex border-t border-x rounded-t-lg border-white/10 divide-x divide-white/10">
+    <div class="w-[30rem] flex border-t border-x rounded-t-lg border-white/10 divide-x divide-white/10">
       <div class="flex w-0 flex-1">
-        <button onclick="window.print()" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-2 text-sm font-semibold text-gray-300">
+        <button id="print-btn" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-2 text-sm font-semibold text-gray-300">
           <i class="text-center text-lg m-0 p-0 fas fa-solid fa-print"></i>
           Print
         </button>
@@ -130,8 +139,6 @@ function renderPdfFrame(language: string) {
     </div>
   </div>
   `;
-  document
-    .getElementById(`display-btn-${language}`)
-    ?.addEventListener("click", showPdfDisplay);
+
   return pdfFrame;
 }

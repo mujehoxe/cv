@@ -2,33 +2,21 @@ import { FetchCV } from "../wailsjs/go/main/App";
 import { populateNationalities, populatePhoneExtentions } from "./countries";
 import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
 import { renderError } from "./error";
-import { getAndRenderTranslations } from "./getAndRenderTranslations";
-
-export type Language = {
-  short: string;
-  long: string;
-};
-
-type Languages = {
-  [key: string]: Language;
-};
-
-export const languages: Languages = {
-  EN: { short: "EN", long: "English" },
-  FR: { short: "FR", long: "French" },
-  DE: { short: "DE", long: "German" },
-  ES: { short: "ES", long: "Spanish" },
-};
-
-export let selectedLanguage: Language = { short: "EN", long: "English" };
+import { extractFormData } from "./formDataExtraction";
+import { elementTranslationsRenderer } from "./translationsRenderer";
+import {
+  languages,
+  originalLanguage,
+  setOriginalLanguage,
+  Languages,
+} from "./languages";
 
 function handleSubmit(e: Event) {
   e.preventDefault();
-
   const cvs = new Map();
   showCvsPreviewSlideOver();
   for (const language in languages) {
-    data.profile.language = language;
+    const data = extractFormData(language);
     try {
       FetchCV(JSON.stringify(data))
         .then((result) => {
@@ -47,49 +35,10 @@ function handleSubmit(e: Event) {
   }
 }
 
-const data = {
-  id: null,
-  profile: {
-    language: "en",
-    personalInformation: {
-      firstName: "abc",
-      lastName: "def",
-      personalMottoLine: null,
-      personalDescription: "Hello this is a test.",
-      sex: "male",
-      nationalities: [],
-      socialMediaWebsites: [],
-      emails: [],
-      phones: [],
-      addresses: [],
-      websites: [],
-      instantMessengers: [],
-    },
-    preference: {
-      id: "",
-      profileId: "",
-      profileStructure: [],
-      dateFormat: "dd/MM/yyyy",
-    },
-    customSections: [],
-  },
-  template: {
-    displayLogo: "first",
-    displayPageNumber: false,
-    color: "none",
-    fontSize: "medium",
-    templateName: "cv-formal",
-  },
-};
-
 export function renderForm() {
   document.querySelector("#form")!.innerHTML = `
 <form id="form">
 	<div class="space-y-12">
-		<div class="mt-6 flex items-center justify-end gap-x-6">
-			<button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
-			<button type="submit" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Submit</button>
-		</div>
 
 		<div class="border-b border-white/10 pb-12">
 				<div class="col-span-full">
@@ -104,9 +53,8 @@ export function renderForm() {
 			</div>
 		</div>
 		<div class="flex flex-row gap-4 justify-center items-center mt-4 w-1/3 min-w-64 m-auto">
-			<label for="photo" class="text-sm font-medium leading-6 text-white">Language</label>
-			<select id="language-select" name="gender" autocomplete="gender" class="p-2 w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black">
-				<option>Select from list</option>
+			<label for="language" class="text-sm font-medium leading-6 text-white">Language</label>
+			<select id="language-select" name="language" autocomplete="language" class="p-2 w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black">
 			</select>
 		</div>
 		<div class="border-b mt-4 border-white/10 pb-12">
@@ -120,7 +68,7 @@ export function renderForm() {
 						<span class="text-red-500">*</span>
 					</label>
 					<div class="mt-2">
-						<input type="text" placeholder="e.g. John" name="first-name" id="first-name" autocomplete="given-name" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+						<input type="text" placeholder="e.g. John" name="first-name" id="first-name" autocomplete="given-name" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6" />
 					</div>
 				</div>
 
@@ -130,28 +78,24 @@ export function renderForm() {
 						<span class="text-red-500">*</span>
 					</label>
 					<div class="mt-2">
-						<input type="text" placeholder="e.g. Doe" name="last-name" id="last-name" autocomplete="family-name" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+						<input type="text" placeholder="e.g. Doe" name="last-name" id="last-name" autocomplete="family-name" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6" />
 					</div>
 				</div>
 
 				<div class="col-span-full">
 					<label for="about" class="block text-sm font-medium leading-6 text-white">
 						About me
-						<i
-							title="Highlight who you are. Describe your professional and/or personal self. Example 1: I am a professional photographer with five years of experience in photography, portraits and family pictures. I am looking for new exciting projects. Example 2: I am a student majoring in computer science looking for internships to get work experience."
-							class="text-blue-500 text-center text-xs fas fa-solid fa-circle-info">
-						</i>
 					</label>
-					<p class="mt-3 text-sm leading-6 text-gray-400">Write a few sentences about yourself.</p>
 					<div id='about' class="mt-2">
+            <label class='text-xs font-medium text-white'>${originalLanguage.long}</about>
 						<div
-							id="about-original-lang"
+							id="about-${originalLanguage.short}"
 							rows="3"
 							contenteditable="true"
 							placeholder="You can provide a description of yourself here..."
 							class="p-2 block w-full h-max min-h-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
 						</div>
-						<div id="about-other-langs"></div>
+						<div id="about-other-langs" class="mt-2"></div>
 					</div>
 				</div>
 				<div class="sm:col-span-4">
@@ -165,9 +109,9 @@ export function renderForm() {
 					<label for="gender" class="block text-sm font-medium leading-6 text-white">Gender</label>
 					<div class="mt-2">
 						<select id="gender" name="gender" autocomplete="gender" class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black">
-							<option>Select from list</option>
-							<option>Male</option>
-							<option>Female</option>
+							<option value"" selected disabled hidden>Select from list</option>
+							<option value="male">Male</option>
+							<option vlaue="female">Female</option>
 						</select>
 					</div>
 				</div>
@@ -211,22 +155,48 @@ export function renderForm() {
 		</div>
 
 		<div class="border-b mt-4 border-white/10 pb-12">
-			<h2 class="text-base font-semibold leading-7 text-white">Contact</h2>
+			<h2 class="text-base font-semibold leading-7 text-white">Address</h2>
+
+      <div class="mt-10 space-y-10">
+
+        <div class="col-span-full">
+					<label for="street-address" class="block text-sm font-medium leading-6 text-white">Street address</label>
+					<div id="street-addresses" class="mt-2">
+            <label class='text-xs font-medium text-white'>${originalLanguage.short}</about>
+						<input type="text" name="street-address-${originalLanguage.short}" id="street-address" autocomplete="street-address" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+					</div>
+				</div>
+
+				<div class="sm:col-span-2 sm:col-start-1">
+					<label for="city" class="block text-sm font-medium leading-6 text-white">City</label>
+					<div class="mt-2">
+					  <input type="text" name="city" id="city" autocomplete="address-level2" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+					</div>
+				</div>
+
+				<div class="sm:col-span-2">
+					<label for="region" class="block text-sm font-medium leading-6 text-white">State / Province</label>
+					<div class="mt-2">
+						<input type="text" name="region" id="region" autocomplete="address-level1" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+					</div>
+				</div>
+
+				<div class="sm:col-span-2">
+					<label for="postal-code" class="block text-sm font-medium leading-6 text-white">ZIP / Postal code</label>
+					<div class="mt-2">
+						<input type="text" name="postal-code" id="postal-code" autocomplete="postal-code" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+					</div>
+				</div>
+      </div>
 		</div>
 	</div>
 
 	<div class="mt-6 flex items-center justify-end gap-x-6">
-		<button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
+		<button type="reset" class="text-sm font-semibold leading-6 text-white">Reset</button>
 		<button type="submit" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Submit</button>
 	</div>
 </form>
 `;
-  const form = document.getElementById("form");
-  form?.addEventListener("submit", (e) => handleSubmit(e));
-
-  document
-    .getElementById("about-original-lang")
-    ?.addEventListener("blur", getAndRenderTranslations);
 
   const languageSelect = document.getElementById("language-select")!;
   languageSelect.innerHTML = generateLanguageOptions(languages);
@@ -235,43 +205,27 @@ export function renderForm() {
   populatePhoneExtentions();
 
   languageSelect?.addEventListener("change", (e) => {
-    selectedLanguage = languages[(e.target as HTMLSelectElement).value];
-    console.log(selectedLanguage);
+    setOriginalLanguage(languages[(e.target as HTMLSelectElement).value]);
   });
+
+  const about = document.getElementById(`about-${originalLanguage.short}`);
+  const parent = document.getElementById("about-other-langs");
+  if (!about || !parent) return;
+  const renderAboutTranslations = elementTranslationsRenderer(about, parent);
+  about?.addEventListener("blur", () => {
+    renderAboutTranslations();
+  });
+
+  const form = document.getElementById("form");
+  form?.addEventListener("submit", (e) => handleSubmit(e));
 }
 
 function generateLanguageOptions(languages: Languages) {
   // prettier-ignore
   return Object.entries(languages).map(
-      ([key, language]) => `<option value="${key}">${language.long}</option>`
+      ([key, language]) => 
+        `<option ${language.short === originalLanguage.short ? 'selected="selected"' : ''} value="${key}">
+          ${language.long}
+        </option>`
   ).join("");
 }
-
-interface Country {
-  name: { common: string };
-}
-
-async function populateCountries() {
-  try {
-    const response = await fetch("https://restcountries.com/v3.1/all");
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const countries: Country[] = await response.json();
-
-    const countrySelect = document.getElementById("country");
-
-    countries
-      .sort((a, b) => (a.name.common > b.name.common ? 1 : -1))
-      .forEach((country: Country) => {
-        const option = document.createElement("option");
-        option.value = country.name.common;
-        option.textContent = country.name.common;
-        countrySelect?.appendChild(option);
-      });
-  } catch (error) {
-    console.error("Failed to fetch countries:", error);
-  }
-}
-
-populateCountries();
