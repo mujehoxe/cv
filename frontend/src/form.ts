@@ -1,4 +1,5 @@
 import { FetchCV } from "../wailsjs/go/main/App";
+import { populateNationalities, populatePhoneExtentions } from "./countries";
 import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
 import { renderError } from "./error";
 import { getAndRenderTranslations } from "./getAndRenderTranslations";
@@ -172,41 +173,13 @@ export function renderForm() {
 				</div>
 
 				<div class="sm:col-span-3">
-					<label for="country" class="block text-sm font-medium leading-6 text-white">Country</label>
+					<label for="nationality" class="block text-sm font-medium leading-6 text-white">Nationality</label>
 					<div class="mt-2">
-						<select id="country" name="country" autocomplete="country-name" class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black">
-							<option>Select</option>
+						<select id="nationality" name="nationality" autocomplete="nationality" class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black">
+							<option disabled>Select</option>
 						</select>
 					</div>
-				</div>
-
-				<div class="col-span-full">
-					<label for="street-address" class="block text-sm font-medium leading-6 text-white">Street address</label>
-					<div class="mt-2">
-						<input type="text" name="street-address" id="street-address" autocomplete="street-address" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
-					</div>
-				</div>
-
-				<div class="sm:col-span-2 sm:col-start-1">
-					<label for="city" class="block text-sm font-medium leading-6 text-white">City</label>
-					<div class="mt-2">
-						<input type="text" name="city" id="city" autocomplete="address-level2" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
-					</div>
-				</div>
-
-				<div class="sm:col-span-2">
-					<label for="region" class="block text-sm font-medium leading-6 text-white">State / Province</label>
-					<div class="mt-2">
-						<input type="text" name="region" id="region" autocomplete="address-level1" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
-					</div>
-				</div>
-
-				<div class="sm:col-span-2">
-					<label for="postal-code" class="block text-sm font-medium leading-6 text-white">ZIP / Postal code</label>
-					<div class="mt-2">
-						<input type="text" name="postal-code" id="postal-code" autocomplete="postal-code" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
-					</div>
-				</div>
+				</div>				
 			</div>
 		</div>
 
@@ -221,12 +194,19 @@ export function renderForm() {
 						</div>
 				</div>
 
-				<div class="sm:col-span-4">
-						<label for="phone" class="block text-sm font-medium leading-6 text-white">Phone number</label>
-						<div class="mt-2">
-							<input id="phone" name="phone" type="phone" autocomplete="phone" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
-						</div>
-				</div>
+
+        <div>
+          <label for="phone-number" class="block text-sm font-medium leading-6 text-white">Phone Number</label>
+          <div class="relative mt-2 rounded-md shadow-sm">
+            <div class="absolute inset-y-0 left-0 flex items-center">
+              <label for="phone-extention" class="sr-only">Phone extention</label>
+              <select id="phone-extention" name="country" autocomplete="country" class="bg-transparent h-full rounded-md border-0 py-0 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs">
+                <option disabled>Select</option>
+              </select>
+            </div>
+            <input type="text" name="phone-number" id="phone-number" class="p-2 block w-full rounded-md border-0 py-1.5 pl-36 bg-white/5 text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="612345678">
+          </div>
+        </div>
 			</div>
 		</div>
 
@@ -250,6 +230,9 @@ export function renderForm() {
 
   const languageSelect = document.getElementById("language-select")!;
   languageSelect.innerHTML = generateLanguageOptions(languages);
+
+  populateNationalities();
+  populatePhoneExtentions();
 
   languageSelect?.addEventListener("change", (e) => {
     selectedLanguage = languages[(e.target as HTMLSelectElement).value];
