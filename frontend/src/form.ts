@@ -147,7 +147,7 @@ export function renderForm() {
                 <option disabled>Select</option>
               </select>
             </div>
-            <input type="text" name="phone-number" id="phone-number" class="p-2 block w-full rounded-md border-0 py-1.5 pl-36 bg-white/5 text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="612345678">
+            <input type="text" name="phone-number" id="phone-number" class="p-2 block w-full rounded-md border-0 py-1.5 pl-36 bg-white/5 text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 placeholder:text-white/20" placeholder="612345678">
           </div>
         </div>
 			</div>
