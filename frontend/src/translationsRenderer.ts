@@ -1,5 +1,6 @@
 import { Translate } from "../wailsjs/go/main/App";
 import { Language, languages, originalLanguage } from "./languages";
+import { renderLoadingIndicator } from "./loadingIndicator";
 
 interface Translation {
   language: Language;
@@ -8,21 +9,22 @@ interface Translation {
 
 export function elementTranslationsRenderer(
   element: HTMLElement,
-  parent: HTMLElement
+  parent: HTMLElement,
+  isSigleLine?: boolean
 ): () => void {
   let previousInput = "";
 
   async function getTranslations(): Promise<Translation[]> {
-    const currentInput = element.innerText;
+    const currentInput = element.innerText.replace(/^\n+|\n+$/g, "");
     if (previousInput == currentInput) return [];
     previousInput = currentInput;
 
-    if (!element.textContent || element.textContent.trim() == "") {
+    if (!currentInput || currentInput.trim() == "") {
       parent.innerHTML = "";
       return [];
     }
 
-    parent.innerHTML = `<div class="loading-indicator">Loading translations...</div>`;
+    renderLoadingIndicator(parent);
 
     const translations: Translation[] = [];
 
@@ -32,7 +34,7 @@ export function elementTranslationsRenderer(
         const translation: Translation = {
           language: otherLanguage,
           content: await Translate(
-            element.textContent!.replace(/\n/g, "<br>"),
+            currentInput!.replace(/\r?\n/g, "<br>"),
             originalLanguage.short,
             otherLanguage.short
           ),
@@ -48,30 +50,32 @@ export function elementTranslationsRenderer(
     return translations;
   }
 
+  function renderInputDivForTranslation(translation: Translation) {
+    const inputDiv = document.createElement("div");
+    inputDiv.outerHTML = `<label class="text-xs font-medium text-white">${translation.language.long}</label>`;
+    inputDiv.classList.add(
+      ...`p-2 whitespace-nowrap overflow-hidden block w-full h-max rounded-md py-1.5 text-white/40 shadow-sm ring-1 ring-inset ring-white/5 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6`.split(
+        " "
+      )
+    );
+    isSigleLine && inputDiv.classList.add("single-line");
+    inputDiv.innerHTML = translation.content;
+    parent.appendChild(inputDiv);
+
+    const editBtn = createEditButton(parent);
+    const doneEditing = createDoneEditingButton(parent);
+
+    editBtn.onclick = () => handleToggleEditing(editBtn, doneEditing, inputDiv);
+
+    doneEditing.onclick = () =>
+      handleToggleEditing(editBtn, doneEditing, inputDiv);
+  }
+
   return async function renderTranslations() {
     const translations = await getTranslations();
 
     for (const translation of translations) {
-      const inputDiv = document.createElement("div");
-      inputDiv.outerHTML = `<label class="text-xs font-medium text-white">${translation.language.long}</label>`;
-      inputDiv.classList.add(
-        ..."p-2 block w-full h-max min-h-20 rounded-md py-1.5 text-white/40 shadow-sm ring-1 ring-inset ring-white/5 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6".split(
-          " "
-        )
-      );
-      inputDiv.innerHTML = translation.content;
-      parent.appendChild(inputDiv);
-
-      const editBtn = createEditButton(parent);
-      const doneEditing = createDoneEditingButton(parent);
-
-      editBtn.onclick = () => {
-        handleToggleEditing(editBtn, doneEditing, inputDiv);
-      };
-
-      doneEditing.onclick = () => {
-        handleToggleEditing(editBtn, doneEditing, inputDiv);
-      };
+      renderInputDivForTranslation(translation);
     }
   };
 }

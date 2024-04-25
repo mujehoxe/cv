@@ -92,7 +92,6 @@ export function renderForm() {
 							id="about-${originalLanguage.short}"
 							rows="3"
 							contenteditable="true"
-							placeholder="You can provide a description of yourself here..."
 							class="p-2 block w-full h-max min-h-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
 						</div>
 						<div id="about-other-langs" class="mt-2"></div>
@@ -162,9 +161,25 @@ export function renderForm() {
         <div class="col-span-full">
 					<label for="street-address" class="block text-sm font-medium leading-6 text-white">Street address</label>
 					<div id="street-addresses" class="mt-2">
-            <label class='text-xs font-medium text-white'>${originalLanguage.short}</about>
-						<input type="text" name="street-address-${originalLanguage.short}" id="street-address" autocomplete="street-address" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
-					</div>
+            <label class='text-xs font-medium text-white'>${originalLanguage.long}</label>
+						
+						<div
+							contenteditable="true"
+							id="street-${originalLanguage.short}"
+							name="street-address"
+							class="single-line whitespace-nowrap overflow-hidden overflow-x-auto p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+						>
+						</div>
+						<style>
+						[contenteditable="true"].single-line br {
+								display:none;
+						}
+						[contenteditable="true"].single-line * {
+								display:inline;
+								white-space:nowrap;
+						}
+						</style>
+					<div id="street-other-langs" class="mt-2"></div>
 				</div>
 
 				<div class="sm:col-span-2 sm:col-start-1">
@@ -209,12 +224,26 @@ export function renderForm() {
   });
 
   const about = document.getElementById(`about-${originalLanguage.short}`);
-  const parent = document.getElementById("about-other-langs");
-  if (!about || !parent) return;
-  const renderAboutTranslations = elementTranslationsRenderer(about, parent);
-  about?.addEventListener("blur", () => {
-    renderAboutTranslations();
-  });
+  const parentAbout = document.getElementById("about-other-langs");
+  if (about && parentAbout) {
+    const renderAboutTranslations = elementTranslationsRenderer(
+      about,
+      parentAbout,
+      false
+    );
+    about?.addEventListener("blur", () => renderAboutTranslations());
+  }
+
+  const street = document.getElementById(`street-${originalLanguage.short}`);
+  const parentStreet = document.getElementById("street-other-langs");
+  if (street && parentStreet) {
+    const renderStreetTranslations = elementTranslationsRenderer(
+      street,
+      parentStreet,
+      true
+    );
+    street?.addEventListener("blur", () => renderStreetTranslations());
+  }
 
   const form = document.getElementById("form");
   form?.addEventListener("submit", (e) => handleSubmit(e));
