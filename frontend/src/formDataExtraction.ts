@@ -1,5 +1,3 @@
-import { CVProfileData, Phone } from "./cv-profile-types";
-
 export function extractFormData(language: string) {
   const data: CVProfileData = {
     id: null,
@@ -80,9 +78,10 @@ export function extractFormData(language: string) {
 
   const currentLangAboutMe = document.getElementById(
     `about-${language}`
-  )?.innerText;
+  ) as HTMLElement;
   if (currentLangAboutMe)
-    data.profile.personalInformation.personalDescription = currentLangAboutMe;
+    data.profile.personalInformation.personalDescription =
+      currentLangAboutMe.innerHTML;
 
   const birthday = (document.getElementById("birthday") as HTMLInputElement)
     .value;
@@ -102,18 +101,42 @@ export function extractFormData(language: string) {
     );
 
   const email = (document.getElementById("email") as HTMLInputElement).value;
-  email && data.profile.personalInformation.emails.push(email);
+  data.profile.personalInformation.emails.push(email);
 
-  const phoneNumber = (
-    document.getElementById("phone-number") as HTMLInputElement
-  ).value;
+  extractPhoneInto(data);
 
-  extractPhone(phoneNumber, data);
+  extractAddressInto(language, data);
 
   return data;
 }
 
-function extractPhone(phoneNumber: string, data: CVProfileData) {
+function extractAddressInto(language: string, data: CVProfileData) {
+  const currentLangStreet = document.getElementById(
+    `street-${language}`
+  ) as HTMLElement;
+  const city = (document.getElementById("city") as HTMLInputElement).value;
+  const country = (document.getElementById("country") as HTMLSelectElement)
+    .value;
+  const postalCode = (
+    document.getElementById("postal-code") as HTMLInputElement
+  ).value;
+  const address: Address = {
+    addressName: null,
+    addressPart1: currentLangStreet ? currentLangStreet.innerHTML : "",
+    addressPart2: "",
+    city,
+    postalCode: postalCode,
+    country,
+    addressType: "home",
+  };
+
+  data.profile.personalInformation.addresses.push(address);
+}
+
+function extractPhoneInto(data: CVProfileData) {
+  const phoneNumber = (
+    document.getElementById("phone-number") as HTMLInputElement
+  ).value;
   if (phoneNumber != "") {
     const phoneExtentionSelect = document.getElementById(
       "phone-extention"
@@ -128,4 +151,78 @@ function extractPhone(phoneNumber: string, data: CVProfileData) {
 
     phoneExtentionSelect && data.profile.personalInformation.phones.push(phone);
   }
+}
+interface SocialMediaWebsite {
+  mediaType: string;
+  mediaURL: string;
+  customMediaType: string;
+}
+
+export interface Phone {
+  phonePrefix: {
+    countryCode: string;
+    prefix: number;
+  };
+  phoneNumber: string;
+  customPhoneNumberType: string;
+  phoneNumberType: string;
+}
+interface Address {
+  addressName: string | null;
+  addressPart1: string;
+  addressPart2: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  addressType: string;
+}
+interface InstantMessenger {
+  provider: string;
+  id: string;
+  customProvider: string;
+}
+interface DateOfBirth {
+  date: string;
+  dateType: string;
+}
+interface PersonalInformation {
+  firstName: string;
+  lastName: string;
+  personalMottoLine: string | null;
+  personalDescription: string;
+  sex: string;
+  nationalities: string[];
+  socialMediaWebsites: SocialMediaWebsite[];
+  emails: string[];
+  phones: Phone[];
+  addresses: Address[];
+  websites: string[];
+  instantMessengers: InstantMessenger[];
+  dateOfBirth: DateOfBirth;
+}
+interface Preference {
+  id: string;
+  profileId: string;
+  profileStructure: any[]; // Assuming profileStructure can be any array, adjust as needed
+  dateFormat: string;
+}
+interface Template {
+  displayLogo: string;
+  displayPageNumber: boolean;
+  color: string;
+  fontSize: string;
+  templateName: string;
+}
+interface Profile {
+  language: string;
+  personalInformation: PersonalInformation;
+  preference: Preference;
+  customSections: any[]; // Assuming customSections can be any array, adjust as needed
+  userId: string;
+}
+
+export interface CVProfileData {
+  id: null | string; // Assuming id can be null or a string, adjust as needed
+  profile: Profile;
+  template: Template;
 }

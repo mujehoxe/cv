@@ -7,15 +7,22 @@ interface Translation {
   content: string;
 }
 
-export function elementTranslationsRenderer(
-  element: HTMLElement,
-  parent: HTMLElement,
-  isSigleLine?: boolean
-): () => void {
-  let previousInput = "";
+export function elementTranslationsRendererFor(
+  name: string,
+  isSigleLine: boolean
+) {
+  const element = document.getElementById(
+    name + "-" + originalLanguage.short
+  ) as HTMLDivElement;
+  const parent = document.getElementById(
+    `${name}-other-langs`
+  ) as HTMLDivElement;
 
+  element.addEventListener("blur", () => renderTranslations());
+
+  let previousInput = "";
   async function getTranslations(): Promise<Translation[]> {
-    const currentInput = element.innerText.replace(/^\n+|\n+$/g, "");
+    const currentInput = element?.innerText.replace(/^\n+|\n+$/g, "");
     if (previousInput == currentInput) return [];
     previousInput = currentInput;
 
@@ -52,14 +59,18 @@ export function elementTranslationsRenderer(
 
   function renderInputDivForTranslation(translation: Translation) {
     const inputDiv = document.createElement("div");
-    inputDiv.outerHTML = `<label class="text-xs font-medium text-white">${translation.language.long}</label>`;
+    inputDiv.id = name + "-" + translation.language.short;
+    parent.insertAdjacentHTML(
+      "beforeend",
+      `<label class="block text-xs font-medium text-white">${translation.language.long}</label>`
+    );
     inputDiv.classList.add(
       ...`p-2 whitespace-nowrap overflow-hidden block w-full h-max rounded-md py-1.5 text-white/40 shadow-sm ring-1 ring-inset ring-white/5 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6`.split(
         " "
       )
     );
     isSigleLine && inputDiv.classList.add("single-line");
-    inputDiv.innerHTML = translation.content;
+    inputDiv.innerText = translation.content;
     parent.appendChild(inputDiv);
 
     const editBtn = createEditButton(parent);
@@ -71,13 +82,13 @@ export function elementTranslationsRenderer(
       handleToggleEditing(editBtn, doneEditing, inputDiv);
   }
 
-  return async function renderTranslations() {
+  async function renderTranslations() {
     const translations = await getTranslations();
 
     for (const translation of translations) {
       renderInputDivForTranslation(translation);
     }
-  };
+  }
 }
 
 function createEditButton(parent: HTMLElement) {

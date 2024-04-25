@@ -1,9 +1,9 @@
 import { FetchCV } from "../wailsjs/go/main/App";
-import { populateNationalities, populatePhoneExtentions } from "./countries";
+import { populateCountries, populatePhoneExtentions } from "./countries";
 import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
 import { renderError } from "./error";
 import { extractFormData } from "./formDataExtraction";
-import { elementTranslationsRenderer } from "./translationsRenderer";
+import { elementTranslationsRendererFor } from "./translationsRenderer";
 import {
   languages,
   originalLanguage,
@@ -39,7 +39,6 @@ export function renderForm() {
   document.querySelector("#form")!.innerHTML = `
 <form id="form">
 	<div class="space-y-12">
-
 		<div class="border-b border-white/10 pb-12">
 				<div class="col-span-full">
 					<label for="photo" class="block text-sm font-medium leading-6 text-white">Photo</label>
@@ -68,7 +67,7 @@ export function renderForm() {
 						<span class="text-red-500">*</span>
 					</label>
 					<div class="mt-2">
-						<input type="text" placeholder="e.g. John" name="first-name" id="first-name" autocomplete="given-name" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6" />
+						<input type="text" placeholder="e.g. John" name="first-name" id="first-name" autocomplete="given-name" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 placeholder:text-white/20" />
 					</div>
 				</div>
 
@@ -78,7 +77,7 @@ export function renderForm() {
 						<span class="text-red-500">*</span>
 					</label>
 					<div class="mt-2">
-						<input type="text" placeholder="e.g. Doe" name="last-name" id="last-name" autocomplete="family-name" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6" />
+						<input type="text" placeholder="e.g. Doe" name="last-name" id="last-name" autocomplete="family-name" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 placeholder:text-white/20"" />
 					</div>
 				</div>
 
@@ -190,18 +189,20 @@ export function renderForm() {
 				</div>
 
 				<div class="sm:col-span-2">
-					<label for="region" class="block text-sm font-medium leading-6 text-white">State / Province</label>
-					<div class="mt-2">
-						<input type="text" name="region" id="region" autocomplete="address-level1" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
-					</div>
-				</div>
-
-				<div class="sm:col-span-2">
 					<label for="postal-code" class="block text-sm font-medium leading-6 text-white">ZIP / Postal code</label>
 					<div class="mt-2">
 						<input type="text" name="postal-code" id="postal-code" autocomplete="postal-code" class="p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
 					</div>
 				</div>
+
+				<div class="sm:col-span-3">
+					<label for="country" class="block text-sm font-medium leading-6 text-white">Country</label>
+					<div class="mt-2">
+						<select id="country" name="country" autocomplete="country" class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black">
+							<option disabled>Select</option>
+						</select>
+					</div>
+				</div>	
       </div>
 		</div>
 	</div>
@@ -216,34 +217,18 @@ export function renderForm() {
   const languageSelect = document.getElementById("language-select")!;
   languageSelect.innerHTML = generateLanguageOptions(languages);
 
-  populateNationalities();
+  populateCountries("nationality");
+  populateCountries("country");
+
   populatePhoneExtentions();
 
   languageSelect?.addEventListener("change", (e) => {
     setOriginalLanguage(languages[(e.target as HTMLSelectElement).value]);
   });
 
-  const about = document.getElementById(`about-${originalLanguage.short}`);
-  const parentAbout = document.getElementById("about-other-langs");
-  if (about && parentAbout) {
-    const renderAboutTranslations = elementTranslationsRenderer(
-      about,
-      parentAbout,
-      false
-    );
-    about?.addEventListener("blur", () => renderAboutTranslations());
-  }
+  elementTranslationsRendererFor("about", false);
 
-  const street = document.getElementById(`street-${originalLanguage.short}`);
-  const parentStreet = document.getElementById("street-other-langs");
-  if (street && parentStreet) {
-    const renderStreetTranslations = elementTranslationsRenderer(
-      street,
-      parentStreet,
-      true
-    );
-    street?.addEventListener("blur", () => renderStreetTranslations());
-  }
+  elementTranslationsRendererFor("street", true);
 
   const form = document.getElementById("form");
   form?.addEventListener("submit", (e) => handleSubmit(e));

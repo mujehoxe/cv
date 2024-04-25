@@ -259,10 +259,8 @@ interface Country {
   idd: string;
 }
 
-export async function populateNationalities() {
-  const nationalitySelect = document.getElementById(
-    "nationality"
-  ) as HTMLSelectElement;
+export async function populateCountries(selectElementId: string) {
+  const select = document.getElementById(selectElementId) as HTMLSelectElement;
 
   countries
     .sort((a, b) => (a.name > b.name ? 1 : -1))
@@ -270,12 +268,10 @@ export async function populateNationalities() {
       const option = document.createElement("option");
       option.value = country.cca2.toLowerCase();
       option.textContent = country.name;
-      nationalitySelect?.appendChild(option);
+      select?.appendChild(option);
     });
 
-  nationalitySelect.selectedIndex = 3;
-
-  // logCountries();
+  select.selectedIndex = 3;
 }
 
 export async function populatePhoneExtentions() {
