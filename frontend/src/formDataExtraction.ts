@@ -1,111 +1,61 @@
-export function extractFormData(language: string) {
+import { extractEducationTrainingsInto } from "./education-tranings";
+import { extractWorkExperiencesInto } from "./work-experience";
+
+export function extractProfileInfo(language: string) {
+  const firstName = (document.getElementById("first-name") as HTMLInputElement)
+    .value;
+  const lastName = (document.getElementById("last-name") as HTMLInputElement)
+    .value;
+  const personalDescription =
+    (document.getElementById(`about-${language}`) as HTMLElement)?.innerHTML ||
+    "";
+  const sex =
+    (document.getElementById("gender") as HTMLInputElement).value === "male" ||
+    (document.getElementById("gender") as HTMLInputElement).value === "female"
+      ? (document.getElementById("gender") as HTMLInputElement).value
+      : undefined;
+  const nationalities = [
+    (document.getElementById("nationality") as HTMLSelectElement).value,
+  ];
+  const emails = [(document.getElementById("email") as HTMLInputElement).value];
+  const dateOfBirth = (document.getElementById("birthday") as HTMLInputElement)
+    .value
+    ? {
+        date: (document.getElementById("birthday") as HTMLInputElement).value,
+        dateType: "DAY",
+      }
+    : null;
+
   const data: CVProfileData = {
-    id: null,
     profile: {
       language: language,
       personalInformation: {
-        firstName: "kldsfjlkdsq",
-        lastName: "klsdjflkds",
-        personalMottoLine: null,
-        personalDescription: "",
-        sex: "male",
-        nationalities: [],
-        socialMediaWebsites: [
-          {
-            mediaType: "facebook",
-            mediaURL: "https://facebook.com/jkhkjhkj",
-            customMediaType: "",
-          },
-          {
-            mediaType: "linkedin",
-            mediaURL: "https://linkedin.com/in/lksdjflk",
-            customMediaType: "",
-          },
-        ],
-        emails: [],
-        phones: [],
-        addresses: [
-          {
-            addressName: null,
-            addressPart1: "Strret name 65, avnue",
-            addressPart2: "Strret name 65, avnue",
-            city: "Paris",
-            postalCode: "253321",
-            country: "be",
-            addressType: "home",
-          },
-          {
-            addressName: null,
-            addressPart1: "Strret name 65, avnue",
-            addressPart2: "",
-            city: "paris",
-            postalCode: "23432",
-            country: "be",
-            addressType: "work",
-          },
-        ],
-        websites: ["www.hdksfj.com"],
-        instantMessengers: [
-          { provider: "whatsapp", id: "+23654643232", customProvider: "" },
-        ],
-        dateOfBirth: { date: "2005-05-11T00:00:00.000Z", dateType: "DAY" },
+        firstName,
+        lastName,
+        personalDescription,
+        sex,
+        nationalities,
+        emails,
+        dateOfBirth,
       },
       preference: {
-        id: "",
-        profileId: "",
         profileStructure: [],
         dateFormat: "dd/MM/yyyy",
       },
       customSections: [],
-      userId: "65e8e7e9e40eb67cd85645d3",
     },
     template: {
       displayLogo: "first",
       displayPageNumber: false,
-      color: "none",
       fontSize: "medium",
       templateName: "cv-3",
     },
   };
 
-  data.profile.personalInformation.firstName = (
-    document.getElementById("first-name") as HTMLInputElement
-  ).value;
-
-  data.profile.personalInformation.lastName = (
-    document.getElementById("last-name") as HTMLInputElement
-  ).value;
-
-  const currentLangAboutMe = document.getElementById(
-    `about-${language}`
-  ) as HTMLElement;
-  if (currentLangAboutMe)
-    data.profile.personalInformation.personalDescription =
-      currentLangAboutMe.innerHTML;
-
-  const birthday = (document.getElementById("birthday") as HTMLInputElement)
-    .value;
-  if (birthday != "")
-    data.profile.personalInformation.dateOfBirth.date = birthday;
-
-  const gender = (document.getElementById("gender") as HTMLInputElement).value;
-  if (gender == "male" || gender == "female")
-    data.profile.personalInformation.sex = gender;
-
-  const nationalitySelect = document.getElementById(
-    "nationality"
-  ) as HTMLSelectElement;
-  nationalitySelect &&
-    data.profile.personalInformation.nationalities.push(
-      nationalitySelect.value
-    );
-
-  const email = (document.getElementById("email") as HTMLInputElement).value;
-  data.profile.personalInformation.emails.push(email);
-
   extractPhoneInto(data);
-
   extractAddressInto(language, data);
+  extractWorkExperiencesInto(language, data);
+  extractEducationTrainingsInto(language, data);
 
   return data;
 }
@@ -130,7 +80,7 @@ function extractAddressInto(language: string, data: CVProfileData) {
     addressType: "home",
   };
 
-  data.profile.personalInformation.addresses.push(address);
+  data.profile.personalInformation.addresses = [address];
 }
 
 function extractPhoneInto(data: CVProfileData) {
@@ -141,7 +91,6 @@ function extractPhoneInto(data: CVProfileData) {
     const phoneExtentionSelect = document.getElementById(
       "phone-extention"
     ) as HTMLSelectElement;
-
     const phone: Phone = {
       phoneNumber,
       phonePrefix: JSON.parse(phoneExtentionSelect.value),
@@ -149,9 +98,10 @@ function extractPhoneInto(data: CVProfileData) {
       phoneNumberType: "mobile",
     };
 
-    phoneExtentionSelect && data.profile.personalInformation.phones.push(phone);
+    if (phoneExtentionSelect) data.profile.personalInformation.phones = [phone];
   }
 }
+
 interface SocialMediaWebsite {
   mediaType: string;
   mediaURL: string;
@@ -167,6 +117,7 @@ export interface Phone {
   customPhoneNumberType: string;
   phoneNumberType: string;
 }
+
 interface Address {
   addressName: string | null;
   addressPart1: string;
@@ -176,53 +127,101 @@ interface Address {
   country: string;
   addressType: string;
 }
+
 interface InstantMessenger {
   provider: string;
   id: string;
   customProvider: string;
 }
+
 interface DateOfBirth {
   date: string;
   dateType: string;
 }
+
 interface PersonalInformation {
   firstName: string;
   lastName: string;
-  personalMottoLine: string | null;
-  personalDescription: string;
-  sex: string;
-  nationalities: string[];
-  socialMediaWebsites: SocialMediaWebsite[];
-  emails: string[];
-  phones: Phone[];
-  addresses: Address[];
-  websites: string[];
-  instantMessengers: InstantMessenger[];
-  dateOfBirth: DateOfBirth;
+  personalDescription?: string;
+  sex?: string;
+  nationalities?: string[];
+  socialMediaWebsites?: SocialMediaWebsite[];
+  emails?: string[];
+  phones?: Phone[];
+  addresses?: Address[];
+  websites?: string[];
+  instantMessengers?: InstantMessenger[];
+  dateOfBirth?: DateOfBirth | null;
 }
+
 interface Preference {
-  id: string;
-  profileId: string;
-  profileStructure: any[]; // Assuming profileStructure can be any array, adjust as needed
+  profileStructure: string[];
   dateFormat: string;
 }
+
 interface Template {
   displayLogo: string;
   displayPageNumber: boolean;
-  color: string;
+  color?: string;
   fontSize: string;
   templateName: string;
 }
+
+export interface WorkExperience {
+  order?: string | null;
+  occupation: {
+    label: string;
+    uri: string | null;
+  };
+  employer: string;
+  startDate?: {
+    date: string;
+    dateType: string;
+  } | null;
+  ongoing?: boolean;
+  mainActivities?: string | null;
+  organisationAddress: {
+    city?: string;
+    country?: string;
+  };
+  endDate?: {
+    date: string;
+    dateType: string;
+  } | null;
+}
+
+export interface EducationTraining {
+  qualification?: string;
+  organisationName?: string;
+  city?: string;
+  country?: string;
+  website?: string | null;
+  startDate?: {
+    date: string;
+    dateType: string;
+  } | null;
+  endDate?: {
+    date: string;
+    dateType: string;
+  } | null;
+  ongoing?: boolean | null;
+  studyFields?: {
+    content: string;
+    studyFieldCategoryType: string;
+  }[];
+}
+
 interface Profile {
   language: string;
   personalInformation: PersonalInformation;
   preference: Preference;
-  customSections: any[]; // Assuming customSections can be any array, adjust as needed
-  userId: string;
+  customSections: any[];
+  workExperiences?: WorkExperience[];
+  educationTrainings?: EducationTraining[];
 }
 
 export interface CVProfileData {
-  id: null | string; // Assuming id can be null or a string, adjust as needed
+  id?: null | string;
   profile: Profile;
   template: Template;
 }

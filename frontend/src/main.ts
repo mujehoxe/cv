@@ -1,11 +1,14 @@
-// import { Greet } from "../wailsjs/go/main/App";
-import { renderForm } from "./form";
+import "./index.css";
+
+import { renderUserInfoForm } from "./form";
 import { renderCvsPreviewSlideOver } from "./cvs-preview";
 import { renderPdfDisplay } from "./pdf-display";
+import { renderLanguages } from "./languages";
 
 document.querySelector("#app")!.innerHTML = `
   <div>
-    <div class="p-12" id="form">
+    <div class="px-12 pt-4" id="languages-containter"></div>
+    <div class="px-12 pt-4" id="info-form-container">
     </div>
     <div id="cvs-preview" class="hidden">
     </div>
@@ -19,7 +22,9 @@ document.querySelector("#app")!.innerHTML = `
   </div>
 `;
 
-renderForm();
+renderLanguages();
+
+renderUserInfoForm();
 
 renderCvsPreviewSlideOver();
 

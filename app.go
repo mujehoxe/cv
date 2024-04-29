@@ -8,6 +8,7 @@ import (
 	"io"
 	"math"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -82,11 +83,33 @@ func (a *App) unmarshalJSONResponse(resp *http.Response) (*struct {
 	return result, nil
 }
 
-// createCVProfile creates a CV profile and returns the profile ID.
-func (a *App) createCVProfile(jsonData string) (string, error) {
+// CreateCVProfile creates a CV profile and returns the profile ID.
+func (a *App) CreateCVProfile(jsonData string) (string, error) {
 	reqOps := NewRequestOptionsBuilder("POST", "https://europa.eu/europass/eportfolio/api/eprofile/cv").
 		Body(bytes.NewBuffer([]byte(jsonData))).
 		ExpectedStatusCode(http.StatusCreated).
+		ContentType("application/json").
+		Build()
+
+	resp, err := a.makeRequest(reqOps)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	result, err := a.unmarshalJSONResponse(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return result.ID, nil
+}
+
+// UpdateCVProfile updates a CV profile and returns the profile ID.
+func (a *App) UpdateCVProfile(profileID string, jsonData string) (string, error) {
+	reqOps := NewRequestOptionsBuilder("PUT", fmt.Sprintf("https://europa.eu/europass/eportfolio/api/eprofile/cv/%s", profileID)).
+		Body(bytes.NewBuffer([]byte(jsonData))).
+		ExpectedStatusCode(http.StatusOK).
 		ContentType("application/json").
 		Build()
 
@@ -185,12 +208,7 @@ func (a *App) getPdfFile(pdfID string) ([]byte, error) {
 	return nil, fmt.Errorf("failed to get pdf file with id %s after %d retries", pdfID, maxRetries)
 }
 
-func (a *App) FetchCV(data string) ([]byte, error) {
-	profileID, err := a.createCVProfile(data)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create CV profile: %w", err)
-	}
-
+func (a *App) FetchCV(profileID string) ([]byte, error) {
 	pdfID, err := a.getPdfId(profileID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get pdf id: %w", err)
@@ -213,4 +231,43 @@ func (a *App) Translate(text string, sourceLanguage string, targetLanguage strin
 	}
 
 	return result.Text, nil
+}
+
+func (a *App) TranslateHTML(html string, sourceLanguage string, targetLanguage string) (string, error) {
+	data := url.Values{
+		"q":      []string{html},
+		"source": []string{strings.ToLower(sourceLanguage)},
+		"target": []string{strings.ToLower(targetLanguage)},
+		"format": []string{"html"},
+	}
+
+	req, err := http.NewRequest("POST", "http://localhost:5000/translate", strings.NewReader(data.Encode()))
+	if err != nil {
+		return "", fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded") // Ensure the content type is set correctly for form data
+
+	resp, err := a.client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to send request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("server responded with status code: %d, message: %s", resp.StatusCode, string(body))
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("error reading response body: %w", err)
+	}
+
+	var result map[string]string
+	if err := json.Unmarshal(body, &result); err != nil {
+		return "", fmt.Errorf("error unmarshalling response body: %w", err)
+	}
+
+	return result["translatedText"], nil
 }

@@ -1,119 +1,215 @@
-import { Translate } from "../wailsjs/go/main/App";
+import Quill from "quill";
+import { Translate, TranslateHTML } from "../wailsjs/go/main/App";
 import { Language, languages, originalLanguage } from "./languages";
-import { renderLoadingIndicator } from "./loadingIndicator";
+import {
+  removeLoadingIndicator,
+  renderLoadingIndicator,
+} from "./loadingIndicator";
 
 interface Translation {
   language: Language;
   content: string;
 }
 
+function getElement(nameOrElement: string | HTMLDivElement): HTMLDivElement {
+  if (typeof nameOrElement === "string") {
+    return document.getElementById(
+      nameOrElement + "-" + originalLanguage.short
+    ) as HTMLDivElement;
+  }
+  return nameOrElement;
+}
+
+function getParentElement(element: HTMLDivElement): HTMLDivElement {
+  return element.nextElementSibling as HTMLDivElement;
+}
+
 export function elementTranslationsRendererFor(
   name: string,
-  isSigleLine: boolean
-) {
-  const element = document.getElementById(
-    name + "-" + originalLanguage.short
-  ) as HTMLDivElement;
-  const parent = document.getElementById(
-    `${name}-other-langs`
-  ) as HTMLDivElement;
+  isSingleLine: boolean
+): void;
+export function elementTranslationsRendererFor(
+  element: HTMLDivElement,
+  isSingleLine: boolean
+): void;
+export function elementTranslationsRendererFor(
+  nameOrElement: string | HTMLDivElement,
+  isSingleLine: boolean
+): void {
+  const element = getElement(nameOrElement);
+  const parent = getParentElement(element);
 
-  element.addEventListener("blur", () => renderTranslations());
+  var previousInput = "";
+  element.addEventListener("blur", () => {
+    const currentInput = element.innerText.replace(/^\n+|\n+$/g, "");
+    if (previousInput === currentInput) return;
+    previousInput = currentInput;
+
+    if (!currentInput || currentInput.trim() === "") {
+      parent.innerHTML = "";
+      return;
+    }
+    renderTranslations(currentInput, parent, isSingleLine);
+  });
+}
+
+async function renderTranslations(
+  input: string,
+  parent: HTMLDivElement,
+  isSingleLine: boolean
+): Promise<void> {
+  renderLoadingIndicator(parent);
+  for (const [_, otherLanguage] of Object.entries(languages)) {
+    if (areLanguagesEqual(originalLanguage, otherLanguage)) continue;
+    try {
+      const translation: Translation = {
+        language: otherLanguage,
+        content: await Translate(
+          input.replace(/\r?\n/g, "<br>"),
+          originalLanguage.short,
+          otherLanguage.short
+        ),
+      };
+      renderInputDivForTranslation(translation, parent, isSingleLine);
+    } catch (error) {
+      console.error("Error translating text:", error);
+    }
+  }
+
+  removeLoadingIndicator(parent);
+}
+
+function renderInputDivForTranslation(
+  translation: Translation,
+  parent: HTMLDivElement,
+  isSingleLine: boolean
+): void {
+  const inputDiv = document.createElement("div");
+  const name = parent.id.replace("-other-langs", "");
+  inputDiv.id = name + "-" + translation.language.short;
+  parent.insertAdjacentHTML(
+    "beforeend",
+    `<label class="block text-xs font-medium text-white">${translation.language.long}</label>`
+  );
+  inputDiv.classList.add(
+    ...`p-2 overflow-hidden block w-full h-max rounded-md py-1.5 text-white/40 shadow-sm ring-1 ring-inset ring-white/5 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6`.split(
+      " "
+    )
+  );
+  isSingleLine && inputDiv.classList.add("single-line", "whitespace-nowrap");
+  inputDiv.innerHTML = translation.content;
+  parent.appendChild(inputDiv);
+
+  const editBtn = createEditButton(parent);
+  const doneEditing = createDoneEditingButton(parent);
+
+  editBtn.onclick = () => handleToggleEditing(editBtn, doneEditing, inputDiv);
+  doneEditing.onclick = () =>
+    handleToggleEditing(editBtn, doneEditing, inputDiv);
+}
+
+export function translationsRendererForQuill(name: string, quill: Quill) {
+  if (!quill.root.parentElement) return;
+  const parent = getParentElement(quill.root.parentElement as HTMLDivElement);
+
+  quill.on("selection-change", (range) => {
+    if (!range) {
+      renderTranslations();
+    }
+  });
 
   let previousInput = "";
-  async function getTranslations(): Promise<Translation[]> {
-    const currentInput = element?.innerText.replace(/^\n+|\n+$/g, "");
-    if (previousInput == currentInput) return [];
+  async function renderTranslations() {
+    const currentInput = quill?.root.innerHTML.replace(/^\n+|\n+$/g, "");
+    if (previousInput == currentInput) return;
     previousInput = currentInput;
 
     if (!currentInput || currentInput.trim() == "") {
       parent.innerHTML = "";
-      return [];
+      return;
     }
 
     renderLoadingIndicator(parent);
-
-    const translations: Translation[] = [];
 
     for (const [_, otherLanguage] of Object.entries(languages)) {
       if (areLanguagesEqual(originalLanguage, otherLanguage)) continue;
       try {
         const translation: Translation = {
           language: otherLanguage,
-          content: await Translate(
-            currentInput!.replace(/\r?\n/g, "<br>"),
+          content: await TranslateHTML(
+            currentInput,
             originalLanguage.short,
             otherLanguage.short
           ),
         };
-        translations.push(translation);
+        renderInputQuillForTranslation(translation);
       } catch (error) {
         console.error("Error translating text:", error);
       }
     }
 
-    parent.innerHTML = "";
-
-    return translations;
+    removeLoadingIndicator(parent);
   }
 
-  function renderInputDivForTranslation(translation: Translation) {
+  function renderInputQuillForTranslation(translation: Translation) {
     const inputDiv = document.createElement("div");
     inputDiv.id = name + "-" + translation.language.short;
     parent.insertAdjacentHTML(
       "beforeend",
       `<label class="block text-xs font-medium text-white">${translation.language.long}</label>`
     );
-    inputDiv.classList.add(
-      ...`p-2 whitespace-nowrap overflow-hidden block w-full h-max rounded-md py-1.5 text-white/40 shadow-sm ring-1 ring-inset ring-white/5 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6`.split(
-        " "
-      )
-    );
-    isSigleLine && inputDiv.classList.add("single-line");
-    inputDiv.innerText = translation.content;
+    const inputQuill = new Quill(inputDiv, {
+      theme: "snow",
+      modules: {
+        toolbar: [
+          ["bold", "italic", "underline"],
+          [{ list: "ordered" }, { list: "bullet" }],
+        ],
+        clipboard: {
+          matchVisual: false,
+        },
+      },
+    });
+
+    inputQuill.root.innerHTML = translation.content;
+    inputDiv.classList.add("mb-2");
     parent.appendChild(inputDiv);
-
-    const editBtn = createEditButton(parent);
-    const doneEditing = createDoneEditingButton(parent);
-
-    editBtn.onclick = () => handleToggleEditing(editBtn, doneEditing, inputDiv);
-
-    doneEditing.onclick = () =>
-      handleToggleEditing(editBtn, doneEditing, inputDiv);
   }
+}
 
-  async function renderTranslations() {
-    const translations = await getTranslations();
-
-    for (const translation of translations) {
-      renderInputDivForTranslation(translation);
-    }
-  }
+function createButton(
+  parent: HTMLElement,
+  text: string,
+  icon: string,
+  classes: string[]
+) {
+  const button = document.createElement("div");
+  parent.appendChild(button);
+  button.classList.add(...classes);
+  button.innerHTML = `${text} <i class="pl-1 mb-2 fa-solid ${icon} text-center text-xs"></i>`;
+  return button;
 }
 
 function createEditButton(parent: HTMLElement) {
-  const edit = document.createElement("div");
-  parent.appendChild(edit);
-  edit.classList.add(
-    ..."cursor-pointer inline p-1 text-xs rounded-md ring-1 rounded-5 ring-inset ring-white/20".split(
+  return createButton(
+    parent,
+    "Edit",
+    "fa-pen",
+    "cursor-pointer inline p-1 text-xs rounded-md ring-1 rounded-5 ring-inset ring-white/20".split(
       " "
     )
   );
-  edit.innerHTML = `Edit <i class="pl-1 mb-2 fa-solid fa-pen text-center text-xs"></i>`;
-
-  return edit;
 }
+
 function createDoneEditingButton(parent: HTMLElement) {
-  const doneEditing = document.createElement("div");
-  parent.appendChild(doneEditing);
-  doneEditing.classList.add(
-    ..."cursor-pointer inline p-1 text-xs rounded-md ring-1 rounded-5 ring-inset ring-white/20 hidden".split(
+  return createButton(
+    parent,
+    "Done",
+    "fa-check",
+    "cursor-pointer inline p-1 text-xs rounded-md ring-1 rounded-5 ring-inset ring-white/20 hidden".split(
       " "
     )
   );
-  doneEditing.innerHTML = `Done <i class="pl-1 mb-2 fa-solid fa-check text-center text-xs"></i>`;
-
-  return doneEditing;
 }
 
 function handleToggleEditing(

@@ -259,9 +259,7 @@ interface Country {
   idd: string;
 }
 
-export async function populateCountries(selectElementId: string) {
-  const select = document.getElementById(selectElementId) as HTMLSelectElement;
-
+export async function populateCountries(select: HTMLSelectElement) {
   countries
     .sort((a, b) => (a.name > b.name ? 1 : -1))
     .forEach((country: Country) => {
