@@ -4,3 +4,4 @@ frontend/dist
 cv.pdf
 exampleCvsLyna
 .env
+db/
