@@ -1,7 +1,7 @@
 import { populateCountries } from "./countries";
 import { WorkExperience } from "./formDataExtraction";
 import { originalLanguage } from "./languages";
-import Quill from 'quill';
+import Quill from "quill";
 import { translationsRendererForQuill } from "./translationsRenderer";
 import { CVProfileData } from "./formDataExtraction";
 import Toolbar from "quill/modules/toolbar";
@@ -113,16 +113,26 @@ export function renderWorkExperienceFields() {
 
   workExperiencesContainer.appendChild(workExperience);
 
-  const deleteWorkExperienceButton = workExperience.querySelector('button[name="delete"]')!;
-  deleteWorkExperienceButton.addEventListener('click', (e) => {
+  const deleteWorkExperienceButton = workExperience.querySelector(
+    'button[name="delete"]'
+  )!;
+  deleteWorkExperienceButton.addEventListener("click", (e) => {
     e.preventDefault();
     workExperience.remove();
   });
 
-  const occupation = workExperience.querySelector('input[name="occupation"]') as HTMLInputElement;
-  const employer = workExperience.querySelector('input[name="employer"]') as HTMLInputElement;
-  const workCountry = workExperience.querySelector('select[name="work-country"]') as HTMLSelectElement;
-  const workExperienceName = workExperience.querySelector('span[id="work-experience-name"]') as HTMLSpanElement;
+  const occupation = workExperience.querySelector(
+    'input[name="occupation"]'
+  ) as HTMLInputElement;
+  const employer = workExperience.querySelector(
+    'input[name="employer"]'
+  ) as HTMLInputElement;
+  const workCountry = workExperience.querySelector(
+    'select[name="work-country"]'
+  ) as HTMLSelectElement;
+  const workExperienceName = workExperience.querySelector(
+    'span[id="work-experience-name"]'
+  ) as HTMLSpanElement;
 
   occupation.addEventListener("input", updateWorkExperienceName);
   employer.addEventListener("input", updateWorkExperienceName);
@@ -135,82 +145,115 @@ export function renderWorkExperienceFields() {
       if (employer.value != "")
         name += ` at <span class='font-bold'>${employer.value}</span>`;
       if (workCountry.value != "")
-        name += " in (" + workCountry.options[workCountry.selectedIndex].text + ")";
+        name +=
+          " in (" + workCountry.options[workCountry.selectedIndex].text + ")";
     }
     workExperienceName.innerHTML = name;
   }
 
-  const activites = workExperience.querySelector(`#activities-${originalLanguage.short}`) as HTMLDivElement
+  const activites = workExperience.querySelector(
+    `#activities-${originalLanguage.short}`
+  ) as HTMLDivElement;
 
   const quill = new Quill(activites, {
-    theme: 'snow',
+    theme: "snow",
     modules: {
       toolbar: [
-        [{ 'header': [1, 2, false] }],
-        ['bold', 'italic', 'underline'],
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        ['clean']
+        [{ header: [1, 2, false] }],
+        ["bold", "italic", "underline"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["clean"],
       ],
       clipboard: {
         matchVisual: false,
-      }
-    }
+      },
+    },
   });
 
-  const toolbar = quill.getModule('toolbar') as Toolbar;
-  toolbar.container?.classList.add('rounded-t-md', 'bg-slate-300');
+  const toolbar = quill.getModule("toolbar") as Toolbar;
+  toolbar.container?.classList.add("rounded-t-md", "bg-slate-300");
 
-  translationsRendererForQuill('activities', quill)
+  translationsRendererForQuill("activities", quill);
 
-  populateCountries(workCountry)
+  populateCountries(workCountry);
 }
 
+function extractWorkExperienceData(
+  language: string,
+  workExperience: Element
+): WorkExperience {
+  const occupation = (
+    workExperience.querySelector("#occupation") as HTMLInputElement
+  ).value;
+  const employer = (
+    workExperience.querySelector("#employer") as HTMLInputElement
+  ).value;
+  const city = (workExperience.querySelector("#work-city") as HTMLInputElement)
+    .value;
+  const country = (
+    workExperience.querySelector("#work-country") as HTMLInputElement
+  ).value;
+  const startDate = (
+    workExperience.querySelector("#from-date") as HTMLInputElement
+  ).value;
+  const endDate = (workExperience.querySelector("#to-date") as HTMLInputElement)
+    .value;
+  const activitiesContainer = workExperience.querySelector(
+    `#activities-${language}`
+  ) as HTMLDivElement;
+  const mainActivities = (
+    activitiesContainer.querySelector(".ql-editor") as HTMLDivElement
+  ).innerHTML;
 
-function extractWorkExperienceData(language: string, workExperience: Element): WorkExperience {
-  const occupation = (workExperience.querySelector("#occupation") as HTMLInputElement).value;
-  const employer = (workExperience.querySelector("#employer") as HTMLInputElement).value;
-  const city = (workExperience.querySelector("#work-city") as HTMLInputElement).value;
-  const country = (workExperience.querySelector("#work-country") as HTMLInputElement).value;
-  const startDate = (workExperience.querySelector("#from-date") as HTMLInputElement).value;
-  const endDate = (workExperience.querySelector("#to-date") as HTMLInputElement).value;
-  const activitiesContainer = workExperience.querySelector(`#activities-${language}`) as HTMLDivElement;
-  const mainActivities = (activitiesContainer.querySelector('.ql-editor') as HTMLDivElement).innerHTML
-
-  const ongoing = (workExperience.querySelector("#ongoing") as HTMLInputElement).checked;
+  const ongoing = (workExperience.querySelector("#ongoing") as HTMLInputElement)
+    .checked;
 
   return {
-    "occupation": {
-      "label": occupation,
-      "uri": null
+    occupation: {
+      label: occupation,
+      uri: null,
     },
     employer,
-    startDate: startDate ? {
-      "date": startDate,
-      "dateType": "DAY"
-    } : null,
+    startDate: startDate
+      ? {
+          date: startDate,
+          dateType: "DAY",
+        }
+      : null,
     ongoing,
     mainActivities,
-    "organisationAddress": {
+    organisationAddress: {
       city,
-      country
+      country,
     },
-    "endDate": endDate ? {
-      "date": endDate,
-      "dateType": "DAY"
-    } : null,
+    endDate: endDate
+      ? {
+          date: endDate,
+          dateType: "DAY",
+        }
+      : null,
   };
 }
 
-export function extractWorkExperiencesInto(language: string, data: CVProfileData) {
-  const workExperienceContainer = document.getElementById("work-experiences-container")!;
-  const workExperiences = workExperienceContainer.querySelectorAll(".work-experience");
+export function extractWorkExperiencesInto(
+  language: string,
+  data: CVProfileData
+) {
+  const workExperienceContainer = document.getElementById(
+    "work-experiences-container"
+  )!;
+  const workExperiences =
+    workExperienceContainer.querySelectorAll(".work-experience");
 
   if (workExperiences.length > 0) {
     data.profile.preference.profileStructure.push("work-experience");
   }
 
   workExperiences.forEach((workExperience) => {
-    const workExperienceData = extractWorkExperienceData(language, workExperience);
+    const workExperienceData = extractWorkExperienceData(
+      language,
+      workExperience
+    );
     data.profile.workExperiences = data.profile.workExperiences || [];
     data.profile.workExperiences.push(workExperienceData);
   });

@@ -9,6 +9,7 @@ export function renderPdfDisplay() {
     renderError("Couldn't display pdf");
     return;
   }
+
   pdfDisplay.innerHTML = `
 <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
   <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
@@ -25,10 +26,7 @@ export function renderPdfDisplay() {
         </div>
         <div class="sm:flex sm:items-start">
           <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-            <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Deactivate account</h3>
-            <div class="mt-2">
-              <p class="text-sm text-gray-500">Are you sure you want to deactivate your account? All of your data will be permanently removed from our servers forever. This action cannot be undone.</p>
-            </div>
+            <embed id="pdf-viewer" width="500" height="375" type="application/pdf">
           </div>
         </div>
       </div>
@@ -41,12 +39,4 @@ export function renderPdfDisplay() {
     ?.addEventListener("click", () => {
       pdfDisplay!.classList.toggle("hidden", true);
     });
-}
-
-export function showPdfDisplay() {
-  if (!pdfDisplay) {
-    renderError("Couldn't display pdf");
-    return;
-  }
-  pdfDisplay.classList.toggle("hidden", false);
 }

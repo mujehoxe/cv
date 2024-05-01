@@ -1,9 +1,9 @@
 import "./index.css";
 
-import { renderUserInfoForm } from "./form";
-import { renderCvsPreviewSlideOver } from "./cvs-preview";
-import { renderPdfDisplay } from "./pdf-display";
-import { renderLanguages } from "./languages";
+import { renderUserInfoForm } from "./components/form";
+import { renderCvsPreviewSlideOver } from "./components/cvs-preview";
+import { renderPdfDisplay } from "./components/pdf-display";
+import { renderLanguages } from "./components/languages";
 
 document.querySelector("#app")!.innerHTML = `
   <div>
@@ -29,8 +29,3 @@ renderUserInfoForm();
 renderCvsPreviewSlideOver();
 
 renderPdfDisplay();
-declare global {
-  interface Window {
-    greet: () => void;
-  }
-}

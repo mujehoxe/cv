@@ -1,15 +1,13 @@
-import { FetchCV, CreateCVProfile } from "../wailsjs/go/main/App";
+import { FetchCV, CreateCVProfile } from "../../wailsjs/go/main/App";
 import { populateCountries, populatePhoneExtentions } from "./countries";
 import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
 import { renderError } from "./error";
 import { extractProfileInfo } from "./formDataExtraction";
 import { elementTranslationsRendererFor } from "./translationsRenderer";
-import {
-  languages,
-  originalLanguage,
-} from "./languages";
+import { languages, originalLanguage } from "./languages";
 import { renderWorkExperiencesForm } from "./work-experience";
 import { renderEducationTrainingsForm } from "./education-tranings";
+import { renderDrivingLicencesForm } from "./driving-licences";
 
 async function handleSubmit(e: Event) {
   e.preventDefault();
@@ -210,6 +208,9 @@ export function renderUserInfoForm() {
     <div class="py-4 border-b border-white/10" id="education-trainings">
     </div>
 
+    <div class="py-4 border-b border-white/10" id="driving-licences">
+    </div>
+
     <div class="mt-6 flex items-center justify-end gap-x-6">
       <button type="reset" class="text-sm font-semibold leading-6 text-white bg-transparent border border-white/10 px-3 py-2 rounded-md hover:bg-white/10 hover:text-indigo-500 transition-colors duration-200">Reset</button>
       <button type="submit"
@@ -219,7 +220,9 @@ export function renderUserInfoForm() {
 </form>
 `;
 
-  const nationality = document.getElementById("nationality") as HTMLSelectElement;
+  const nationality = document.getElementById(
+    "nationality"
+  ) as HTMLSelectElement;
   populateCountries(nationality);
   const country = document.getElementById("country") as HTMLSelectElement;
   populateCountries(country);
@@ -232,6 +235,8 @@ export function renderUserInfoForm() {
   renderWorkExperiencesForm();
 
   renderEducationTrainingsForm();
+
+  renderDrivingLicencesForm();
 
   const form = document.getElementById("info-form");
   form?.addEventListener("submit", (e) => handleSubmit(e));

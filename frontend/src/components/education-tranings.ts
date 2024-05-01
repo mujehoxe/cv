@@ -4,7 +4,7 @@ import { originalLanguage } from "./languages";
 import { elementTranslationsRendererFor } from "./translationsRenderer";
 import { CVProfileData } from "./formDataExtraction";
 
-export function initEducationTrainingFields() {
+function initEducationTrainingFields() {
   const addEducationTrainingButton = document.getElementById(
     "add-education-training"
   )!;
@@ -33,7 +33,7 @@ export function renderEducationTrainingsForm() {
   initEducationTrainingFields();
 }
 
-export function renderEducationTrainingFields() {
+function renderEducationTrainingFields() {
   const educationTrainingsContainer = document.getElementById(
     "education-trainings-container"
   )!;

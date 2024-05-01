@@ -1,3 +1,4 @@
+import { extractDrivingLicencesInto } from "./driving-licences";
 import { extractEducationTrainingsInto } from "./education-tranings";
 import { extractWorkExperiencesInto } from "./work-experience";
 
@@ -56,6 +57,7 @@ export function extractProfileInfo(language: string) {
   extractAddressInto(language, data);
   extractWorkExperiencesInto(language, data);
   extractEducationTrainingsInto(language, data);
+  extractDrivingLicencesInto(data);
 
   return data;
 }
@@ -211,6 +213,18 @@ export interface EducationTraining {
   }[];
 }
 
+export interface DrivingLicence {
+  licence: string;
+  timeRange: {
+    startDate: { date: string; dateType: string } | null;
+    endDate: { date: string; dateType: string } | null;
+  };
+}
+
+export interface Licence {
+  licences: DrivingLicence[];
+}
+
 interface Profile {
   language: string;
   personalInformation: PersonalInformation;
@@ -218,6 +232,7 @@ interface Profile {
   customSections: any[];
   workExperiences?: WorkExperience[];
   educationTrainings?: EducationTraining[];
+  drivingLicence?: Licence;
 }
 
 export interface CVProfileData {
