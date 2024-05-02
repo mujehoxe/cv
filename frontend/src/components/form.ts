@@ -212,7 +212,7 @@ export function renderUserInfoForm() {
     <div class="py-4 border-b border-white/10" id="language-skills"></div>
 
 
-    <div class="mt-6 flex items-center justify-end gap-x-6">
+    <div class="my-6 flex items-center justify-end gap-x-6">
       <button type="reset" class="text-sm font-semibold leading-6 text-white bg-transparent border border-white/10 px-3 py-2 rounded-md hover:bg-white/10 hover:text-indigo-500 transition-colors duration-200">Reset</button>
       <button type="submit"
         class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200">Save</button>

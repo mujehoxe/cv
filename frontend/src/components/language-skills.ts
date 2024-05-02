@@ -18,7 +18,8 @@ export function renderLanguageSkillsForm() {
   }
 
   languageSkillsContainer.innerHTML = `
-	<detail
+	<details>
+    <summary class="text-base font-semibold leading-6 text-white cursor-pointer">Language Skills</summary>
 		<div>
 			<label for="motherTongue" class="block text-sm font-medium leading-6 text-white">Mother Tongue</label>
 			<select name="motherTongue" class="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
@@ -34,6 +35,7 @@ export function renderLanguageSkillsForm() {
 						+ Add Work Experience
 			</button>
 		</div>
+  </details>
 	`;
   const motherLanguageSelect = languageSkillsContainer.querySelector(
     'select[name="motherTongue"]'
@@ -62,22 +64,22 @@ export function renderLanguageSkillsForm() {
 
       const newSkill = document.createElement("div");
       newSkill.innerHTML = `
-		 	<div class="mb-4 mx-2 border mt-2 rounded-md p-2">
-				<div class="flex justify-end">
-					<button type="button" 
-						name='delete'
-						class="text-sm text-right font-medium text-red-300 bg-transparent border border-white/10 p-2 rounded-md hover:bg-white/10 hover:text-red-700 transition-colors duration-200">
-						<i class="fa-solid fa-trash"></i>
-					</button>
-				</div>
-				<div class="mx-2">
-					<label class="mt-2 text-xs">Language</label>
-					<select name="language" class="text-sm mb-2 block w-full text-gray-700 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-						<option value="" hidden selected disabled>Select a language</option>
-						${updateLanguageOptions()}
-					</select>
-				</div>
-			</div>
+        <div class="mb-4 mx-2 border border-gray-700 bg-zinc-800 mt-2 rounded-md p-2">
+          <div class="flex justify-end">
+            <button type="button" 
+              name='delete'
+              class="text-sm text-right font-medium text-red-300 bg-transparent border border-white/10 p-2 rounded-md hover:bg-white/10 hover:text-red-700 transition-colors duration-200">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+          <div class="mx-2">
+            <label class="mt-2 text-xs">Language</label>
+            <select name="language" class="text-sm mb-2 block w-full text-gray-700 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+              <option value="" hidden selected disabled>Select a language</option>
+              ${updateLanguageOptions()}
+            </select>
+          </div>
+        </div>
 			`;
       list.appendChild(newSkill);
 
