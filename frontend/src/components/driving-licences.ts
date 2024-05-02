@@ -31,7 +31,7 @@ function renderDrivingLicenceType(
   licenceContainer.innerHTML = `
     <div class="flex flex-col bg-zinc-800 p-2 rounded-md items-center space-x-4">
       <div class="flex flex-row items-center w-full">
-        <input id="${licenceType}" type="checkbox" class="form-checkbox h-4 w-4 text-blue-600" id="check" aria-required="false" aria-label="Add licence ${licenceType} to your profile" aria-invalid="false" />
+        <input id="${licenceType}" type="checkbox" class="h-4 w-4 text-blue-600" id="check" aria-required="false" aria-label="Add licence ${licenceType} to your profile" aria-invalid="false" />
         <div class="select-none flex items-center w-full justify-between">
           <div class="flex items-center space-x-2">
             <i class="fas"></i> <!-- Driving licence type icon -->
@@ -63,7 +63,7 @@ function renderDrivingLicenceType(
           <div class="flex items-center space-x-2"><i class="fas fa-id-card"></i><span>${ageRestriction}</span></div>
         </div>
       </div>
-      <div class="hidden flex flex-row space-x-8" id="licence-dates">
+      <div class="hidden flex-row space-x-8" id="licence-dates">
         <div class="flex items-center space-x-2">
           <i class="fas fa-calendar-check"></i>
           <input
@@ -93,18 +93,21 @@ function renderDrivingLicenceType(
     </style>
   `;
 
+  const checkbox = licenceContainer.querySelector(
+    `#${licenceType}`
+  ) as HTMLInputElement;
+  checkbox.disabled = true;
+
   licenceContainer.children[0].children[0].addEventListener(
     "click",
     function () {
-      const checkbox = licenceContainer.querySelector(
-        `#${licenceType}`
-      ) as HTMLInputElement;
       checkbox.checked = !checkbox.checked;
       const datesContainer = licenceContainer.querySelector(
         `#licence-dates`
       ) as HTMLDivElement;
 
       datesContainer.classList.toggle("hidden");
+      datesContainer.classList.toggle("flex");
     }
   );
 
