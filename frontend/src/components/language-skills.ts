@@ -22,25 +22,38 @@ export function renderLanguageSkillsForm() {
   }
 
   languageSkillsContainer.innerHTML = `
-	<details>
-    <summary class="text-base font-semibold leading-6 text-white cursor-pointer">Language Skills</summary>
-		<div>
-			<label for="motherTongue" class="block text-sm font-medium leading-6 text-white">Mother Tongue</label>
-			<select name="motherTongue" class="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-				<option value="" hidden selected disabled>Select a language</option>
-				${updateLanguageOptions()}
+<details>
+    <summary class="text-base font-semibold text-white cursor-pointer">Language Skills</summary>
+    <div>
+      <label
+        for="motherTongue"
+        class="block text-sm font-medium leading-6 text-white"
+        >Mother Tongue</label
+      >
+      <select
+        name="motherTongue"
+        class="mt-1 text-gray-700 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+      >
+        <option value="" hidden selected disabled>Select a language</option>
+        ${updateLanguageOptions()}
       </select>
-		</div>
-		<div class="mt-4">
-		 	<label for="other-language-skills" class="block text-sm font-medium leading-6 text-white">Other Language Skills</label>
-		 	<div id="other-language-skills-list"></div>
-			<button type="button" id="add-language-skill"
-						class="rounded-md bg-indigo-500 p-2 my-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200">
-						+ Add Work Experience
-			</button>
-		</div>
-  </details>
-	`;
+    </div>
+    <div class="mt-4">
+      <label
+        for="other-language-skills"
+        class="block text-sm font-medium leading-6 text-white"
+        >Other Language Skills</label
+      >
+      <div id="other-language-skills-list"></div>
+      <button
+        type="button"
+        id="add-language-skill"
+        class="rounded-md bg-indigo-500 p-2 my-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200"
+      >+ Add Work Experience</button>
+    </div>
+</details>
+  `;
+
   const motherLanguageSelect = languageSkillsContainer.querySelector(
     'select[name="motherTongue"]'
   );
@@ -89,12 +102,13 @@ export function renderLanguageSkillsForm() {
 
       const newLanguageSelect = newSkill.querySelector(
         'select[name="language"]'
-      );
+      ) as HTMLSelectElement;
       newLanguageSelect?.addEventListener("change", handleSelectChange());
 
       newSkill
         .querySelector('button[name="delete"]')
         ?.addEventListener("click", () => {
+          selectedLanguages.delete(newLanguageSelect.value);
           newSkill.remove();
         });
 
