@@ -1,4 +1,8 @@
-import { CVProfileData, NonNativeLang } from "./formDataExtraction";
+import {
+  CVProfileData,
+  LanguageSkill,
+  NonNativeLang,
+} from "./formDataExtraction";
 import { allLanguages } from "./languages";
 
 export function renderLanguageSkillsForm() {
@@ -124,10 +128,12 @@ export function renderLanguageSkillsForm() {
 
 const languageLevels = ["A1", "A2", "B1", "B2", "C1", "C2"];
 
-function extractNativeLanguagesData() {
+function extractNativeLanguagesData(): LanguageSkill[] {
   const nativeLanguage = (
     document.querySelector('select[name="motherTongue"]') as HTMLSelectElement
   ).value;
+
+  if (nativeLanguage == "") return [];
 
   return [
     {
@@ -137,7 +143,7 @@ function extractNativeLanguagesData() {
   ];
 }
 
-function extractOtherLanguagesData() {
+function extractOtherLanguagesData(): NonNativeLang[] {
   const languageSkillsContainer = document.getElementById(
     "other-language-skills-list"
   );

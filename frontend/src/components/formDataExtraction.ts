@@ -226,7 +226,8 @@ export interface DrivingLicence {
 export interface Licence {
   licences: DrivingLicence[];
 }
-interface LanguageSkill {
+
+export interface LanguageSkill {
   language: string;
   languageCategory: string;
 }
