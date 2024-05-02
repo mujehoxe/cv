@@ -1,6 +1,6 @@
 import Quill from "quill";
 import { Translate, TranslateHTML } from "../../wailsjs/go/main/App";
-import { Language, languages, originalLanguage } from "./languages";
+import { Language, formLanguages, originalLanguage } from "./languages";
 import {
   removeLoadingIndicator,
   renderLoadingIndicator,
@@ -59,7 +59,7 @@ async function renderTranslations(
   isSingleLine: boolean
 ): Promise<void> {
   renderLoadingIndicator(parent);
-  for (const [_, otherLanguage] of Object.entries(languages)) {
+  for (const [_, otherLanguage] of Object.entries(formLanguages)) {
     if (areLanguagesEqual(originalLanguage, otherLanguage)) continue;
     try {
       const translation: Translation = {
@@ -131,7 +131,7 @@ export function translationsRendererForQuill(name: string, quill: Quill) {
 
     renderLoadingIndicator(parent);
 
-    for (const [_, otherLanguage] of Object.entries(languages)) {
+    for (const [_, otherLanguage] of Object.entries(formLanguages)) {
       if (areLanguagesEqual(originalLanguage, otherLanguage)) continue;
       try {
         const translation: Translation = {

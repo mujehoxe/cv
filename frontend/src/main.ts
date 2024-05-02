@@ -3,11 +3,11 @@ import "./index.css";
 import { renderUserInfoForm } from "./components/form";
 import { renderCvsPreviewSlideOver } from "./components/cvs-preview";
 import { renderPdfDisplay } from "./components/pdf-display";
-import { renderLanguages } from "./components/languages";
+import { renderFormLanguages } from "./components/languages";
 
 document.querySelector("#app")!.innerHTML = `
   <div>
-    <div class="px-12 pt-4" id="languages-containter"></div>
+    <div class="px-12 pt-4" id="form-languages-containter"></div>
     <div class="px-12 pt-4" id="info-form-container">
     </div>
     <div id="cvs-preview" class="hidden">
@@ -22,7 +22,7 @@ document.querySelector("#app")!.innerHTML = `
   </div>
 `;
 
-renderLanguages();
+renderFormLanguages();
 
 renderUserInfoForm();
 

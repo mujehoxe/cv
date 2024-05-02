@@ -1,5 +1,6 @@
 import { extractDrivingLicencesInto } from "./driving-licences";
 import { extractEducationTrainingsInto } from "./education-tranings";
+import { extractLanguageSkillsData as extractLanguageSkillsInto } from "./language-skills";
 import { extractWorkExperiencesInto } from "./work-experience";
 
 export function extractProfileInfo(language: string) {
@@ -58,6 +59,7 @@ export function extractProfileInfo(language: string) {
   extractWorkExperiencesInto(language, data);
   extractEducationTrainingsInto(language, data);
   extractDrivingLicencesInto(data);
+  extractLanguageSkillsInto(data);
 
   return data;
 }
@@ -224,6 +226,25 @@ export interface DrivingLicence {
 export interface Licence {
   licences: DrivingLicence[];
 }
+interface LanguageSkill {
+  language: string;
+  languageCategory: string;
+}
+
+export type NonNativeLang = LanguageSkill & {
+  language: string;
+  listening: string;
+  reading: string;
+  spokenInteraction: string;
+  spokenProduction: string;
+  writing: string;
+  languageCategory: string;
+};
+
+interface LanguageSkills {
+  nativeLanguages: LanguageSkill[];
+  otherLanguages?: NonNativeLang[];
+}
 
 interface Profile {
   language: string;
@@ -233,6 +254,7 @@ interface Profile {
   workExperiences?: WorkExperience[];
   educationTrainings?: EducationTraining[];
   drivingLicence?: Licence;
+  languageSkills?: LanguageSkills;
 }
 
 export interface CVProfileData {

@@ -1,4 +1,4 @@
-import { CVProfileData, DrivingLicence } from "./formDataExtraction";
+import { CVProfileData } from "./formDataExtraction";
 
 export function renderDrivingLicencesForm() {
   const drivingLicences = document.getElementById("driving-licences");
