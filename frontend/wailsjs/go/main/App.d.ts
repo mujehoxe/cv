@@ -5,6 +5,8 @@ export function CreateCVProfile(arg1:string):Promise<string>;
 
 export function FetchCV(arg1:string):Promise<Array<number>>;
 
+export function FetchDigitalSkillsAutocomplete(arg1:string):Promise<Array<string>>;
+
 export function Translate(arg1:string,arg2:string,arg3:string):Promise<string>;
 
 export function TranslateHTML(arg1:string,arg2:string,arg3:string):Promise<string>;

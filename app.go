@@ -174,6 +174,8 @@ func (a *App) getPdfFile(pdfID string) ([]byte, error) {
 	initialDelay := 100 * time.Millisecond
 	maxDelay := 2 * time.Second
 
+	var body []byte
+	var err error
 	for i := 0; i < maxRetries; i++ {
 		reqOps := NewRequestOptionsBuilder(
 			"GET",
@@ -182,7 +184,9 @@ func (a *App) getPdfFile(pdfID string) ([]byte, error) {
 			ContentType("application/json").
 			Accept("application/pdf").
 			Build()
-		resp, err := a.makeRequest(reqOps)
+
+		var resp *http.Response
+		resp, err = a.makeRequest(reqOps)
 
 		if err != nil {
 			if strings.Contains(err.Error(), fmt.Sprint(http.StatusNoContent)) {
@@ -191,23 +195,27 @@ func (a *App) getPdfFile(pdfID string) ([]byte, error) {
 					delay = maxDelay
 				}
 				time.Sleep(delay)
-				continue
 			}
-			return nil, err
+			continue
 		}
 		defer resp.Body.Close()
 
-		body, err := io.ReadAll(resp.Body)
+		body, err = io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, fmt.Errorf("error reading response body: %w", err)
 		}
 
-		return body, nil
+		break
 	}
 
-	return nil, fmt.Errorf("failed to get pdf file with id %s after %d retries", pdfID, maxRetries)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get pdf file with id %s after %d retries", pdfID, maxRetries)
+	}
+
+	return body, nil
 }
 
+// FetchCV fetches the CV for the given profile ID and returns it as a byte array
 func (a *App) FetchCV(profileID string) ([]byte, error) {
 	pdfID, err := a.getPdfId(profileID)
 	if err != nil {
@@ -222,6 +230,7 @@ func (a *App) FetchCV(profileID string) ([]byte, error) {
 	return pdfContent, nil
 }
 
+// Translate translates text from one language to another
 func (a *App) Translate(text string, sourceLanguage string, targetLanguage string) (string, error) {
 	t := translator.New()
 
@@ -233,6 +242,7 @@ func (a *App) Translate(text string, sourceLanguage string, targetLanguage strin
 	return result.Text, nil
 }
 
+// TranslateHTML takes an html string and returns the translated version of it
 func (a *App) TranslateHTML(html string, sourceLanguage string, targetLanguage string) (string, error) {
 	data := url.Values{
 		"q":      []string{html},
@@ -270,4 +280,26 @@ func (a *App) TranslateHTML(html string, sourceLanguage string, targetLanguage s
 	}
 
 	return result["translatedText"], nil
+}
+
+// Get the list of digital skills from europass
+func (a *App) FetchDigitalSkillsAutocomplete(search string) ([]string, error) {
+	reqOps := NewRequestOptionsBuilder("GET", fmt.Sprintf("https://europa.eu/europass/eportfolio/api/eprofile/digital-skills/autocomplete?search=%s&language=en&size=10", url.QueryEscape(search))).
+		ExpectedStatusCode(http.StatusOK).
+		ContentType("application/json").
+		Build()
+
+	resp, err := a.makeRequest(reqOps)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result []string
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshaling response: %w", err)
+	}
+
+	return result, nil
 }

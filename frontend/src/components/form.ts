@@ -9,6 +9,7 @@ import { renderWorkExperiencesForm } from "./work-experience";
 import { renderEducationTrainingsForm } from "./education-tranings";
 import { renderDrivingLicencesForm } from "./driving-licences";
 import { renderLanguageSkillsForm } from "./language-skills";
+import { renderDigitalSkillsForm } from "./digital-skills";
 
 async function handleSubmit(e: Event) {
   e.preventDefault();
@@ -345,6 +346,8 @@ export function renderUserInfoForm() {
 
   <div class="py-4 border-b border-white/10" id="language-skills"></div>
 
+  <div class="py-4 border-b border-white/10" id="digital-skills"></div>
+
   <div class="my-6 flex items-center justify-end gap-x-6">
     <button
       type="reset"
@@ -381,6 +384,8 @@ export function renderUserInfoForm() {
   renderDrivingLicencesForm();
 
   renderLanguageSkillsForm();
+
+  renderDigitalSkillsForm();
 
   const form = document.getElementById("info-form");
   form?.addEventListener("submit", (e) => handleSubmit(e));

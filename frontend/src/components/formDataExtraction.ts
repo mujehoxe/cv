@@ -1,3 +1,4 @@
+import { extractDigitalSkillsData } from "./digital-skills";
 import { extractDrivingLicencesInto } from "./driving-licences";
 import { extractEducationTrainingsInto } from "./education-tranings";
 import { extractLanguageSkillsData as extractLanguageSkillsInto } from "./language-skills";
@@ -60,6 +61,7 @@ export function extractProfileInfo(language: string) {
   extractEducationTrainingsInto(language, data);
   extractDrivingLicencesInto(data);
   extractLanguageSkillsInto(data);
+  extractDigitalSkillsData(data);
 
   return data;
 }
@@ -256,6 +258,9 @@ interface Profile {
   educationTrainings?: EducationTraining[];
   drivingLicence?: Licence;
   languageSkills?: LanguageSkills;
+  digitalSkills?: {
+    other: string[];
+  };
 }
 
 export interface CVProfileData {
