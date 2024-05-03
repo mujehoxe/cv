@@ -1,4 +1,8 @@
-import { FetchCV, CreateCVProfile } from "../../wailsjs/go/main/App";
+import {
+  CreateCVProfile,
+  FetchCVAndSave,
+  GetPdfFile,
+} from "../../wailsjs/go/main/App";
 import { populateCountries, populatePhoneExtentions } from "./countries";
 import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
 import { renderError } from "./error";
@@ -19,10 +23,12 @@ async function handleSubmit(e: Event) {
     const data = extractProfileInfo(language);
     try {
       const profileId = await CreateCVProfile(JSON.stringify(data));
-      const cv = await FetchCV(profileId);
-      if (cvs.get(language) !== cv) {
-        cvs.set(language, cv);
-        renderPreviewPdf(cv, language);
+      const cvPath = await FetchCVAndSave(profileId);
+      console.log(cvPath);
+      const cv = await GetPdfFile(cvPath);
+      if (cvs.get(language) !== cvPath) {
+        cvs.set(language, cvPath);
+        renderPreviewPdf(cv, language, cvPath);
       }
     } catch (err) {
       console.error(err);

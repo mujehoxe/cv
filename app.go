@@ -9,6 +9,7 @@ import (
 	"math"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 
@@ -168,8 +169,8 @@ func (a *App) getPdfId(profileID string) (string, error) {
 	return result.ID, nil
 }
 
-// getPdfFile retrieves the PDF file given its ID.
-func (a *App) getPdfFile(pdfID string) ([]byte, error) {
+// fetchPdfFile retrieves the PDF file given its ID.
+func (a *App) fetchPdfFile(pdfID string) ([]byte, error) {
 	maxRetries := 10
 	initialDelay := 100 * time.Millisecond
 	maxDelay := 2 * time.Second
@@ -215,19 +216,48 @@ func (a *App) getPdfFile(pdfID string) ([]byte, error) {
 	return body, nil
 }
 
-// FetchCV fetches the CV for the given profile ID and returns it as a byte array
-func (a *App) FetchCV(profileID string) ([]byte, error) {
+// FetchCVAndSave fetches the CV for the given profile and saves it to temp file.
+func (a *App) FetchCVAndSave(profileID string) (string, error) {
 	pdfID, err := a.getPdfId(profileID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get pdf id: %w", err)
+		return "", fmt.Errorf("failed to get pdf id: %w", err)
 	}
 
-	pdfContent, err := a.getPdfFile(pdfID)
+	pdfContent, err := a.fetchPdfFile(pdfID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get pdf file whith id %s: %w", pdfID, err)
+		return "", fmt.Errorf("failed to get pdf file whith id %s: %w", pdfID, err)
 	}
 
-	return pdfContent, nil
+	fileName, err := saveToTempDir(pdfContent)
+	if err != nil {
+		return "", fmt.Errorf("failed to save pdf file to temp dir: %w", err)
+	}
+
+	return fileName, nil
+}
+
+// saveToTempDir saves the content of the PDF in a temporary directory,
+// returns the path to the created file
+func saveToTempDir(content []byte) (string, error) {
+	file, err := os.CreateTemp("", "*.pdf")
+	if err != nil {
+		return "", fmt.Errorf("failed to create temporary file: %w", err)
+	}
+	defer file.Close()
+
+	_, err = file.Write(content)
+	if err != nil {
+		os.Remove(file.Name())
+		return "", fmt.Errorf("failed to write content to file: %w", err)
+	}
+
+	err = file.Sync()
+	if err != nil {
+		os.Remove(file.Name())
+		return "", fmt.Errorf("failed to sync file: %w", err)
+	}
+
+	return file.Name(), nil
 }
 
 // Translate translates text from one language to another

@@ -6,9 +6,9 @@ import { renderPdfDisplay } from "./components/pdf-display";
 import { renderFormLanguages } from "./components/languages";
 
 document.querySelector("#app")!.innerHTML = `
-  <div>
+  <div id="root" class='h-screen'>
     <div class="px-12 pt-4" id="form-languages-containter"></div>
-    <div class="px-12 pt-4" id="info-form-container">
+    <div class="px-12 py-4" id="info-form-container">
     </div>
     <div id="cvs-preview" class="hidden">
     </div>

@@ -1,4 +1,5 @@
 import { PDFDocumentProxy } from "pdfjs-dist";
+import { setPdfSrc } from "./pdf-display";
 
 // @ts-ignore
 const pdfjsLib = window["pdfjs-dist/build/pdf"];
@@ -30,8 +31,20 @@ export function renderCvsPreviewSlideOver() {
               </div>
             </div>
             <div class="relative mt-6 flex-1 px-4 sm:px-6">
-              <div id="pdfs-container" class="flex flex-auto flex-wrap justify-between">
+              <div id="pdfs-container" class="flex flex-auto flex-wrap justify-between overflow-hidden">
               </div>
+              <style>
+                /* Hide the controls */
+                iframe::-webkit-media-controls {
+                    display: none!important;
+                }
+                /* For Firefox */
+                @-moz-document url-prefix() {
+                    iframe video::-moz-media-controls {
+                        display: none!important;
+                    }
+                }
+              </style>
             </div>
           </div>
         </div>
@@ -44,17 +57,29 @@ export function renderCvsPreviewSlideOver() {
     .getElementById("close-slide-over-button")
     ?.addEventListener("click", () => {
       cvsPreview!.classList.toggle("hidden", true);
+      const rootElement = document.querySelector("#root");
+      if (rootElement) {
+        rootElement.classList.remove("overflow-hidden");
+      }
     });
 }
 
 export function showCvsPreviewSlideOver() {
   cvsPreview!.classList.toggle("hidden", false);
+  const rootElement = document.querySelector("#root");
+  if (rootElement) {
+    rootElement.classList.add("overflow-hidden");
+  }
 }
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.js";
 
-export function renderPreviewPdf(pdfContent: number[], language: string) {
+export function renderPreviewPdf(
+  pdfContent: number[],
+  language: string,
+  pdfPath: string
+) {
   // @ts-ignore
   var pdfData = atob(pdfContent as string);
   var pdfArray = new Uint8Array(pdfData.length);
@@ -62,7 +87,9 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
     pdfArray[i] = pdfData.charCodeAt(i);
   }
 
-  pdfjsLib.getDocument({ data: pdfArray }).promise.then(
+  const pdfFrame = renderPdfFrame(language, pdfPath);
+
+  pdfjsLib.getDocument(pdfPath).promise.then(
     function (pdf: PDFDocumentProxy) {
       pdf.getPage(1).then(function (page) {
         var scale = 1.2;
@@ -79,15 +106,6 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
           "border-white/10"
         );
 
-        const pdfFrame = renderPdfFrame(language);
-        document.getElementById("print-btn")?.addEventListener("click", () => {
-          printJS({
-            printable: URL.createObjectURL(
-              new Blob([pdfArray], { type: "application/pdf" })
-            ),
-            type: "pdf",
-          });
-        });
         pdfFrame?.appendChild(canvas);
 
         const context = canvas.getContext("2d");
@@ -106,14 +124,12 @@ export function renderPreviewPdf(pdfContent: number[], language: string) {
   );
 }
 
-import printJS from "print-js";
-
-function renderPdfFrame(language: string) {
+function renderPdfFrame(language: string, pdfSrc: string) {
   let pdfFrame = document.getElementById(`pdf-${language}`);
   if (pdfFrame === null) {
     pdfFrame = document.createElement("div");
     pdfFrame.id = `pdf-${language}`;
-    pdfFrame.classList.add("relative", "p-2");
+    pdfFrame.classList.add("relative", "p-2", "overflow-hidden");
     document.getElementById("pdfs-container")?.appendChild(pdfFrame);
   }
 
@@ -131,7 +147,7 @@ function renderPdfFrame(language: string) {
         </button>
       </div>
       <div class="-ml-px flex w-0 flex-1">
-        <button id="display-btn-${language}" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-2 text-sm text-gray-300 font-semibold">
+        <button id="display-btn" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-2 text-sm text-gray-300 font-semibold">
           <i class="text-center text-lg m-0 p-0 fa-solid fa-eye"></i>
           Display
         </button>
@@ -139,6 +155,12 @@ function renderPdfFrame(language: string) {
     </div>
   </div>
   `;
+
+  pdfFrame.querySelector("#display-btn")?.addEventListener("click", () => {
+    const pdfDisplay = document.getElementById(`pdf-display`);
+    setPdfSrc(pdfSrc);
+    pdfDisplay?.classList.toggle("hidden");
+  });
 
   return pdfFrame;
 }

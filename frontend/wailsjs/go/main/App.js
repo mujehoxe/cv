@@ -6,12 +6,16 @@ export function CreateCVProfile(arg1) {
   return window['go']['main']['App']['CreateCVProfile'](arg1);
 }
 
-export function FetchCV(arg1) {
-  return window['go']['main']['App']['FetchCV'](arg1);
+export function FetchCVAndSave(arg1) {
+  return window['go']['main']['App']['FetchCVAndSave'](arg1);
 }
 
 export function FetchDigitalSkillsAutocomplete(arg1) {
   return window['go']['main']['App']['FetchDigitalSkillsAutocomplete'](arg1);
+}
+
+export function GetPdfFile(arg1) {
+  return window['go']['main']['App']['GetPdfFile'](arg1);
 }
 
 export function Translate(arg1, arg2, arg3) {
