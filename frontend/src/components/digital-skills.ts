@@ -68,7 +68,20 @@ export function renderDigitalSkillsForm() {
       return;
     }
     const response = await FetchDigitalSkillsAutocomplete(combobox.value);
+
+    if (response.length == 0) {
+      options.classList.add("hidden");
+      return;
+    }
+
     options.innerHTML = "";
+
+    // on escape pressed hide the list
+    document.body.addEventListener("keyup", (e) => {
+      if (e.keyCode === 27) {
+        options.classList.add("hidden");
+      }
+    });
 
     response
       .filter((s) => !selectedSkills.has(s))
