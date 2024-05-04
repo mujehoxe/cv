@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
+	"runtime"
 	"strings"
 	"time"
 
@@ -258,6 +260,26 @@ func saveToTempDir(content []byte) (string, error) {
 	}
 
 	return file.Name(), nil
+}
+
+// Open pdf file in system's default viewer, os agnostic
+func (a *App) OpenPDF(path string) error {
+	var cmd *exec.Cmd
+
+	switch runtime.GOOS {
+	case "windows":
+		cmd = exec.Command("cmd", "/c", "start", path)
+	case "darwin":
+		cmd = exec.Command("open", path)
+	default:
+		cmd = exec.Command("xdg-open", path)
+	}
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to open pdf file: %w", err)
+	}
+
+	return nil
 }
 
 // Translate translates text from one language to another

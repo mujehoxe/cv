@@ -1,5 +1,6 @@
 import { PDFDocumentProxy } from "pdfjs-dist";
-import { setPdfSrc } from "./pdf-display";
+import { OpenPDF } from "../../wailsjs/go/main/App";
+// import { setPdfSrc } from "./pdf-display";
 
 // @ts-ignore
 const pdfjsLib = window["pdfjs-dist/build/pdf"];

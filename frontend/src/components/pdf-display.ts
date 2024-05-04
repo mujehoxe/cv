@@ -16,7 +16,6 @@ export function renderPdfDisplay() {
   }
 
   //pdfDisplay prevent scrolling
-  pdfDisplay.style.overflow = "hidden";
   pdfDisplay.innerHTML = `
 <div class="relative overflow-hidden h-svh z-10 w-full" aria-labelledby="modal-title" role="dialog" aria-modal="true">
   <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
