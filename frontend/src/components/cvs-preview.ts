@@ -75,31 +75,20 @@ export function showCvsPreviewSlideOver() {
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.js";
 
-export function renderPreviewPdf(
-  pdfContent: number[],
-  language: string,
-  pdfPath: string
-) {
-  // @ts-ignore
-  var pdfData = atob(pdfContent as string);
-  var pdfArray = new Uint8Array(pdfData.length);
-  for (var i = 0; i < pdfData.length; i++) {
-    pdfArray[i] = pdfData.charCodeAt(i);
-  }
-
+export function renderPreviewPdf(pdfPath: string, language: string) {
   const pdfFrame = renderPdfFrame(language, pdfPath);
 
   pdfjsLib.getDocument(pdfPath).promise.then(
     function (pdf: PDFDocumentProxy) {
       pdf.getPage(1).then(function (page) {
-        var scale = 1.2;
+        var scale = 1;
         var viewport = page.getViewport({ scale: scale });
 
         const canvas = document.createElement("canvas");
         canvas.height = viewport.height;
         canvas.width = viewport.width;
         canvas.classList.add(
-          "w-[30rem]",
+          "w-[36rem]",
           "p-2",
           "border",
           "rounded-b-lg",
@@ -125,42 +114,32 @@ export function renderPreviewPdf(
 }
 
 function renderPdfFrame(language: string, pdfSrc: string) {
-  let pdfFrame = document.getElementById(`pdf-${language}`);
-  if (pdfFrame === null) {
-    pdfFrame = document.createElement("div");
-    pdfFrame.id = `pdf-${language}`;
-    pdfFrame.classList.add("relative", "p-2", "overflow-hidden");
-    document.getElementById("pdfs-container")?.appendChild(pdfFrame);
+  let pdfContainer = document.getElementById(`pdf-${language}`);
+  if (pdfContainer === null) {
+    pdfContainer = document.createElement("div");
+    pdfContainer.id = `pdf-${language}`;
+    pdfContainer.classList.add("relative", "p-2", "overflow-hidden");
+    document.getElementById("pdfs-container")?.appendChild(pdfContainer);
   }
 
-  pdfFrame.innerHTML = `
-  <h1 class='font-bold text-xl uppercase p-1'>
+  pdfContainer.innerHTML = `
+  <h1 class='static font-bold text-xl uppercase p-1'>
     ${language}
   </h1>
-  
-  <div>
-    <div class="w-[30rem] flex border-t border-x rounded-t-lg border-white/10 divide-x divide-white/10">
-      <div class="flex w-0 flex-1">
-        <button id="print-btn" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-2 text-sm font-semibold text-gray-300">
-          <i class="text-center text-lg m-0 p-0 fas fa-solid fa-print"></i>
-          Print
-        </button>
-      </div>
-      <div class="-ml-px flex w-0 flex-1">
-        <button id="display-btn" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-2 text-sm text-gray-300 font-semibold">
-          <i class="text-center text-lg m-0 p-0 fa-solid fa-eye"></i>
-          Display
-        </button>
-      </div>
-    </div>
+  <div id="display-btn" class="absolute top-9 rounded-md inset-0 bg-zinc-900 bg-opacity-85 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+    Display In Default Viewer
+    <i class="fas fa-eye ml-2"></i>
   </div>
   `;
 
-  pdfFrame.querySelector("#display-btn")?.addEventListener("click", () => {
-    const pdfDisplay = document.getElementById(`pdf-display`);
-    setPdfSrc(pdfSrc);
-    pdfDisplay?.classList.toggle("hidden");
-  });
+  pdfContainer
+    .querySelector("#display-btn")
+    ?.addEventListener("click", async () => {
+      document.body.style.cursor = "wait";
+      await OpenPDF(pdfSrc);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      document.body.style.cursor = "";
+    });
 
-  return pdfFrame;
+  return pdfContainer;
 }
