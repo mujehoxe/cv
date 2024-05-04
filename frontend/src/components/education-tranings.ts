@@ -20,12 +20,12 @@ export function renderEducationTrainingsForm() {
   educationTrainings!.innerHTML = `
   <div id='education-trainings-form'>
      <details>
-       <summary class="text-base font-semibold leading-6 text-white cursor-pointer">Education and Training</summary>
+       <summary class="text-base font-semibold leading-6 text-white cursor-pointer">Éducation et Formations</summary>
        <div id="education-trainings-container" class="px-4 grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 pt-4">
        </div>
        <button type="button" id="add-education-training" 
          class="rounded-md bg-indigo-500 p-2 my-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200">
-       + Add Education and Training</button>
+       + Ajouter Education ou Formation</button>
      </details>
   <div>
   `;
@@ -52,7 +52,7 @@ function renderEducationTrainingFields() {
     class="text-base font-semibold leading-6 text-white cursor-pointer flex justify-between items-center"
   >
     <span>
-      Education and Training
+      Education ou Formation
       <span id="education-training-name" class="font-normal"></span>
     </span>
     <button
@@ -68,7 +68,7 @@ function renderEducationTrainingFields() {
       <div class="sm:col-span-2">
         <label
           for="degree-container"
-          class="block text-sm font-medium leading-6 text-white">Degree or Certification</label>
+          class="block text-sm font-medium leading-6 text-white">Intitulé de Diplôme ou certification</label>
         <div id="degree-container" class="mt-2 mx-2">
           <label for="degree" class="text-xs font-medium text-white">${originalLanguage.long}</label>
           <div
@@ -101,7 +101,7 @@ function renderEducationTrainingFields() {
         <label
           for="education-city"
           class="block text-sm font-medium leading-6 text-white"
-          >City</label
+          >Ville</label
         >
         <input
           type="text"
@@ -115,21 +115,21 @@ function renderEducationTrainingFields() {
         <label
           for="education-country"
           class="block text-sm font-medium leading-6 text-white"
-          >Country</label
+          >Pays</label
         >
         <select
           name="education-country"
           id="education-country"
           class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
         >
-          <option disabled>Select</option>
+          <option disabled>Selectioner</option>
         </select>
       </div>
       <div class="sm:col-span-2">
         <label
           for="from-date"
           class="block text-sm font-medium leading-6 text-white"
-          >From</label
+          >À Partir du</label
         >
         <input
           type="date"
@@ -142,7 +142,7 @@ function renderEducationTrainingFields() {
         <label
           for="to-date"
           class="block text-sm font-medium leading-6 text-white"
-          >To</label
+          >Jusqu'au</label
         >
         <input
           type="date"

@@ -8,11 +8,11 @@ export function renderDigitalSkillsForm() {
 
   digitalSkillsContainer.innerHTML = `
 <details>
- 	<summary class="text-base font-semibold text-white cursor-pointer">Digital Skills</summary>
+ 	<summary class="text-base font-semibold text-white cursor-pointer">Compétences Numériques</summary>
  	<div class="mx-4">
 		<div class="my-4">
 			<div class="relative mt-2">
-				<input id="combobox" type="text" class="w-full rounded-md border-0 bg-transparent py-1.5 pl-3 pr-12 text-white shadow-sm ring-1 ring-inset ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" role="combobox" aria-controls="options" aria-expanded="false">
+				<input placeholder="" id="combobox" type="text" class="w-full rounded-md border-0 bg-transparent py-1.5 pl-3 pr-12 text-white shadow-sm ring-1 ring-inset ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" role="combobox" aria-controls="options" aria-expanded="false">
 				<button type="button" id="add-digital-skill" class="absolute px-2 inset-y-0 text-center align-middle bg-zinc-600 border-l border-gray-700 rounded-md right-0 flex items-center">
 					<i class="fas fa-add text-center align-middle"></i>
 				</button>

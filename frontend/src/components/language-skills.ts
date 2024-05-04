@@ -23,12 +23,12 @@ export function renderLanguageSkillsForm() {
 
   languageSkillsContainer.innerHTML = `
 <details>
-    <summary class="text-base font-semibold text-white cursor-pointer">Language Skills</summary>
+    <summary class="text-base font-semibold text-white cursor-pointer">Compétences Linguistiques</summary>
     <div>
       <label
         for="motherTongue"
         class="block text-sm font-medium leading-6 text-white"
-        >Mother Tongue</label
+        >Langue maternelle</label
       >
       <select
         name="motherTongue"
@@ -42,14 +42,14 @@ export function renderLanguageSkillsForm() {
       <label
         for="other-language-skills"
         class="block text-sm font-medium leading-6 text-white"
-        >Other Language Skills</label
+        >Autre(s) langue(s)</label
       >
       <div id="other-language-skills-list"></div>
       <button
         type="button"
         id="add-language-skill"
         class="rounded-md bg-indigo-500 p-2 my-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200"
-      >+ Add Work Experience</button>
+      >+ Ajouter d'Autre Compétence</button>
     </div>
 </details>
   `;
@@ -83,7 +83,7 @@ export function renderLanguageSkillsForm() {
       newSkill.innerHTML = `
         <div class="mb-4 mx-2 border border-gray-700 bg-zinc-800 mt-2 rounded-md p-2">
           <div class="flex justify-end">
-            <button type="button" 
+            <button type="button"
               name='delete'
               class="text-sm text-right font-medium text-red-300 bg-transparent border border-white/10 p-2 rounded-md hover:bg-white/10 hover:text-red-700 transition-colors duration-200">
               <i class="fa-solid fa-trash"></i>
@@ -92,7 +92,7 @@ export function renderLanguageSkillsForm() {
           <div class="mx-2">
             <label class="mt-2 text-xs">Language</label>
             <select name="language" class="text-sm mb-2 block w-full text-gray-700 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-              <option value="" hidden selected disabled>Select a language</option>
+              <option value="" hidden selected disabled>Sélectionner une Langue</option>
               ${updateLanguageOptions()}
             </select>
           </div>
@@ -125,7 +125,7 @@ export function renderLanguageSkillsForm() {
           )
         );
         select.innerHTML =
-          [`<option value="" selected hidden>Please select a level</option>`] +
+          [`<option value="" selected hidden>Sélectionner un niveau</option>`] +
           languageLevels
             .map((option) => `<option value="${option}">${option}</option>`)
             .join("");
@@ -168,7 +168,7 @@ function extractOtherLanguagesData(): NonNativeLang[] {
       const languageSelect = skill.querySelector(
         'select[name="language"]'
       ) as HTMLSelectElement;
-      if (languageSelect.value == "") return undefined; // Explicitly return undefined
+      if (languageSelect.value == "") return undefined;
 
       const listeningSelect = skill.querySelector(
         'select[name="listening"]'

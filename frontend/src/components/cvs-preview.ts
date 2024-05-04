@@ -20,7 +20,7 @@ export function renderCvsPreviewSlideOver() {
           <div class="flex h-full flex-col overflow-y-scroll bg-zinc-900 py-6 shadow-xl">
             <div class="px-4 sm:px-6">
               <div class="flex items-start justify-between">
-                <h2 class="text-base font-semibold leading-6 text-gray-100" id="slide-over-title">Panel title</h2>
+                <h2 class="text-base font-semibold leading-6 text-gray-100" id="slide-over-title">Cvs Preview</h2>
                 <div class="ml-3 flex h-7 items-center">
                   <button id="close-slide-over-button" type="button" class="rounded-md bg-zinc-700 text-gray-300 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                     <span class="sr-only">Close panel</span>
@@ -34,18 +34,6 @@ export function renderCvsPreviewSlideOver() {
             <div class="relative mt-6 flex-1 px-4 sm:px-6">
               <div id="pdfs-container" class="flex flex-auto flex-wrap justify-between overflow-hidden">
               </div>
-              <style>
-                /* Hide the controls */
-                iframe::-webkit-media-controls {
-                    display: none!important;
-                }
-                /* For Firefox */
-                @-moz-document url-prefix() {
-                    iframe video::-moz-media-controls {
-                        display: none!important;
-                    }
-                }
-              </style>
             </div>
           </div>
         </div>
@@ -128,7 +116,7 @@ function renderPdfFrame(language: string, pdfSrc: string) {
     ${language}
   </h1>
   <div id="display-btn" class="absolute top-9 rounded-md inset-0 bg-zinc-900 bg-opacity-85 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
-    Display In Default Viewer
+    Afficher
     <i class="fas fa-eye ml-2"></i>
   </div>
   `;

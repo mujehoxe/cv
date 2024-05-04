@@ -38,7 +38,7 @@ export function renderUserInfoForm() {
     <summary
       class="text-lg pb-8 font-semibold leading-6 text-white cursor-pointer"
     >
-      User Information
+      Informations sur l'utilisateur
     </summary>
     <div class="border-b border-white/10 pb-4">
       <div class="col-span-full">
@@ -64,7 +64,7 @@ export function renderUserInfoForm() {
             type="button"
             class="rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white/20"
           >
-            Change
+            Changer
           </button>
         </div>
       </div>
@@ -72,11 +72,8 @@ export function renderUserInfoForm() {
 
     <div class="border-b mt-4 border-white/10 pb-12">
       <h2 class="text-base font-semibold leading-7 text-white">
-        Personal Information
+        Informations Personnelles
       </h2>
-      <p class="mt-1 text-sm leading-6 text-gray-400">
-        Use a permanent address where you can receive mail.
-      </p>
 
       <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <div class="sm:col-span-3">
@@ -84,7 +81,7 @@ export function renderUserInfoForm() {
             for="first-name"
             class="block text-sm font-medium leading-6 text-white"
           >
-            First name
+            Prénom
             <span class="text-red-500">*</span>
           </label>
           <div class="mt-2">
@@ -104,7 +101,7 @@ export function renderUserInfoForm() {
             for="last-name"
             class="block text-sm font-medium leading-6 text-white"
           >
-            Last name
+            Nom
             <span class="text-red-500">*</span>
           </label>
           <div class="mt-2">
@@ -122,7 +119,7 @@ export function renderUserInfoForm() {
             for="about"
             class="block text-sm font-medium leading-6 text-white"
           >
-            About me
+            À propos de moi
           </label>
           <div id="about" class="mt-2">
             <label class="text-xs font-medium text-white"
@@ -140,7 +137,7 @@ export function renderUserInfoForm() {
           <label
             for="birthday"
             class="block text-sm font-medium leading-6 text-white"
-            >Date of birth</label
+            >Date de Naissance</label
           >
           <div class="mt-2">
             <input
@@ -157,7 +154,7 @@ export function renderUserInfoForm() {
           <label
             for="gender"
             class="block text-sm font-medium leading-6 text-white"
-            >Gender</label
+            >Sexe</label
           >
           <div class="mt-2">
             <select
@@ -167,7 +164,7 @@ export function renderUserInfoForm() {
               class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
             >
               <option value="" selected disabled hidden>
-                Select from list
+                Sélectionnez Une Valuer
               </option>
               <option value="male">Male</option>
               <option vlaue="female">Female</option>
@@ -179,7 +176,7 @@ export function renderUserInfoForm() {
           <label
             for="nationality"
             class="block text-sm font-medium leading-6 text-white"
-            >Nationality</label
+            >Nationalité</label
           >
           <div class="mt-2">
             <select
@@ -188,7 +185,7 @@ export function renderUserInfoForm() {
               autocomplete="nationality"
               class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
             >
-              <option disabled>Select</option>
+              <option disabled>Selectioner</option>
             </select>
           </div>
         </div>
@@ -204,7 +201,7 @@ export function renderUserInfoForm() {
         <label
           for="email"
           class="block text-sm font-medium leading-6 text-white"
-          >Email address</label
+          >Adresse E-mail</label
         >
         <div class="mt-2">
           <input
@@ -220,7 +217,7 @@ export function renderUserInfoForm() {
         <label
           for="phone-number"
           class="block text-sm font-medium leading-6 text-white"
-          >Phone Number</label
+          >Numéro de téléphone</label
         >
         <div class="relative mt-2 rounded-md shadow-sm">
           <div class="absolute inset-y-0 left-0 flex items-center">
@@ -231,7 +228,7 @@ export function renderUserInfoForm() {
               autocomplete="country"
               class="bg-transparent h-full rounded-md border-0 py-0 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
             >
-              <option disabled>Select</option>
+              <option disabled>Selectioner</option>
             </select>
           </div>
           <input
@@ -248,7 +245,7 @@ export function renderUserInfoForm() {
 
   <details class="border-b py-4 border-white/10">
     <summary class="text-base font-semibold leading-6 text-white">
-      Address
+      Adresse
     </summary>
     <div class="my-4 px-4 space-y-10">
       <div class="flex flex-col gap-y-8 col-span-full">
@@ -256,7 +253,7 @@ export function renderUserInfoForm() {
           <label
             for="street-address"
             class="block text-sm font-medium leading-6 text-white"
-            >Street address</label
+            >Adresse de rue</label
           >
           <div id="street-addresses">
             <label class="text-xs font-medium text-white"
@@ -287,7 +284,7 @@ export function renderUserInfoForm() {
           <label
             for="city"
             class="block text-sm font-medium leading-6 text-white"
-            >City</label
+            >Ville</label
           >
           <div class="mt-2">
             <input
@@ -304,7 +301,7 @@ export function renderUserInfoForm() {
           <label
             for="postal-code"
             class="block text-sm font-medium leading-6 text-white"
-            >ZIP / Postal code</label
+            >ZIP / Code Postal</label
           >
           <div class="mt-2">
             <input
@@ -321,7 +318,7 @@ export function renderUserInfoForm() {
           <label
             for="country"
             class="block text-sm font-medium leading-6 text-white"
-            >Country</label
+            >Pays</label
           >
           <div class="mt-2">
             <select
@@ -330,7 +327,7 @@ export function renderUserInfoForm() {
               autocomplete="country"
               class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
             >
-              <option disabled>Select</option>
+              <option disabled>Sélectionner</option>
             </select>
           </div>
         </div>
@@ -353,13 +350,13 @@ export function renderUserInfoForm() {
       type="reset"
       class="text-sm font-semibold leading-6 text-white bg-transparent border border-white/10 px-3 py-2 rounded-md hover:bg-white/10 hover:text-indigo-500 transition-colors duration-200"
     >
-      Reset
+      Reinitialiser
     </button>
     <button
       type="submit"
       class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200"
     >
-      Save
+      Envoyer
     </button>
   </div>
 </form>

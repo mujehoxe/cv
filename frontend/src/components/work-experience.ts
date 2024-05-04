@@ -20,12 +20,12 @@ export function renderWorkExperiencesForm() {
   workExperiences!.innerHTML = `
   <div id='work-experiences-form'>
     <details>
-      <summary class="text-base font-semibold leading-6 text-white cursor-pointer">Work Experiences</summary>
+      <summary class="text-base font-semibold leading-6 text-white cursor-pointer">Expériences Professionnele</summary>
       <div id="work-experiences-container" class="px-4 grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 pt-4">
       </div>
       <button type="button" id="add-work-experience" 
         class="rounded-md bg-indigo-500 p-2 my-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200">
-      + Add Work Experience</button>
+      + Ajouter une expérience de travail</button>
     </details>
   <div>
   `;
@@ -50,11 +50,11 @@ export function renderWorkExperienceFields() {
   <details>
     <summary class="text-base font-semibold leading-6 text-white cursor-pointer flex justify-between items-center">
       <span>
-        Work Experience
+        Expérience Professionnelle
         <span id="work-experience-name" class="font-normal"></span>
       </span>
-      <button type="button" 
-          name='delete'
+      <button type="button"
+          name="delete"
           class="text-sm font-medium text-red-300 bg-transparent border border-white/10 p-2 rounded-md hover:bg-white/10 hover:text-red-700 transition-colors duration-200" 
       >
         <i class="fa-solid fa-trash"></i>
@@ -63,45 +63,46 @@ export function renderWorkExperienceFields() {
     <div class="work-experience flex flex-col">
         <div class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-4">
           <div class="sm:col-span-2">
-            <label for="occupation" class="block text-sm font-medium leading-6 text-white">Occupation or position held</label>
-            <input type="text" name="occupation" id="occupation" class="mt-2 p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6" placeholder="Enter your occupation or position">
+            <label for="occupation" class="block text-sm font-medium leading-6 text-white">Occupation ou poste tenue</label>
+            <input type="text" name="occupation" id="occupation" class="mt-2 p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6" placeholder="Enterer le Nom d'Occupation">
           </div>
           <div class="sm:col-span-2">
-            <label for="employer" class="block text-sm font-medium leading-6 text-white">Employer</label>
-            <input type="text" name="employer" id="employer" class="mt-2 p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6" placeholder="Enter your employer">
+            <label for="employer" class="block text-sm font-medium leading-6 text-white">Employeur</label>
+            <input type="text" name="employer" id="employer" class="mt-2 p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6" placeholder="Enterer l'Employer">
           </div>
           <div class="sm:col-span-2">
-            <label for="work-city" class="block text-sm font-medium leading-6 text-white">City</label>
+            <label for="work-city" class="block text-sm font-medium leading-6 text-white">Ville</label>
             <input type="text" name="work-city" id="work-city" class="mt-2 p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6" placeholder="Enter the city where you work">
           </div>
           <div class="sm:col-span-2">
-            <label for="work-country" class="block text-sm font-medium leading-6 text-white">Country</label>
+            <label for="work-country" class="block text-sm font-medium leading-6 text-white">Pays</label>
             <select name="work-country" id="work-country"
               class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black">
-              <option disabled>Select</option>
+              <option disabled>Selectioner</option>
             </select>
           </div>
           <div class="sm:col-span-2">
-            <label for="from-date" class="block text-sm font-medium leading-6 text-white">From</label>
+            <label for="from-date" class="block text-sm font-medium leading-6 text-white">À Partir du</label>
             <input type="date" name="from-date" id="from-date" class="mt-2 p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
           </div>
           <div class="sm:col-span-2">
-            <label for="to-date" class="block text-sm font-medium leading-6 text-white">To</label>
+            <label for="to-date" class="block text-sm font-medium leading-6 text-white">Jusqu'au</label>
             <input type="date" name="to-date" id="to-date" class="mt-2 p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
           </div>
           
           <div class="sm:col-span-2">
-            <label for="main-activities" class="block text-sm font-medium leading-6 text-white">Main activities and responsibilities</label>
+            <label for="main-activities" class="block text-sm font-medium leading-6 text-white">Activités et responsabilités principales</label>
             <div class="mt-2 mx-2">
               <label class='text-xs font-medium text-white'>${originalLanguage.long}</label>
               <div id="activities-${originalLanguage.short}"
-                class="p-2 block w-full h-max min-h-20 rounded-b-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                contentEditable
+                class="p-2 block text-white w-full h-max min-h-20 rounded-md border-0 bg-white/5 py-1.5 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
               </div>
               <div id="activities-other-langs" class="mt-2"></div>
             </div>
           </div>
           <div class="sm:col-span-2">
-            <label for="ongoing" class="text-sm font-medium leading-6 text-white mr-2">Ongoing?</label>
+            <label for="ongoing" class="text-sm font-medium leading-6 text-white mr-2">En cours?</label>
             <input type="checkbox" name="ongoing" id="ongoing" class="align-middle" style="transform: scale(1.5);">
           </div>
         </div>

@@ -5,7 +5,7 @@ export function renderDrivingLicencesForm() {
   drivingLicences!.innerHTML = `
     <div id='driving-licences-form'>
       <details>
-        <summary class="text-base font-semibold leading-6 text-white cursor-pointer">Driving Licences</summary>
+        <summary class="text-base font-semibold leading-6 text-white cursor-pointer">Permis de Conduire</summary>
         <div id="driving-licences-container" class="flex flex-col px-4 gap-y-4 sm:gap-x-6 pt-4">
         </div>
       </details>
