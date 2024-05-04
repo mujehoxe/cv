@@ -1,10 +1,8 @@
 import { populateCountries } from "./countries";
 import { WorkExperience } from "./formDataExtraction";
 import { originalLanguage } from "./languages";
-import Quill from "quill";
-import { translationsRendererForQuill } from "./translationsRenderer";
+import { elementTranslationsRendererFor } from "./translationsRenderer";
 import { CVProfileData } from "./formDataExtraction";
-import Toolbar from "quill/modules/toolbar";
 
 export function initWorkExperienceFields() {
   const addWorkExperienceButton = document.getElementById(
@@ -155,25 +153,7 @@ export function renderWorkExperienceFields() {
     `#activities-${originalLanguage.short}`
   ) as HTMLDivElement;
 
-  const quill = new Quill(activites, {
-    theme: "snow",
-    modules: {
-      toolbar: [
-        [{ header: [1, 2, false] }],
-        ["bold", "italic", "underline"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        ["clean"],
-      ],
-      clipboard: {
-        matchVisual: false,
-      },
-    },
-  });
-
-  const toolbar = quill.getModule("toolbar") as Toolbar;
-  toolbar.container?.classList.add("rounded-t-md", "bg-slate-300");
-
-  translationsRendererForQuill("activities", quill);
+  elementTranslationsRendererFor(activites, false);
 
   populateCountries(workCountry);
 }
@@ -198,15 +178,16 @@ function extractWorkExperienceData(
   ).value;
   const endDate = (workExperience.querySelector("#to-date") as HTMLInputElement)
     .value;
-  const activitiesContainer = workExperience.querySelector(
-    `#activities-${language}`
-  ) as HTMLDivElement;
   const mainActivities = (
-    activitiesContainer.querySelector(".ql-editor") as HTMLDivElement
-  ).innerHTML;
-
+    workExperience?.querySelector(`#activities-${language}`) as HTMLDivElement
+  )?.innerText;
   const ongoing = (workExperience.querySelector("#ongoing") as HTMLInputElement)
     .checked;
+
+  const activities = `<ul><li>${mainActivities.trim()}</li></ul>`.replace(
+    /(?:\r\n|\r|\n)/g,
+    "</li><li>"
+  );
 
   return {
     occupation: {
@@ -221,7 +202,7 @@ function extractWorkExperienceData(
         }
       : null,
     ongoing,
-    mainActivities,
+    mainActivities: activities,
     organisationAddress: {
       city,
       country,

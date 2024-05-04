@@ -1,5 +1,5 @@
 import Quill from "quill";
-import { Translate, TranslateHTML } from "../../wailsjs/go/main/App";
+import { Translate } from "../../wailsjs/go/main/App";
 import { Language, formLanguages, originalLanguage } from "./languages";
 import {
   removeLoadingIndicator,
@@ -32,6 +32,7 @@ export function elementTranslationsRendererFor(
   element: HTMLDivElement,
   isSingleLine: boolean
 ): void;
+
 export function elementTranslationsRendererFor(
   nameOrElement: string | HTMLDivElement,
   isSingleLine: boolean
@@ -136,7 +137,7 @@ export function translationsRendererForQuill(name: string, quill: Quill) {
       try {
         const translation: Translation = {
           language: otherLanguage,
-          content: await TranslateHTML(
+          content: await Translate(
             currentInput,
             originalLanguage.short,
             otherLanguage.short
