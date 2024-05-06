@@ -1,6 +1,5 @@
 import { PDFDocumentProxy } from "pdfjs-dist";
-import { OpenPDF } from "../../wailsjs/go/main/App";
-// import { setPdfSrc } from "./pdf-display";
+import { GetPdfFile, OpenPDF } from "../../wailsjs/go/main/App";
 
 // @ts-ignore
 const pdfjsLib = window["pdfjs-dist/build/pdf"];
@@ -61,13 +60,19 @@ export function showCvsPreviewSlideOver() {
   }
 }
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.js";
-
-export function renderPreviewPdf(pdfPath: string, language: string) {
+export async function renderPreviewPdf(pdfPath: string, language: string) {
   const pdfFrame = renderPdfFrame(language, pdfPath);
 
-  pdfjsLib.getDocument(pdfPath).promise.then(
+  const pdfContent = await GetPdfFile(pdfPath);
+
+  // @ts-ignore
+  var pdfData = atob(pdfContent);
+  var pdfArray = new Uint8Array(pdfData.length);
+  for (var i = 0; i < pdfData.length; i++) {
+    pdfArray[i] = pdfData.charCodeAt(i);
+  }
+
+  pdfjsLib.getDocument({ data: pdfArray }).promise.then(
     function (pdf: PDFDocumentProxy) {
       pdf.getPage(1).then(function (page) {
         var scale = 1;

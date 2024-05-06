@@ -7,6 +7,8 @@ export function FetchCVAndSave(arg1:string):Promise<string>;
 
 export function FetchDigitalSkillsAutocomplete(arg1:string):Promise<Array<string>>;
 
+export function GetPdfFile(arg1:string):Promise<Array<number>>;
+
 export function OpenPDF(arg1:string):Promise<void>;
 
 export function Translate(arg1:string,arg2:string,arg3:string):Promise<string>;

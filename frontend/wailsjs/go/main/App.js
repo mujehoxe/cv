@@ -14,6 +14,10 @@ export function FetchDigitalSkillsAutocomplete(arg1) {
   return window['go']['main']['App']['FetchDigitalSkillsAutocomplete'](arg1);
 }
 
+export function GetPdfFile(arg1) {
+  return window['go']['main']['App']['GetPdfFile'](arg1);
+}
+
 export function OpenPDF(arg1) {
   return window['go']['main']['App']['OpenPDF'](arg1);
 }
