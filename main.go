@@ -38,39 +38,6 @@ func (h *FileLoader) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	res.Write(fileData)
 }
 
-func startPythonScript() error {
-	cmd := exec.Command("python", "translate_html.py")
-
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		return fmt.Errorf("failed to create stdout pipe: %w", err)
-	}
-
-	err = cmd.Start()
-	if err != nil {
-		return fmt.Errorf("failed to start Python script: %w", err)
-	}
-
-	go func() {
-		scanner := bufio.NewScanner(stdout)
-		for scanner.Scan() {
-			fmt.Println(scanner.Text()) // Print each line of output
-		}
-		if err := scanner.Err(); err != nil {
-			fmt.Println("Error reading from stdout:", err)
-		}
-	}()
-
-	go func() {
-		err = cmd.Wait()
-		if err != nil {
-			fmt.Println("python script exited with error:", err)
-		}
-	}()
-
-	return nil
-}
-
 func main() {
 	app := NewApp()
 
