@@ -1,13 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"embed"
 	"fmt"
 	"net/http"
 	"os"
-	"os/exec"
-	"strings"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
