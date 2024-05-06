@@ -262,6 +262,21 @@ func saveToTempDir(content []byte) (string, error) {
 	return file.Name(), nil
 }
 
+// GetPdfFile returns byte[]
+func (a *App) GetPdfFile(filePath string) ([]byte, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %w", err)
+	}
+	defer file.Close()
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read file: %w", err)
+	}
+	return data, nil
+}
+
 // Open pdf file in system's default viewer, os agnostic
 func (a *App) OpenPDF(path string) error {
 	var cmd *exec.Cmd
