@@ -193,9 +193,7 @@ export function renderUserInfoForm() {
     </div>
   </details>
   <details class="border-b py-4 border-white/10">
-    <summary class="text-base font-semibold leading-6 text-white">
-      Contact
-    </summary>
+    <summary class="text-base font-semibold leading-6 text-white">Contact</summary>
     <div class="my-4 space-y-10">
       <div class="sm:col-span-4">
         <label
@@ -244,9 +242,7 @@ export function renderUserInfoForm() {
   </details>
 
   <details class="border-b py-4 border-white/10">
-    <summary class="text-base font-semibold leading-6 text-white">
-      Adresse
-    </summary>
+    <summary class="text-base font-semibold leading-6 text-white">Adresse</summary>
     <div class="my-4 px-4 space-y-10">
       <div class="flex flex-col gap-y-8 col-span-full">
         <div>
@@ -266,6 +262,7 @@ export function renderUserInfoForm() {
               name="street-address"
               class="single-line whitespace-nowrap overflow-hidden overflow-x-auto p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
             ></div>
+            <div id="street-other-langs" class="mt-2"></div>
             <style>
               [contenteditable="true"].single-line br {
                 display: none;
@@ -276,7 +273,6 @@ export function renderUserInfoForm() {
                 white-space: nowrap;
               }
             </style>
-            <div id="street-other-langs" class="mt-2"></div>
           </div>
         </div>
 
