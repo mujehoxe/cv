@@ -185,7 +185,7 @@ function extractWorkExperienceData(
   const ongoing = (workExperience.querySelector("#ongoing") as HTMLInputElement)
     .checked;
 
-  const activities = `<ul><li>${mainActivities.trim()}</li></ul>`.replace(
+  const activities = `<ul><li>${mainActivities?.trim()}</li></ul>`.replace(
     /(?:\r\n|\r|\n)/g,
     "</li><li>"
   );
