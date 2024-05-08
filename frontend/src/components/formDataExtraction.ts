@@ -48,9 +48,11 @@ export function extractProfileInfo(language: string) {
       customSections: [],
     },
     template: {
+      closingStatement: null,
+      color: "dark-blue",
       displayLogo: "first",
       displayPageNumber: false,
-      fontSize: "medium",
+      fontSize: "large",
       templateName: "cv-3",
     },
   };
