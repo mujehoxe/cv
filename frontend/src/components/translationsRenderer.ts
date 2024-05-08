@@ -28,6 +28,7 @@ export function elementTranslationsRendererFor(
   name: string,
   isSingleLine: boolean
 ): void;
+
 export function elementTranslationsRendererFor(
   element: HTMLDivElement,
   isSingleLine: boolean
