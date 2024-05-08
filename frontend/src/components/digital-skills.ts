@@ -1,6 +1,6 @@
 // digital-skills.ts
 import { FetchDigitalSkillsAutocomplete } from "../../wailsjs/go/main/App";
-import { CVProfileData } from "./formDataExtraction";
+import { CVProfileData } from "../utils/formDataExtraction";
 
 export function renderDigitalSkillsForm() {
   const digitalSkillsContainer = document.getElementById("digital-skills");

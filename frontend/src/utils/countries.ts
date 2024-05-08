@@ -291,29 +291,3 @@ export async function populatePhoneExtentions() {
 
   phoneExtentionSelect.selectedIndex = 3;
 }
-
-// async function logCountries() {
-//   try {
-//     const response = await fetch("https://restcountries.com/v3.1/all");
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! status: ${response.status}`);
-//     }
-//     const countries: Country[] = await response.json();
-
-//     console.log(
-//       countries
-//         .filter((c) => c.idd && Object.keys(c.idd).length > 0)
-//         .sort((a, b) => (a.name.common > b.name.common ? 1 : -1))
-//         .map((c) => {
-//           return c;
-//           return {
-//             name: c.name.common,
-//             cca2: c.cca2,
-//             idd: c.idd.root + c.idd.suffixes[0],
-//           };
-//         })
-//     );
-//   } catch (error) {
-//     console.error("Failed to fetch countries:", error);
-//   }
-// }

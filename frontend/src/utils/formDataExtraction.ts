@@ -1,8 +1,9 @@
-import { extractDigitalSkillsData } from "./digital-skills";
-import { extractDrivingLicencesInto } from "./driving-licences";
-import { extractEducationTrainingsInto } from "./education-tranings";
-import { extractLanguageSkillsData as extractLanguageSkillsInto } from "./language-skills";
-import { extractWorkExperiencesInto } from "./work-experience";
+import { extractDateFrom } from "./dateExtraction";
+import { extractDigitalSkillsData } from "../components/digital-skills";
+import { extractDrivingLicencesInto } from "../components/driving-licences";
+import { extractEducationTrainingsInto } from "../components/education-tranings";
+import { extractLanguageSkillsData as extractLanguageSkillsInto } from "../components/language-skills";
+import { extractWorkExperiencesInto } from "../components/work-experience";
 
 export function extractProfileInfo(language: string) {
   const firstName = (document.getElementById("first-name") as HTMLInputElement)
@@ -21,13 +22,9 @@ export function extractProfileInfo(language: string) {
     (document.getElementById("nationality") as HTMLSelectElement).value,
   ];
   const emails = [(document.getElementById("email") as HTMLInputElement).value];
-  const dateOfBirth = (document.getElementById("birthday") as HTMLInputElement)
-    .value
-    ? {
-        date: (document.getElementById("birthday") as HTMLInputElement).value,
-        dateType: "DAY",
-      }
-    : null;
+
+  const birthDiv = document.getElementById("birthday") as HTMLDivElement;
+  const dateOfBirth = extractDateFrom(birthDiv);
 
   const data: CVProfileData = {
     profile: {
@@ -142,7 +139,7 @@ interface InstantMessenger {
   customProvider: string;
 }
 
-interface DateOfBirth {
+export interface DataDate {
   date: string;
   dateType: string;
 }
@@ -159,7 +156,7 @@ interface PersonalInformation {
   addresses?: Address[];
   websites?: string[];
   instantMessengers?: InstantMessenger[];
-  dateOfBirth?: DateOfBirth | null;
+  dateOfBirth?: DataDate | null;
 }
 
 interface Preference {
@@ -168,6 +165,7 @@ interface Preference {
 }
 
 interface Template {
+  closingStatement?: string | null;
   displayLogo: string;
   displayPageNumber: boolean;
   color?: string;
@@ -182,20 +180,14 @@ export interface WorkExperience {
     uri: string | null;
   };
   employer: string;
-  startDate?: {
-    date: string;
-    dateType: string;
-  } | null;
+  startDate?: DataDate | null;
   ongoing?: boolean;
   mainActivities?: string | null;
   organisationAddress: {
     city?: string;
     country?: string;
   };
-  endDate?: {
-    date: string;
-    dateType: string;
-  } | null;
+  endDate?: DataDate | null;
 }
 
 export interface EducationTraining {
@@ -204,14 +196,8 @@ export interface EducationTraining {
   city?: string;
   country?: string;
   website?: string | null;
-  startDate?: {
-    date: string;
-    dateType: string;
-  } | null;
-  endDate?: {
-    date: string;
-    dateType: string;
-  } | null;
+  startDate?: DataDate | null;
+  endDate?: DataDate | null;
   ongoing?: boolean | null;
   studyFields?: {
     content: string;
@@ -222,8 +208,8 @@ export interface EducationTraining {
 export interface DrivingLicence {
   licence: string;
   timeRange: {
-    startDate: { date: string; dateType: string } | null;
-    endDate: { date: string; dateType: string } | null;
+    startDate: DataDate | null;
+    endDate: DataDate | null;
   };
 }
 

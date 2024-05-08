@@ -1,8 +1,9 @@
-import { populateCountries } from "./countries";
-import { WorkExperience } from "./formDataExtraction";
-import { originalLanguage } from "./languages";
+import { populateCountries } from "../utils/countries";
+import { WorkExperience } from "../utils/formDataExtraction";
+import { originalLanguage } from "../utils/languages";
 import { elementTranslationsRendererFor } from "./translationsRenderer";
-import { CVProfileData } from "./formDataExtraction";
+import { CVProfileData } from "../utils/formDataExtraction";
+import { extractDateFrom } from "../utils/dateExtraction";
 
 export function initWorkExperienceFields() {
   const addWorkExperienceButton = document.getElementById(

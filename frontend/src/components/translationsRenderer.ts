@@ -1,6 +1,6 @@
 import Quill from "quill";
 import { Translate } from "../../wailsjs/go/main/App";
-import { Language, formLanguages, originalLanguage } from "./languages";
+import { Language, formLanguages, originalLanguage } from "../utils/languages";
 import {
   removeLoadingIndicator,
   renderLoadingIndicator,
