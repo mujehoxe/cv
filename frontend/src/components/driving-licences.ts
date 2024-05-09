@@ -63,22 +63,78 @@ function renderDrivingLicenceType(
           <div class="flex items-center space-x-2"><i class="fas fa-id-card"></i><span>${ageRestriction}</span></div>
         </div>
       </div>
-      <div class="hidden flex-row space-x-8" id="licence-dates">
-        <div class="flex items-center space-x-2">
-          <i class="fas fa-calendar-check"></i>
-          <input
-            type="date"
-            id="from-date"
-            class="px-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm"
-          />
+
+      <div class="hidden flex-row space-x-8 divide-x max-h-16" id="licence-dates">
+        <div class="sm:col-span-2 flex flex-row items-center align-middle p-4">
+          <i class="fas fa-calendar-check mx-2 text-xl"></i>
+          <div id="from-date" class="flex gap-x-8">
+            <div>
+              <label class="text-xs" for="day">Day</label>
+              <input
+                  type="number"
+                  id="day"
+                  min="1" max="31"
+                  placeholder="DD"
+                  class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+              />
+            </div>
+            <div>
+              <label class="text-xs" for="month">Month</label>
+              <input 
+                  type="number"
+                  id="month"
+                  min="1" max="12"
+                  placeholder="MM"
+                  class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+              />
+            </div>
+            <div>
+              <label class="text-xs" for="year">Year</label>
+              <input 
+                  type="number"
+                  id="year"
+                  min="1800" max="3000"
+                  placeholder="YYYY"
+                  class="p-2 block w-28 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
         </div>
-        <div class="flex items-center space-x-2">
-          <i class="fas fa-calendar-times"></i>
-          <input
-            type="date"
-            id="to-date"
-            class="px-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm"
-          />
+
+        <div class="sm:col-span-2 flex flex-row items-center align-middle p-4">
+          <i class="fas fa-calendar-times mx-2 text-xl"></i>
+          <div id="to-date" class="flex gap-x-8">
+            <div>
+              <label class="text-xs" for="day">Day</label>
+              <input 
+                type="number"
+                    id="day"
+                    min="1" max="31"
+                    placeholder="DD"
+                    class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+              />
+            </div>
+            <div>
+              <label class="text-xs" for="month">Month</label>
+              <input 
+                    type="number"
+                    id="month"
+                    min="1" max="12"
+                    placeholder="MM"
+                    class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+              />
+            </div>
+            <div>
+              <label class="text-xs" for="year">Year</label>
+              <input 
+                  type="number"
+                  id="year"
+                  min="1800" max="3000"
+                  placeholder="YYYY"
+                  class="p-2 block w-28 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -160,22 +216,19 @@ export function extractDrivingLicencesInto(data: CVProfileData) {
     ) as HTMLInputElement;
     if (checkbox.checked) {
       const licenceType = checkbox.id;
-      const startDateInput = drivingLicence.querySelector(
+      const startDateDiv = drivingLicence.querySelector(
         `#from-date`
       ) as HTMLInputElement;
-      const endDateInput = drivingLicence.querySelector(
+      const startDate = extractDateFrom(startDateDiv);
+
+      const endDateDiv = drivingLicence.querySelector(
         `#to-date`
       ) as HTMLInputElement;
-      const startDate =
-        startDateInput.value != "" ? startDateInput.value : null;
-      const endDate = endDateInput.value != "" ? endDateInput.value : null;
+      const endDate = extractDateFrom(endDateDiv);
 
       const drivingLicenceData = {
         licence: licenceType,
-        timeRange: {
-          startDate: startDate ? { date: startDate, dateType: "DAY" } : null,
-          endDate: endDate ? { date: endDate, dateType: "DAY" } : null,
-        },
+        timeRange: { startDate, endDate },
       };
 
       data.profile.drivingLicence = data.profile.drivingLicence || {

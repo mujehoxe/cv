@@ -127,30 +127,74 @@ function renderEducationTrainingFields() {
         </select>
       </div>
       <div class="sm:col-span-2">
-        <label
-          for="from-date"
-          class="block text-sm font-medium leading-6 text-white"
-          >À Partir du</label
-        >
-        <input
-          type="date"
-          name="from-date"
-          id="from-date"
-          class="mt-2 p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-        />
+        <label for="from-date" class="block text-sm font-medium leading-6 text-white">À Partir du</label>
+        <div id="from-date" class="mt-2 flex gap-x-8">
+          <div>
+                <label class="text-xs" for="day">Day</label>
+                <input 
+                  type="number"
+                  id="day"
+                  min="1" max="31"
+                  placeholder="DD"
+                  class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                  />
+          </div>
+          <div>
+                <label class="text-xs" for="month">Month</label>
+                <input 
+                  type="number"
+                  id="month"
+                  min="1" max="12"
+                  placeholder="MM"
+                  class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                  />
+          </div>
+          <div>
+                <label class="text-xs" for="year">Year</label>
+                <input 
+                  type="number"
+                  id="year"
+                  min="1800" max="3000"
+                  placeholder="YYYY"
+                  class="p-2 block w-28 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                  />
+          </div>
+        </div>
       </div>
       <div class="sm:col-span-2">
-        <label
-          for="to-date"
-          class="block text-sm font-medium leading-6 text-white"
-          >Jusqu'au</label
-        >
-        <input
-          type="date"
-          name="to-date"
-          id="to-date"
-          class="mt-2 p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-        />
+        <label for="to-date" class="block text-sm font-medium leading-6 text-white">Jusqu'à</label>
+        <div id="to-date" class="mt-2 flex gap-x-8">
+        <div>
+          <label class="text-xs" for="day">Day</label>
+          <input 
+            type="number"
+                  id="day"
+                  min="1" max="31"
+                  placeholder="DD"
+                  class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+          />
+        </div>
+          <div>
+            <label class="text-xs" for="month">Month</label>
+            <input 
+                  type="number"
+                  id="month"
+                  min="1" max="12"
+                  placeholder="MM"
+                  class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            />
+          </div>
+          <div>
+                <label class="text-xs" for="year">Year</label>
+                <input 
+                  type="number"
+                  id="year"
+                  min="1800" max="3000"
+                  placeholder="YYYY"
+                  class="p-2 block w-28 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                  />
+          </div>
+        </div>
       </div>
       <div class="sm:col-span-2">
         <label
@@ -248,14 +292,18 @@ function extractEducationTrainingData(
   const country = (
     educationTraining.querySelector("#education-country") as HTMLSelectElement
   ).value;
-  const startDate = (
-    educationTraining.querySelector("#from-date") as HTMLInputElement
-  ).value;
-  const endDate = (
-    educationTraining.querySelector("#to-date") as HTMLInputElement
-  ).value;
 
-  const ongoing = endDate === "" && startDate !== "";
+  const startDateDiv = educationTraining.querySelector(
+    "#from-date"
+  ) as HTMLInputElement;
+  const startDate = extractDateFrom(startDateDiv);
+
+  const endDateDiv = educationTraining.querySelector(
+    "#to-date"
+  ) as HTMLInputElement;
+  const endDate = extractDateFrom(endDateDiv);
+
+  const ongoing = endDate === null && startDate !== null;
 
   const studyField =
     (educationTraining.querySelector(
@@ -267,18 +315,8 @@ function extractEducationTrainingData(
     organisationName,
     city,
     country,
-    startDate: startDate
-      ? {
-          date: startDate,
-          dateType: "DAY",
-        }
-      : null,
-    endDate: endDate
-      ? {
-          date: endDate,
-          dateType: "DAY",
-        }
-      : null,
+    startDate,
+    endDate,
     ongoing,
     studyFields: studyField
       ? [
