@@ -28,7 +28,7 @@ export function renderEducationTrainingsForm() {
          class="rounded-md bg-indigo-500 p-2 my-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200">
        + Ajouter Education ou Formation</button>
      </details>
-  <div>
+  </div>
   `;
 
   initEducationTrainingFields();
@@ -126,6 +126,7 @@ function renderEducationTrainingFields() {
           <option disabled>Selectioner</option>
         </select>
       </div>
+      
       <div class="sm:col-span-2">
         <label for="from-date" class="block text-sm font-medium leading-6 text-white">À Partir du</label>
         <div id="from-date" class="mt-2 flex gap-x-8">
@@ -161,6 +162,7 @@ function renderEducationTrainingFields() {
           </div>
         </div>
       </div>
+
       <div class="sm:col-span-2">
         <label for="to-date" class="block text-sm font-medium leading-6 text-white">Jusqu'à</label>
         <div id="to-date" class="mt-2 flex gap-x-8">
@@ -196,6 +198,7 @@ function renderEducationTrainingFields() {
           </div>
         </div>
       </div>
+
       <div class="sm:col-span-2">
         <label
           for="study-field"

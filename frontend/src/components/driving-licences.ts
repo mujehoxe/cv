@@ -9,7 +9,7 @@ export function renderDrivingLicencesForm() {
         <div id="driving-licences-container" class="flex flex-col px-4 gap-y-4 sm:gap-x-6 pt-4">
         </div>
       </details>
-    <div>
+    </div>
  `;
 
   renderDrivingLicenceTypes();
