@@ -1,3 +1,4 @@
+import { extractDateFrom } from "../utils/dateExtraction";
 import { CVProfileData } from "../utils/formDataExtraction";
 
 export function renderDrivingLicencesForm() {
@@ -31,7 +32,7 @@ function renderDrivingLicenceType(
   licenceContainer.innerHTML = `
     <div class="flex flex-col bg-zinc-800 p-2 rounded-md items-center space-x-4">
       <div class="flex flex-row items-center w-full">
-        <input id="${licenceType}" type="checkbox" class="h-4 w-4 text-blue-600" id="check" aria-required="false" aria-label="Add licence ${licenceType} to your profile" aria-invalid="false" />
+        <input id="${licenceType}" type="checkbox" class="h-4 w-4 text-blue-600" aria-required="false" aria-label="Add licence ${licenceType} to your profile" aria-invalid="false" />
         <div class="select-none flex items-center w-full justify-between">
           <div class="flex items-center space-x-2">
             <i class="fas"></i> <!-- Driving licence type icon -->
