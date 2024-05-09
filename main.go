@@ -53,6 +53,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 		},
+		OnBeforeClose: app.confirmClose,
 	})
 
 	if err != nil {

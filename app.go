@@ -16,6 +16,7 @@ import (
 	"time"
 
 	translator "github.com/Conight/go-googletrans"
+	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -35,6 +36,27 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+}
+
+func (a *App) confirmClose(ctx context.Context) (prevent bool) {
+	options := wailsRuntime.MessageDialogOptions{
+		Type:          wailsRuntime.QuestionDialog,
+		Title:         "Confirmation",
+		Buttons:       []string{"Yes", "No"},
+		Message:       "Are you sure you want to quit?",
+		DefaultButton: "No",
+		CancelButton:  "No",
+	}
+
+	//wailsRuntime.MessageDialog
+	result, err := wailsRuntime.MessageDialog(ctx, options)
+	if err != nil {
+		return true
+	}
+	if result == "Yes" {
+		return false
+	}
+	return true
 }
 
 // setHeaders sets the necessary headers for the request.
