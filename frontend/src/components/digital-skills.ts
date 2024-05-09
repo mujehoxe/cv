@@ -43,23 +43,12 @@ export function renderDigitalSkillsForm() {
   const addDigitalSkillButton = digitalSkillsContainer.querySelector(
     "#add-digital-skill"
   ) as HTMLButtonElement;
-  addDigitalSkillButton.addEventListener("click", () => {
-    const s = combobox.value;
-    if (!selectedSkills.has(s)) {
-      renderSkillCard(s);
-      selectedSkills.add(s);
-    }
+  addDigitalSkillButton.addEventListener("click", (e) => {
+    addSkillCard(e);
   });
 
   combobox.addEventListener("keydown", (e) => {
-    if (e.code === "Enter") {
-      e.preventDefault();
-      const s = combobox.value;
-      if (!selectedSkills.has(s)) {
-        renderSkillCard(s);
-        selectedSkills.add(s);
-      }
-    }
+    if (e.code === "Enter") addSkillCard(e);
   });
 
   combobox.addEventListener("input", async () => {
@@ -76,11 +65,8 @@ export function renderDigitalSkillsForm() {
 
     options.innerHTML = "";
 
-    // on escape pressed hide the list
     document.body.addEventListener("keyup", (e) => {
-      if (e.keyCode === 27) {
-        options.classList.add("hidden");
-      }
+      if (e.code === "Escape") options.classList.add("hidden");
     });
 
     response
@@ -102,6 +88,16 @@ export function renderDigitalSkillsForm() {
       });
     options.classList.remove("hidden");
   });
+
+  function addSkillCard(e: Event) {
+    e.preventDefault();
+    if (!combobox.value && combobox.value === "") return;
+    const s = combobox.value;
+    if (!selectedSkills.has(s)) {
+      renderSkillCard(s);
+      selectedSkills.add(s);
+    }
+  }
 
   function renderSkillCard(skill: string) {
     const selectedSkill = document.createElement("div");
