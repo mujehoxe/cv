@@ -10,11 +10,19 @@ import { renderEducationTrainingsForm } from "./education-tranings";
 import { renderDrivingLicencesForm } from "./driving-licences";
 import { renderLanguageSkillsForm } from "./language-skills";
 import { renderDigitalSkillsForm } from "./digital-skills";
+import {
+  removeLoadingIndicator,
+  renderLoadingIndicator,
+} from "./loadingIndicator";
 
-async function handleSubmit(e: Event) {
+async function handleSubmit(e: SubmitEvent) {
   e.preventDefault();
+  const loadingDiv = document.getElementById("loading") as HTMLElement;
+  renderLoadingIndicator(loadingDiv);
+
+  document.body.style.cursor = "progress";
   const cvs = new Map();
-  showCvsPreviewSlideOver();
+
   for (const language in formLanguages) {
     const data = extractProfileInfo(language);
     try {
@@ -28,7 +36,10 @@ async function handleSubmit(e: Event) {
       console.error(err);
       renderError(err as string);
     }
+    showCvsPreviewSlideOver();
   }
+  document.body.style.cursor = "default";
+  removeLoadingIndicator(loadingDiv);
 }
 
 export function renderUserInfoForm() {
@@ -110,7 +121,7 @@ export function renderUserInfoForm() {
             rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1
             ring-inset ring-white/10 focus:ring-2 focus:ring-inset
             focus:ring-indigo-500 sm:text-sm sm:leading-6
-            placeholder:text-white/20"" />
+            placeholder:text-white/20" />
           </div>
         </div>
 
@@ -121,7 +132,7 @@ export function renderUserInfoForm() {
           >
             À propos de moi
           </label>
-          <div id="about" class="mt-2">
+          <div id="about" class="mt-2 mx-2">
             <label class="text-xs font-medium text-white"
               >${originalLanguage.long}</label
             >
@@ -190,7 +201,7 @@ export function renderUserInfoForm() {
                 Sélectionnez Une Valuer
               </option>
               <option value="male">Male</option>
-              <option vlaue="female">Female</option>
+              <option value="female">Female</option>
             </select>
           </div>
         </div>
@@ -364,19 +375,23 @@ export function renderUserInfoForm() {
 
   <div class="py-4 border-b border-white/10" id="digital-skills"></div>
 
-  <div class="my-6 flex items-center justify-end gap-x-6">
-    <button
-      type="reset"
-      class="text-sm font-semibold leading-6 text-white bg-transparent border border-white/10 px-3 py-2 rounded-md hover:bg-white/10 hover:text-indigo-500 transition-colors duration-200"
-    >
-      Reinitialiser
-    </button>
-    <button
-      type="submit"
-      class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200"
-    >
-      Envoyer
-    </button>
+  <div class="my-6 flex flex-row items-center justify-end">
+    <div id="loading"></div>
+    <div class="flex gap-x-6">
+      <button
+        type="reset"
+        class="text-sm font-semibold leading-6 text-white bg-transparent border border-white/10 px-3 py-2 rounded-md hover:bg-white/10 hover:text-indigo-500 transition-colors duration-200"
+      >
+        Reinitialiser
+      </button>
+      <button
+        id="submit"
+        type="submit"
+        class="rounded-md disabled:bg-gray-600 disabled:hover:bg-gray-600 bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200"
+      >
+        Envoyer
+      </button>
+    </div>
   </div>
 </form>
 `;
