@@ -298,7 +298,7 @@ export function extractOtherSectionInto(data: CVProfileData, language: string) {
       title: sectionName?.innerText,
     };
 
-    data.profile.customSections.push(sectionData);
+    data.profile.customSections?.push(sectionData);
     data.profile.preference.profileStructure.push(id);
 
     const records = otherSection.querySelectorAll("#other-record");

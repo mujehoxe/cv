@@ -247,10 +247,10 @@ function extractWorkExperienceData(
   workExperience: Element
 ): WorkExperience {
   const occupation = (
-    workExperience.querySelector("#occupation") as HTMLInputElement
+    workExperience.querySelector(`#occupation-${language}`) as HTMLInputElement
   ).value;
   const employer = (
-    workExperience.querySelector("#employer") as HTMLInputElement
+    workExperience.querySelector(`#employer-${language}`) as HTMLInputElement
   ).value;
   const city = (workExperience.querySelector("#work-city") as HTMLInputElement)
     .value;

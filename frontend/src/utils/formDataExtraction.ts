@@ -262,7 +262,7 @@ interface Profile {
   language: string;
   personalInformation: PersonalInformation;
   preference: Preference;
-  customSections: CustomSection[];
+  customSections?: CustomSection[];
   workExperiences?: WorkExperience[];
   educationTrainings?: EducationTraining[];
   drivingLicence?: Licence;
