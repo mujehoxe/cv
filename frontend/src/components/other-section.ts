@@ -64,7 +64,7 @@ export function renderOtherSectionForm() {
 
   function updateSectionName() {
     let name = "Section";
-    if (sectionName.innerText != "") {
+    if (sectionName && sectionName.innerText != "") {
       name = sectionName.innerText;
     }
 
@@ -72,6 +72,11 @@ export function renderOtherSectionForm() {
     label.innerHTML = name;
     addRecord.textContent = "+ Ajouter une " + name;
   }
+
+  const deleteButton = sectionDiv.querySelector("#delete") as HTMLButtonElement;
+  deleteButton.addEventListener("click", () =>
+    otherSectionsDiv.removeChild(sectionDiv)
+  );
 }
 
 function renderRecord(parent: Element) {
@@ -287,9 +292,10 @@ export function extractOtherSectionInto(data: CVProfileData, language: string) {
     const sectionName = otherSection.querySelector(
       `#section-name-${language}`
     ) as HTMLDivElement;
+    if (!sectionName) return;
     const sectionData: CustomSection = {
       id,
-      title: sectionName.innerText,
+      title: sectionName?.innerText,
     };
 
     data.profile.customSections.push(sectionData);
