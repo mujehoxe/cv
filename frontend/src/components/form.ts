@@ -15,6 +15,7 @@ import {
   renderLoadingIndicator,
 } from "./loadingIndicator";
 import { renderHobbiesForm } from "./hobbies";
+import { renderOtherSectionForm } from "./other-section";
 
 async function handleSubmit(e: SubmitEvent) {
   e.preventDefault();
@@ -49,8 +50,7 @@ export function renderUserInfoForm() {
   <details open>
     <summary
       class="text-lg pb-8 font-semibold leading-6 text-white cursor-pointer"
-    >
-      Informations sur l'utilisateur
+    >Informations sur l'utilisateur
     </summary>
     <div class="border-b border-white/10 pb-4">
       <div class="col-span-full">
@@ -227,6 +227,7 @@ export function renderUserInfoForm() {
       </div>
     </div>
   </details>
+
   <details class="border-b py-4 border-white/10">
     <summary class="text-base font-semibold leading-6 text-white">Contact</summary>
     <div class="my-4 space-y-10">
@@ -378,6 +379,13 @@ export function renderUserInfoForm() {
 
   <div class="py-4 border-b border-white/10" id="hobbies"></div>
 
+  <div id="other-sections"></div>
+  
+  <button type="button" id="add-section"
+      class="rounded-md bg-indigo-500 w-full p-4 border-2 border-dashed my-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200"
+    >+ Ajouter une autre section
+  </button>
+
   <div class="my-6 flex flex-row items-center justify-end">
     <div id="loading"></div>
     <div class="flex gap-x-6">
@@ -422,6 +430,14 @@ export function renderUserInfoForm() {
   renderDigitalSkillsForm();
 
   renderHobbiesForm();
+
+  //add section on click
+  const addSectionButton = document.getElementById(
+    "add-section"
+  ) as HTMLButtonElement;
+  addSectionButton.addEventListener("click", () => {
+    renderOtherSectionForm();
+  });
 
   const form = document.getElementById("info-form");
   form?.addEventListener("submit", (e) => handleSubmit(e));

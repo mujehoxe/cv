@@ -128,73 +128,83 @@ function renderEducationTrainingFields() {
       </div>
       
       <div class="sm:col-span-2">
-        <label for="from-date" class="block text-sm font-medium leading-6 text-white">À Partir du</label>
+        <label for="from-date" class="block text-sm font-medium leading-6 text-white"
+          >À Partir du</label
+        >
         <div id="from-date" class="mt-2 flex gap-x-8">
           <div>
-                <label class="text-xs" for="day">Day</label>
-                <input 
-                  type="number"
-                  id="day"
-                  min="1" max="31"
-                  placeholder="DD"
-                  class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  />
+            <label class="text-xs" for="day">Day</label>
+            <input
+              type="number"
+              id="day"
+              min="1"
+              max="31"
+              placeholder="DD"
+              class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            />
           </div>
           <div>
-                <label class="text-xs" for="month">Month</label>
-                <input 
-                  type="number"
-                  id="month"
-                  min="1" max="12"
-                  placeholder="MM"
-                  class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  />
+            <label class="text-xs" for="month">Month</label>
+            <input
+              type="number"
+              id="month"
+              min="1"
+              max="12"
+              placeholder="MM"
+              class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            />
           </div>
           <div>
-                <label class="text-xs" for="year">Year</label>
-                <input 
-                  type="number"
-                  id="year"
-                  min="1800" max="3000"
-                  placeholder="YYYY"
-                  class="p-2 block w-28 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  />
+            <label class="text-xs" for="year">Year</label>
+            <input
+              type="number"
+              id="year"
+              min="1800"
+              max="3000"
+              placeholder="YYYY"
+              class="p-2 block w-28 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            />
           </div>
         </div>
       </div>
 
       <div class="sm:col-span-2">
-        <label for="to-date" class="block text-sm font-medium leading-6 text-white">Jusqu'à</label>
+        <label for="to-date" class="block text-sm font-medium leading-6 text-white"
+          >Jusqu'à</label
+        >
         <div id="to-date" class="mt-2 flex gap-x-8">
-        <div>
-          <label class="text-xs" for="day">Day</label>
-          <input 
-            type="number"
-                  id="day"
-                  min="1" max="31"
-                  placeholder="DD"
-                  class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-          />
-        </div>
           <div>
-            <label class="text-xs" for="month">Month</label>
-            <input 
-                  type="number"
-                  id="month"
-                  min="1" max="12"
-                  placeholder="MM"
-                  class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            <label class="text-xs" for="day">Day</label>
+            <input
+              type="number"
+              id="day"
+              min="1"
+              max="31"
+              placeholder="DD"
+              class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
             />
           </div>
           <div>
-                <label class="text-xs" for="year">Year</label>
-                <input 
-                  type="number"
-                  id="year"
-                  min="1800" max="3000"
-                  placeholder="YYYY"
-                  class="p-2 block w-28 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  />
+            <label class="text-xs" for="month">Month</label>
+            <input
+              type="number"
+              id="month"
+              min="1"
+              max="12"
+              placeholder="MM"
+              class="p-2 block w-20 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            />
+          </div>
+          <div>
+            <label class="text-xs" for="year">Year</label>
+            <input
+              type="number"
+              id="year"
+              min="1800"
+              max="3000"
+              placeholder="YYYY"
+              class="p-2 block w-28 rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            />
           </div>
         </div>
       </div>
@@ -333,8 +343,8 @@ function extractEducationTrainingData(
 }
 
 export function extractEducationTrainingsInto(
-  language: string,
-  data: CVProfileData
+  data: CVProfileData,
+  language: string
 ) {
   const educationTrainingsContainer = document.getElementById(
     "education-trainings-container"

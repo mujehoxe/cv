@@ -1,10 +1,11 @@
 import { extractDateFrom } from "./dateExtraction";
-import { extractDigitalSkillsData } from "../components/digital-skills";
+import { extractDigitalSkillsData as extractDigitalSkillsInto } from "../components/digital-skills";
 import { extractDrivingLicencesInto } from "../components/driving-licences";
 import { extractEducationTrainingsInto } from "../components/education-tranings";
 import { extractLanguageSkillsData as extractLanguageSkillsInto } from "../components/language-skills";
 import { extractWorkExperiencesInto } from "../components/work-experience";
 import { extractHobbiesInto } from "../components/hobbies";
+import { extractOtherSectionInto } from "../components/other-section";
 
 export function extractProfileInfo(language: string) {
   const firstName = (document.getElementById("first-name") as HTMLInputElement)
@@ -43,7 +44,6 @@ export function extractProfileInfo(language: string) {
         profileStructure: [],
         dateFormat: "dd/MM/yyyy",
       },
-      customSections: [],
     },
     template: {
       closingStatement: null,
@@ -56,18 +56,20 @@ export function extractProfileInfo(language: string) {
   };
 
   extractPhoneInto(data);
-  extractAddressInto(language, data);
-  extractWorkExperiencesInto(language, data);
-  extractEducationTrainingsInto(language, data);
+  extractAddressInto(data, language);
+  extractWorkExperiencesInto(data, language);
+  extractEducationTrainingsInto(data, language);
   extractDrivingLicencesInto(data);
   extractLanguageSkillsInto(data);
-  extractDigitalSkillsData(data);
-  extractHobbiesInto(language, data);
+  extractDigitalSkillsInto(data);
+  extractHobbiesInto(data, language);
+  extractOtherSectionInto(data, language);
+  console.log(data);
 
   return data;
 }
 
-function extractAddressInto(language: string, data: CVProfileData) {
+function extractAddressInto(data: CVProfileData, language: string) {
   const currentLangStreet = document.getElementById(
     `street-${language}`
   ) as HTMLElement;
@@ -243,11 +245,24 @@ interface LanguageSkills {
   otherLanguages?: NonNativeLang[];
 }
 
+export interface CustomSectionsRecord {
+  title?: string | null;
+  content?: string | null;
+  startDate?: DataDate | null;
+  endDate?: DataDate | null;
+}
+
+export interface CustomSection {
+  id: string;
+  title: string;
+  records?: CustomSectionsRecord[] | null;
+}
+
 interface Profile {
   language: string;
   personalInformation: PersonalInformation;
   preference: Preference;
-  customSections: any[];
+  customSections: CustomSection[];
   workExperiences?: WorkExperience[];
   educationTrainings?: EducationTraining[];
   drivingLicence?: Licence;

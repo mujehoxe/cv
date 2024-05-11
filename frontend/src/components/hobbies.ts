@@ -96,7 +96,7 @@ function extractHobbyData(language: string, hobby: Element): Hobby {
   };
 }
 
-export function extractHobbiesInto(language: string, data: CVProfileData) {
+export function extractHobbiesInto(data: CVProfileData, language: string) {
   const hobbiesContainer = document.getElementById("hobbies-container")!;
   const hobbies = hobbiesContainer.querySelectorAll(".hobby");
 

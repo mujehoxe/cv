@@ -279,8 +279,8 @@ function extractWorkExperienceData(
 }
 
 export function extractWorkExperiencesInto(
-  language: string,
-  data: CVProfileData
+  data: CVProfileData,
+  language: string
 ) {
   const workExperienceContainer = document.getElementById(
     "work-experiences-container"
