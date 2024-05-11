@@ -64,12 +64,24 @@ export function renderWorkExperienceFields() {
     <div class="work-experience flex flex-col">
         <div class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-4">
           <div class="sm:col-span-2">
-            <label for="occupation" class="block text-sm font-medium leading-6 text-white">Occupation ou poste tenue</label>
-            <input type="text" name="occupation" id="occupation" class="mt-2 p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6" placeholder="Enterer le Nom d'Occupation">
+            <label for="occupation-${originalLanguage.short}" class="block text-sm font-medium leading-6 text-white">Occupation ou poste tenue</label>
+            <div
+              contenteditable="true"
+              id="occupation-${originalLanguage.short}"
+              name="street-address"
+              class="single-line whitespace-nowrap overflow-hidden overflow-x-auto p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            ></div>
+            <div id="occupation-other-langs" class="mt-2"></div>
           </div>
           <div class="sm:col-span-2">
-            <label for="employer" class="block text-sm font-medium leading-6 text-white">Employeur</label>
-            <input type="text" name="employer" id="employer" class="mt-2 p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6" placeholder="Enterer l'Employer">
+            <label for="employer-${originalLanguage.short}" class="block text-sm font-medium leading-6 text-white">Employeur</label>
+            <div
+              contenteditable="true"
+              id="employer-${originalLanguage.short}"
+              name="street-address"
+              class="single-line whitespace-nowrap overflow-hidden overflow-x-auto p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+            ></div>
+            <div id="employer-other-langs" class="mt-2"></div>
           </div>
           <div class="sm:col-span-2">
             <label for="work-city" class="block text-sm font-medium leading-6 text-white">Ville</label>
@@ -186,11 +198,17 @@ export function renderWorkExperienceFields() {
   });
 
   const occupation = workExperience.querySelector(
-    'input[name="occupation"]'
+    `#occupation-${originalLanguage.short}`
   ) as HTMLInputElement;
+
+  elementTranslationsRendererFor(occupation, true);
+
   const employer = workExperience.querySelector(
-    'input[name="employer"]'
+    `#employer-${originalLanguage.short}`
   ) as HTMLInputElement;
+
+  elementTranslationsRendererFor(employer, true);
+
   const workCountry = workExperience.querySelector(
     'select[name="work-country"]'
   ) as HTMLSelectElement;
@@ -204,10 +222,10 @@ export function renderWorkExperienceFields() {
 
   function updateWorkExperienceName() {
     let name = "";
-    if (occupation.value != "") {
-      name += occupation.value;
+    if (occupation.innerText != "") {
+      name += occupation.innerText;
       if (employer.value != "")
-        name += ` at <span class='font-bold'>${employer.value}</span>`;
+        name += ` at <span class='font-bold'>${employer.innerText}</span>`;
       if (workCountry.value != "")
         name +=
           " in (" + workCountry.options[workCountry.selectedIndex].text + ")";
