@@ -149,12 +149,14 @@ function extractNativeLanguagesData(): LanguageSkill[] {
 
   if (nativeLanguage == "") return [];
 
-  return [
-    {
-      language: nativeLanguage,
-      languageCategory: "NORMAL",
-    },
-  ];
+  const language = {
+    language: nativeLanguage.toUpperCase(),
+    languageCategory: "NORMAL",
+  };
+
+  if (nativeLanguage == "kabyle") language.languageCategory = "FREE_TEXT";
+
+  return [language];
 }
 
 function extractOtherLanguagesData(): NonNativeLang[] {

@@ -24,6 +24,7 @@ export const allLanguages: Languages = {
   chi: { short: "ZH", long: "Chinese" },
   ita: { short: "IT", long: "Italian" },
   dut: { short: "NL", long: "Dutch" },
+  kabyle: { short: "kabyle", long: "Kabyle" },
 };
 
 export let originalLanguage: Language = { short: "FR", long: "French" };
