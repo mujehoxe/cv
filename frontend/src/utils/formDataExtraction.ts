@@ -190,6 +190,10 @@ export interface WorkExperience {
   endDate?: DataDate | null;
 }
 
+export interface Hobby {
+  title: string;
+}
+
 export interface EducationTraining {
   qualification?: string;
   organisationName?: string;
@@ -249,6 +253,7 @@ interface Profile {
   digitalSkills?: {
     other: string[];
   };
+  hobbiesInterests: Hobby[];
 }
 
 export interface CVProfileData {

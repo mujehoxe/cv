@@ -14,6 +14,7 @@ import {
   removeLoadingIndicator,
   renderLoadingIndicator,
 } from "./loadingIndicator";
+import { renderHobbiesForm } from "./hobbies";
 
 async function handleSubmit(e: SubmitEvent) {
   e.preventDefault();
@@ -375,6 +376,8 @@ export function renderUserInfoForm() {
 
   <div class="py-4 border-b border-white/10" id="digital-skills"></div>
 
+  <div class="py-4 border-b border-white/10" id="hobbies"></div>
+
   <div class="my-6 flex flex-row items-center justify-end">
     <div id="loading"></div>
     <div class="flex gap-x-6">
@@ -417,6 +420,8 @@ export function renderUserInfoForm() {
   renderLanguageSkillsForm();
 
   renderDigitalSkillsForm();
+
+  renderHobbiesForm();
 
   const form = document.getElementById("info-form");
   form?.addEventListener("submit", (e) => handleSubmit(e));
