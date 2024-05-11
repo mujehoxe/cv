@@ -4,6 +4,7 @@ import { extractDrivingLicencesInto } from "../components/driving-licences";
 import { extractEducationTrainingsInto } from "../components/education-tranings";
 import { extractLanguageSkillsData as extractLanguageSkillsInto } from "../components/language-skills";
 import { extractWorkExperiencesInto } from "../components/work-experience";
+import { extractHobbiesInto } from "../components/hobbies";
 
 export function extractProfileInfo(language: string) {
   const firstName = (document.getElementById("first-name") as HTMLInputElement)
@@ -61,6 +62,7 @@ export function extractProfileInfo(language: string) {
   extractDrivingLicencesInto(data);
   extractLanguageSkillsInto(data);
   extractDigitalSkillsData(data);
+  extractHobbiesInto(language, data);
 
   return data;
 }
@@ -253,7 +255,7 @@ interface Profile {
   digitalSkills?: {
     other: string[];
   };
-  hobbiesInterests: Hobby[];
+  hobbiesInterests?: Hobby[];
 }
 
 export interface CVProfileData {
