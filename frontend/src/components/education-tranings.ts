@@ -336,10 +336,10 @@ export function extractEducationTrainingsInto(
   language: string,
   data: CVProfileData
 ) {
-  const educationTrainingContainer = document.getElementById(
+  const educationTrainingsContainer = document.getElementById(
     "education-trainings-container"
   )!;
-  const educationTrainings = educationTrainingContainer.querySelectorAll(
+  const educationTrainings = educationTrainingsContainer.querySelectorAll(
     ".education-training"
   );
 
