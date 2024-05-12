@@ -212,11 +212,16 @@ export function renderWorkExperienceFields() {
 
   const occupation = workExperience.querySelector(
     `#occupation-${originalLanguage.short}`
+    `#occupation-${originalLanguage.short}`
   ) as HTMLInputElement;
 
   elementTranslationsRendererFor(occupation, true);
 
+
+  elementTranslationsRendererFor(occupation, true);
+
   const employer = workExperience.querySelector(
+    `#employer-${originalLanguage.short}`
     `#employer-${originalLanguage.short}`
   ) as HTMLInputElement;
 
@@ -239,7 +244,10 @@ export function renderWorkExperienceFields() {
     let name = "";
     if (occupation.innerText != "") {
       name += occupation.innerText;
+    if (occupation.innerText != "") {
+      name += occupation.innerText;
       if (employer.value != "")
+        name += ` at <span class='font-bold'>${employer.innerText}</span>`;
         name += ` at <span class='font-bold'>${employer.innerText}</span>`;
       if (workCountry.value != "")
         name +=
