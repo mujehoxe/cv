@@ -253,7 +253,6 @@ export function renderWorkExperienceFields() {
   const activites = workExperience.querySelector(
     `#activities-${originalLanguage.short}`
   ) as HTMLDivElement;
-  console.log(activites);
 
   elementTranslationsRendererFor(activites, false);
 
