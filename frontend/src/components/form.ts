@@ -152,7 +152,7 @@ export function renderUserInfoForm() {
             class="block text-sm font-medium leading-6 text-white"
             >Date de Naissance</label
           >
-          <div id="birthday" class="mt-2 flex gap-x-8">
+          <div id="birthday" class="mt-2 mx-2 flex gap-x-8">
             <div>
               <label class="text-xs" for="day">Day</label>
               <input 

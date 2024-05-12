@@ -80,7 +80,7 @@ async function renderTranslations(
   removeLoadingIndicator(parent);
 }
 
-export function renderEmpltyInputDivsForAllLanguages(
+export function renderEmptyInputDivsForAllLanguages(
   element: HTMLDivElement,
   isSingleLine: boolean
 ) {

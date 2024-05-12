@@ -3,7 +3,7 @@ import { WorkExperience } from "../utils/formDataExtraction";
 import { originalLanguage } from "../utils/languages";
 import {
   elementTranslationsRendererFor,
-  renderEmpltyInputDivsForAllLanguages,
+  renderEmptyInputDivsForAllLanguages,
 } from "./translationsRenderer";
 import { CVProfileData } from "../utils/formDataExtraction";
 import { extractDateFrom } from "../utils/dateExtraction";
@@ -68,7 +68,7 @@ export function renderWorkExperienceFields() {
         <div class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-4">
           <div class="sm:col-span-2">
             <label for="occupation-${originalLanguage.short}" class="block text-sm font-medium leading-6 text-white">Occupation ou poste tenue</label>
-            <div id="about" class="mt-2 mx-2">
+            <div class="mt-2 mx-2">
               <label class="text-xs font-medium text-white"
                 >${originalLanguage.long}</label
               >
@@ -83,7 +83,7 @@ export function renderWorkExperienceFields() {
           </div>
           <div class="sm:col-span-2">
             <label for="employer-${originalLanguage.short}" class="block text-sm font-medium leading-6 text-white">Employeur</label>
-            <div id="about" class="mt-2 mx-2">
+            <div class="mt-2 mx-2">
               <label class="text-xs font-medium text-white"
                 >${originalLanguage.long}</label
               >
@@ -108,7 +108,7 @@ export function renderWorkExperienceFields() {
             </select>
           </div>
 
-          <div class="sm:col-span-2">
+          <div class="sm:col-span-2 mx-2">
             <label for="from-date" class="block text-sm font-medium leading-6 text-white">À Partir du</label>
             <div id="from-date" class="mt-2 flex gap-x-8">
               <div>
@@ -144,7 +144,7 @@ export function renderWorkExperienceFields() {
             </div>
           </div>
 
-          <div class="sm:col-span-2">
+          <div class="sm:col-span-2 mx-2">
             <label for="to-date" class="block text-sm font-medium leading-6 text-white">Jusqu'à</label>
             <div id="to-date" class="mt-2 flex gap-x-8">
               <div>
@@ -205,6 +205,7 @@ export function renderWorkExperienceFields() {
   const deleteWorkExperienceButton = workExperience.querySelector(
     'button[name="delete"]'
   )!;
+
   deleteWorkExperienceButton.addEventListener("click", (e) => {
     e.preventDefault();
     workExperience.remove();
@@ -212,21 +213,17 @@ export function renderWorkExperienceFields() {
 
   const occupation = workExperience.querySelector(
     `#occupation-${originalLanguage.short}`
-    `#occupation-${originalLanguage.short}`
   ) as HTMLInputElement;
-
-  elementTranslationsRendererFor(occupation, true);
-
 
   elementTranslationsRendererFor(occupation, true);
 
   const employer = workExperience.querySelector(
     `#employer-${originalLanguage.short}`
-    `#employer-${originalLanguage.short}`
   ) as HTMLInputElement;
 
   employer.addEventListener("blur", () => {
-    renderEmpltyInputDivsForAllLanguages(employer, true);
+    if (employer.innerText != "")
+      renderEmptyInputDivsForAllLanguages(employer, true);
   });
 
   const workCountry = workExperience.querySelector(
@@ -244,21 +241,19 @@ export function renderWorkExperienceFields() {
     let name = "";
     if (occupation.innerText != "") {
       name += occupation.innerText;
-    if (occupation.innerText != "") {
-      name += occupation.innerText;
-      if (employer.value != "")
-        name += ` at <span class='font-bold'>${employer.innerText}</span>`;
+      if (employer.innerText != "")
         name += ` at <span class='font-bold'>${employer.innerText}</span>`;
       if (workCountry.value != "")
         name +=
           " in (" + workCountry.options[workCountry.selectedIndex].text + ")";
+      workExperienceName.innerHTML = name;
     }
-    workExperienceName.innerHTML = name;
   }
 
   const activites = workExperience.querySelector(
     `#activities-${originalLanguage.short}`
   ) as HTMLDivElement;
+  console.log(activites);
 
   elementTranslationsRendererFor(activites, false);
 
