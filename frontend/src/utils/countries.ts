@@ -272,11 +272,7 @@ export async function populateCountries(select: HTMLSelectElement) {
   select.selectedIndex = 3;
 }
 
-export async function populatePhoneExtentions() {
-  const phoneExtentionSelect = document.getElementById(
-    "phone-extention"
-  ) as HTMLSelectElement;
-
+export async function populatePhoneExtentions(select: HTMLSelectElement) {
   countries
     .sort((a, b) => (a.name > b.name ? 1 : -1))
     .forEach((country: Country) => {
@@ -286,8 +282,7 @@ export async function populatePhoneExtentions() {
         prefix: country.idd,
       });
       option.textContent = `${country.cca2} (${country.idd})`;
-      phoneExtentionSelect?.appendChild(option);
+      select.appendChild(option);
+      select.selectedIndex = 3;
     });
-
-  phoneExtentionSelect.selectedIndex = 3;
 }

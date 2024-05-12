@@ -251,7 +251,32 @@ export function renderUserInfoForm() {
         <label
           for="phone-number"
           class="block text-sm font-medium leading-6 text-white"
-          >Numéro de téléphone</label
+          >Numéro de téléphone 1</label
+        >
+        <div class="relative mt-2 rounded-md shadow-sm">
+          <div class="absolute inset-y-0 left-0 flex items-center">
+            <label for="phone-extention" class="sr-only">Phone extention</label>
+            <select
+              id="phone-extention"
+              name="country"
+              autocomplete="country"
+              class="bg-transparent h-full rounded-md border-0 py-0 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
+            >
+              <option disabled>Selectioner</option>
+            </select>
+          </div>
+          <input
+            type="text"
+            name="phone-number"
+            id="phone-number"
+            class="p-2 block w-full rounded-md border-0 py-1.5 pl-36 bg-white/5 text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            placeholder="612345678"
+          />
+        </div>
+        <label
+          for="phone-number"
+          class="block text-sm font-medium leading-6 text-white"
+          >Numéro de téléphone 2</label
         >
         <div class="relative mt-2 rounded-md shadow-sm">
           <div class="absolute inset-y-0 left-0 flex items-center">
@@ -411,9 +436,15 @@ export function renderUserInfoForm() {
     "nationality"
   ) as HTMLSelectElement;
   populateCountries(nationality);
-  const country = document.getElementById("country") as HTMLSelectElement;
-  populateCountries(country);
-  populatePhoneExtentions();
+  const countrySelect = document.getElementById("country") as HTMLSelectElement;
+  populateCountries(countrySelect);
+
+  const phoneExtentionSelects = document.querySelectorAll(
+    "#phone-extention"
+  ) as NodeListOf<HTMLSelectElement>;
+  phoneExtentionSelects.forEach((select) => {
+    populatePhoneExtentions(select);
+  });
 
   elementTranslationsRendererFor("about", false);
 

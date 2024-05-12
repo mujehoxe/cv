@@ -93,22 +93,26 @@ function extractAddressInto(data: CVProfileData, language: string) {
 }
 
 function extractPhoneInto(data: CVProfileData) {
-  const phoneNumber = (
-    document.getElementById("phone-number") as HTMLInputElement
-  ).value;
-  if (phoneNumber != "") {
-    const phoneExtentionSelect = document.getElementById(
-      "phone-extention"
-    ) as HTMLSelectElement;
-    const phone: Phone = {
-      phoneNumber,
-      phonePrefix: JSON.parse(phoneExtentionSelect.value),
-      customPhoneNumberType: "",
-      phoneNumberType: "mobile",
-    };
+  const phoneNumbers = document.querySelectorAll("#phone-number");
+  if (phoneNumbers.length > 0) data.profile.personalInformation.phones = [];
 
-    if (phoneExtentionSelect) data.profile.personalInformation.phones = [phone];
-  }
+  phoneNumbers.forEach((phoneNumberInput, key) => {
+    const phoneNumber = (phoneNumberInput as HTMLInputElement).value;
+    const phoneExtentionSelect =
+      document.querySelectorAll("#phone-extention")[key];
+    if (phoneNumber != "") {
+      const phone: Phone = {
+        phoneNumber,
+        phonePrefix: JSON.parse(
+          (phoneExtentionSelect as HTMLInputElement).value
+        ),
+        customPhoneNumberType: "",
+        phoneNumberType: "mobile",
+      };
+
+      data.profile.personalInformation.phones!.push(phone);
+    }
+  });
 }
 
 interface SocialMediaWebsite {
@@ -118,7 +122,7 @@ interface SocialMediaWebsite {
 }
 
 export interface Phone {
-  phonePrefix: {
+  phonePrefix?: {
     countryCode: string;
     prefix: number;
   };
