@@ -1,7 +1,10 @@
 import { populateCountries } from "../utils/countries";
 import { WorkExperience } from "../utils/formDataExtraction";
 import { originalLanguage } from "../utils/languages";
-import { elementTranslationsRendererFor } from "./translationsRenderer";
+import {
+  elementTranslationsRendererFor,
+  renderEmpltyInputDivsForAllLanguages,
+} from "./translationsRenderer";
 import { CVProfileData } from "../utils/formDataExtraction";
 import { extractDateFrom } from "../utils/dateExtraction";
 
@@ -65,23 +68,33 @@ export function renderWorkExperienceFields() {
         <div class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-4">
           <div class="sm:col-span-2">
             <label for="occupation-${originalLanguage.short}" class="block text-sm font-medium leading-6 text-white">Occupation ou poste tenue</label>
-            <div
-              contenteditable="true"
-              id="occupation-${originalLanguage.short}"
-              name="street-address"
-              class="single-line whitespace-nowrap overflow-hidden overflow-x-auto p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-            ></div>
-            <div id="occupation-other-langs" class="mt-2"></div>
+            <div id="about" class="mt-2 mx-2">
+              <label class="text-xs font-medium text-white"
+                >${originalLanguage.long}</label
+              >
+              <div
+                contenteditable="true"
+                id="occupation-${originalLanguage.short}"
+                name="street-address"
+                class="single-line whitespace-nowrap overflow-hidden overflow-x-auto p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+              ></div>
+              <div id="occupation-other-langs" class="mt-2"></div>
+            </div>
           </div>
           <div class="sm:col-span-2">
             <label for="employer-${originalLanguage.short}" class="block text-sm font-medium leading-6 text-white">Employeur</label>
-            <div
-              contenteditable="true"
-              id="employer-${originalLanguage.short}"
-              name="street-address"
-              class="single-line whitespace-nowrap overflow-hidden overflow-x-auto p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-            ></div>
-            <div id="employer-other-langs" class="mt-2"></div>
+            <div id="about" class="mt-2 mx-2">
+              <label class="text-xs font-medium text-white"
+                >${originalLanguage.long}</label
+              >
+              <div
+                contenteditable="true"
+                id="employer-${originalLanguage.short}"
+                name="street-address"
+                class="single-line whitespace-nowrap overflow-hidden overflow-x-auto p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+              ></div>
+              <div id="employer-other-langs" class="mt-2"></div>
+            </div>
           </div>
           <div class="sm:col-span-2">
             <label for="work-city" class="block text-sm font-medium leading-6 text-white">Ville</label>
@@ -207,7 +220,9 @@ export function renderWorkExperienceFields() {
     `#employer-${originalLanguage.short}`
   ) as HTMLInputElement;
 
-  elementTranslationsRendererFor(employer, true);
+  employer.addEventListener("blur", () => {
+    renderEmpltyInputDivsForAllLanguages(employer, true);
+  });
 
   const workCountry = workExperience.querySelector(
     'select[name="work-country"]'

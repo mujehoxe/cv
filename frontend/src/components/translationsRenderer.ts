@@ -80,6 +80,23 @@ async function renderTranslations(
   removeLoadingIndicator(parent);
 }
 
+export function renderEmpltyInputDivsForAllLanguages(
+  element: HTMLDivElement,
+  isSingleLine: boolean
+) {
+  const parent = getParentElement(element);
+  parent.innerHTML = "";
+  for (const [_, otherLanguage] of Object.entries(formLanguages)) {
+    if (areLanguagesEqual(originalLanguage, otherLanguage)) continue;
+
+    renderInputDivForTranslation(
+      { content: element.innerText, language: otherLanguage },
+      parent,
+      isSingleLine
+    );
+  }
+}
+
 function renderInputDivForTranslation(
   translation: Translation,
   parent: HTMLDivElement,

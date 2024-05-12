@@ -312,7 +312,7 @@ export function renderUserInfoForm() {
             class="block text-sm font-medium leading-6 text-white"
             >Adresse de rue</label
           >
-          <div id="street-addresses">
+          <div id="street-addresses" class="mx-2">
             <label class="text-xs font-medium text-white"
               >${originalLanguage.long}</label
             >
