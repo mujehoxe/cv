@@ -60,21 +60,22 @@ export function renderUserInfoForm() {
           >Photo</label
         >
         <div class="mt-2 flex items-center gap-x-3">
-          <svg
-            class="h-12 w-12 text-gray-500"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-              clip-rule="evenodd"
-            />
-          </svg>
+          <i id="profile-icon"
+            class="fa-solid fa-circle-user text-5xl h-12 w-12 text-gray-500"></i>
+          <div id="preview" hidden class="relative">
+            <img id="preview-img" class="h-12 w-12 rounded-full object-cover"></img>
+            <i id="remove-photo-btn" class="fa-regular absolute bottom-0 right-0 fa-times text-red-500 hover:text-red-700"></i>
+          </div>
+          <input
+            id="photo-input"
+            type="file"
+            class="hidden"
+            accept=".jpg,.jpeg,.png"
+          />
           <button
+            id="photo-btn"
             type="button"
-            class="rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white/20"
+            class="rounded-md  px-3 py-2  font-semibold text-white shadow-sm hover:bg-white/20"
           >
             Changer
           </button>
@@ -431,6 +432,46 @@ export function renderUserInfoForm() {
   </div>
 </form>
 `;
+
+  const photoBtn = document.getElementById("photo-btn") as HTMLInputElement;
+  photoBtn.addEventListener("click", () => {
+    const photoInput = document.getElementById(
+      "photo-input"
+    ) as HTMLInputElement;
+    photoInput.click();
+
+    const reader = new FileReader();
+    photoInput.addEventListener("change", (event) => {
+      //@ts-ignore
+      const file = event.target.files[0];
+      if (file) {
+        reader.onload = () => {
+          (document.getElementById("preview-img") as HTMLImageElement).src =
+            reader.result as string;
+          document.getElementById("preview")!.removeAttribute("hidden");
+          document
+            .querySelector("#profile-icon")!
+            .setAttribute("hidden", "true");
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  });
+
+  //remove photo btn clicked
+  const removePhotoBtn = document.getElementById(
+    "remove-photo-btn"
+  ) as HTMLButtonElement;
+  removePhotoBtn.addEventListener("click", () => {
+    const previewImg = document.getElementById(
+      "preview-img"
+    ) as HTMLImageElement;
+    previewImg.src = "";
+
+    document.getElementById("profile-icon")!.removeAttribute("hidden");
+
+    document.getElementById("preview")!.setAttribute("hidden", "true");
+  });
 
   const nationality = document.getElementById(
     "nationality"

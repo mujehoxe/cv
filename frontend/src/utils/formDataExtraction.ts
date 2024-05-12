@@ -8,6 +8,11 @@ import { extractHobbiesInto } from "../components/hobbies";
 import { extractOtherSectionInto } from "../components/other-section";
 
 export function extractProfileInfo(language: string) {
+  //get profilePicture
+  const profilePicture = (
+    document.querySelector("#preview-img") as HTMLImageElement
+  ).src;
+
   const firstName = (document.getElementById("first-name") as HTMLInputElement)
     .value;
   const lastName = (document.getElementById("last-name") as HTMLInputElement)
@@ -45,6 +50,7 @@ export function extractProfileInfo(language: string) {
         dateFormat: "dd/MM/yyyy",
       },
     },
+    profilePicture,
     template: {
       closingStatement: null,
       color: "dark-blue",
@@ -64,7 +70,6 @@ export function extractProfileInfo(language: string) {
   extractDigitalSkillsInto(data);
   extractHobbiesInto(data, language);
   extractOtherSectionInto(data, language);
-  console.log(data);
 
   return data;
 }
@@ -280,5 +285,6 @@ interface Profile {
 export interface CVProfileData {
   id?: null | string;
   profile: Profile;
+  profilePicture?: null | string;
   template: Template;
 }
