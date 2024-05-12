@@ -17,6 +17,8 @@ export const allLanguages: Languages = {
   eng: { short: "EN", long: "English" },
   ara: { short: "AR", long: "Arabic" },
   fre: { short: "FR", long: "French" },
+  ber: { short: "BER", long: "Berber" },
+  Kabyle: { short: "Kabyle", long: "Kabyle" },
   ger: { short: "DE", long: "German" },
   spa: { short: "ES", long: "Spanish" },
   tur: { short: "TR", long: "Turkish" },
@@ -24,7 +26,6 @@ export const allLanguages: Languages = {
   chi: { short: "ZH", long: "Chinese" },
   ita: { short: "IT", long: "Italian" },
   dut: { short: "NL", long: "Dutch" },
-  kabyle: { short: "kabyle", long: "Kabyle" },
 };
 
 export let originalLanguage: Language = { short: "FR", long: "French" };
