@@ -21,11 +21,20 @@ jobs:
       - name: Install Wails
         run: go get -v github.com/wailsapp/wails/cmd/wails
 
-      - name: Get dependencies
-        run: go get -v -t
+      - name: Find wails path
+        id: find_wails
+        run: |
+          WAILS_PATH=$(go env GOPATH)/bin/wails
+          echo "WAILS_PATH=$WAILS_PATH" >> $GITHUB_ENV
+
+      - name: Check PATH
+        run: echo $PATH
+
+      - name: Check GOPATH
+        run: echo $GOPATH
 
       - name: Build Wails Application
-        run: wails build -webview2 embed -platform "windows/amd64" -nsis -upx -debug
+        run: ${{ env.WAILS_PATH }} build -webview2 embed -platform "windows/amd64" -nsis -upx -debug
 
       - name: Create Release
         id: create_release
