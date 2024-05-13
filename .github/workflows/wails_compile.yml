@@ -56,10 +56,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.get_upload_url.outputs.result }}
-          asset_path: ./build/bin/
-          asset_name: cv-amd64-installer.exe
-          asset_content_type: application/octet-stream
+      - name: Upload or Replace Release Asset
+        run: |
+          asset_name="cv-amd64-installer.exe"
+          asset_path="./build/bin/$asset_name"
+          upload_url="${{ steps.get_upload_url.outputs.result }}"
+          asset_content_type="application/octet-stream"
+
+          if [ -f "$asset_path" ]; then
+            echo "Asset $asset_name exists. Uploading or replacing..."
+            curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" -F "asset[name]=$asset_name" -F "asset[content]=@$asset_path" -F "asset[content_type]=$asset_content_type" "$upload_url/assets"
+          else
+            echo "Asset $asset_name does not exist. Skipping upload."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
