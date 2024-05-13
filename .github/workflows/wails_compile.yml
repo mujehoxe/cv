@@ -27,7 +27,7 @@ jobs:
         run: echo $GOPATH
 
       - name: Build Wails Application
-        run: wails build -webview2 embed -platform "windows/amd64" -nsis -upx -debug
+        run: /home/runner/go/bin/wails build -webview2 embed -platform "windows/amd64" -nsis -upx -debug
 
       - name: Create Release
         id: create_release
