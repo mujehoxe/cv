@@ -81,7 +81,8 @@ jobs:
              -H "X-GitHub-Api-Version: 2022-11-28" \
              -F "asset[content]=@$asset_path" \
              -F "asset[content_type]=$asset_content_type" \
-             "https://api.github.com/repos/mujehoxe/cv/releases/assets/167622315"
+             "https://api.github.com/repos/mujehoxe/cv/releases/assets/167622315" \
+             -d '{"name":"cv-amd64-installer.exe","label":"windows"}'
 
           else
             echo "Asset $asset_name does not exist. Skipping upload."
