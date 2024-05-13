@@ -74,13 +74,14 @@ jobs:
             # Asset exists, upload or replace it
             echo "Asset $asset_name exists. Uploading or replacing..."
             # Use curl to upload the asset with the --replace flag
-            curl -X POST \
+            curl -L -X PATCH \
              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-             -H "Accept: application/vnd.github.v3+json" \
+             -H "Accept: application/vnd.github+json" \
              -F "asset[name]=$encoded_asset_name" \
+             -H "X-GitHub-Api-Version: 2022-11-28" \
              -F "asset[content]=@$asset_path" \
              -F "asset[content_type]=$asset_content_type" \
-             "https://api.github.com/repos/mujehoxe/cv/releases/154371556/assets"
+             "https://api.github.com/repos/mujehoxe/cv/releases/assets/167622315"
 
           else
             echo "Asset $asset_name does not exist. Skipping upload."
