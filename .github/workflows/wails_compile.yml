@@ -80,7 +80,8 @@ jobs:
              -F "asset[name]=$encoded_asset_name" \
              -F "asset[content]=@$asset_path" \
              -F "asset[content_type]=$asset_content_type" \
-             "https://api.github.com/repos/mujehoxe/cv/releases/v1/assets"
+             "https://api.github.com/repos/mujehoxe/cv/releases/154371556/assets"
+
           else
             echo "Asset $asset_name does not exist. Skipping upload."
           fi
