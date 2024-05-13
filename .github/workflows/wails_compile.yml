@@ -52,7 +52,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: List build directory contents
-        run: ls./build/bin/
+        run: ls ./build/bin/
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
