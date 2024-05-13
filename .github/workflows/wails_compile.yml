@@ -55,6 +55,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.get_upload_url.outputs.result }}
+          asset_path: ./build/bin/cv-amd64-installer.exe
           asset_name: cv-amd64-installer.exe
-          asset_path: "./build/bin/"
           asset_content_type: application/octet-stream
