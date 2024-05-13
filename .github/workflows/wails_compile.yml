@@ -65,7 +65,7 @@ jobs:
 
           if [ -f "$asset_path" ]; then
             echo "Asset $asset_name exists. Uploading or replacing..."
-            curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" -F "asset[name]=$asset_name" -F "asset[content]=@$asset_path" -F "asset[content_type]=$asset_content_type" "$upload_url/assets"
+            curl -X POST -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" -F "asset[name]=$asset_name" -F "asset[content]=@$asset_path" -F "asset[content_type]=$asset_content_type" "$upload_url"
           else
             echo "Asset $asset_name does not exist. Skipping upload."
           fi
