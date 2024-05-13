@@ -22,7 +22,7 @@ jobs:
         run: git clone --depth 1 https://github.com/wailsapp/wails.git
 
       - name: Install Wails Dependencies
-        run: cd wails && go get -v -t./...
+        run: cd wails && go get -v -t
 
       - name: Build Wails Binary
         run: cd wails && go build -o wails./cmd/wails
