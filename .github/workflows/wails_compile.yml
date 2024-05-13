@@ -34,7 +34,7 @@ jobs:
           chmod +x wails
 
       - name: Build Wails Application
-        run: ./wails/v2/wails./cmd/wails build -webview2 embed -platform "windows/amd64" -nsis -upx -debug
+        run: ./wails/v2/cmd/wails/wails build -webview2 embed -platform "windows/amd64" -nsis -upx -debug
 
       - name: Create Release
         id: create_release
