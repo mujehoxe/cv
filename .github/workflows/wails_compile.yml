@@ -18,12 +18,14 @@ jobs:
         with:
           go-version: "^1.21"
 
-      - name: Download Wails
-        run: |
-          curl -L https://github.com/wailsapp/wails/releases/download/v2.6.0/wails_2.6.0_Linux_x86_64.tar.gz -o wails.tar.gz
-          tar -xzf wails.tar.gz
-          chmod +x wails
-          mv wails./wails
+      - name: Clone Wails Repository with Depth 1
+        run: git clone --depth 1 https://github.com/wailsapp/wails.git
+
+      - name: Install Wails Dependencies
+        run: cd wails && go get -v -t./...
+
+      - name: Build Wails Binary
+        run: cd wails && go build -o wails./cmd/wails
 
       - name: Build Wails Application
         run: ./wails build -webview2 embed -platform "windows/amd64" -nsis -upx -debug
