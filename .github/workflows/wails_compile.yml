@@ -58,14 +58,23 @@ jobs:
 
       - name: Upload or Replace Release Asset
         run: |
+          # Get the asset name from the previous step
           asset_name="cv-amd64-installer.exe"
+          # URL-encode the asset name
+          encoded_asset_name=$(echo -n "$asset_name" | base64)
+          # Define the asset path
           asset_path="./build/bin/$asset_name"
+          # Define the upload URL
           upload_url="${{ steps.get_upload_url.outputs.result }}"
+          # Define the asset content type
           asset_content_type="application/octet-stream"
 
+          # Check if the asset exists
           if [ -f "$asset_path" ]; then
+            # Asset exists, upload or replace it
             echo "Asset $asset_name exists. Uploading or replacing..."
-            curl -X POST -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" -F "asset[name]=$asset_name" -F "asset[content]=@$asset_path" -F "asset[content_type]=$asset_content_type" "$upload_url"
+            # Use curl to upload the asset with the --replace flag
+            curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" -F "asset[name]=$encoded_asset_name" -F "asset[content]=@$asset_path" -F "asset[content_type]=$asset_content_type" "$upload_url/assets"
           else
             echo "Asset $asset_name does not exist. Skipping upload."
           fi
