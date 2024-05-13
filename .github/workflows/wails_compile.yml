@@ -31,7 +31,7 @@ jobs:
         run: cd wails && go build -o wails./cmd/wails
 
       - name: Build Wails Application
-        run:./wails build -webview2 embed -platform "windows/amd64" -nsis -upx -debug
+        run: ./wails build -webview2 embed -platform "windows/amd64" -nsis -upx -debug
 
       - name: Create Release
         id: create_release
