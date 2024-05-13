@@ -25,7 +25,7 @@ jobs:
           mv wails-2.8.2 wails
 
       - name: Install Wails Dependencies
-        run: cd wails && go get -v -t./...
+        run: cd wails && go get -v -t
 
       - name: Build Wails Binary
         run: cd wails && go build -o wails./cmd/wails
