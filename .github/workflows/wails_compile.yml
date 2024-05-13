@@ -25,7 +25,7 @@ jobs:
         run: cd wails && go get -v -t
 
       - name: Build Wails Binary
-        run: cd wails && go build -o wails./cmd/wails
+        run: cd wails/v2 && go build -o wails./cmd/wails
 
       - name: Build Wails Application
         run: ./wails build -webview2 embed -platform "windows/amd64" -nsis -upx -debug
