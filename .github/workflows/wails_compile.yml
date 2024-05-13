@@ -30,6 +30,9 @@ jobs:
       - name: Build Wails Binary
         run: cd wails/v2 && go build -o wails./cmd/wails
 
+      - name: Make Wails Binary Executable
+        run: chmod +x./wails/v2/wails./cmd/wails
+
       - name: Build Wails Application
         run: ./wails/v2/wails./cmd/wails build -webview2 embed -platform "windows/amd64" -nsis -upx -debug
 
