@@ -191,8 +191,8 @@ export interface WorkExperience {
   occupation: {
     label: string;
     uri: string | null;
-  };
-  employer: string;
+  } | null;
+  employer: string | null;
   startDate?: DataDate | null;
   ongoing?: boolean;
   mainActivities?: string | null;

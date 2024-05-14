@@ -263,12 +263,12 @@ function extractWorkExperienceData(
   language: string,
   workExperience: Element
 ): WorkExperience {
-  const occupation = (
-    workExperience.querySelector(`#occupation-${language}`) as HTMLDivElement
-  ).innerText;
-  const employer = (
-    workExperience.querySelector(`#employer-${language}`) as HTMLDivElement
-  ).innerText;
+  const occupation = workExperience.querySelector(
+    `#occupation-${language}`
+  ) as HTMLDivElement;
+  const employer = workExperience.querySelector(
+    `#employer-${language}`
+  ) as HTMLDivElement;
   const city = (workExperience.querySelector("#work-city") as HTMLInputElement)
     .value;
   const country = (
@@ -300,11 +300,13 @@ function extractWorkExperienceData(
       : null;
 
   return {
-    occupation: {
-      label: occupation,
-      uri: null,
-    },
-    employer,
+    occupation: occupation
+      ? {
+          label: occupation.innerText,
+          uri: null,
+        }
+      : null,
+    employer: employer ? employer.innerText : null,
     startDate,
     ongoing,
     mainActivities: activities,
