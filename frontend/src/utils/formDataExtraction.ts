@@ -86,7 +86,7 @@ function extractAddressInto(data: CVProfileData, language: string) {
   ).value;
   const address: Address = {
     addressName: null,
-    addressPart1: currentLangStreet ? currentLangStreet.innerHTML : "",
+    addressPart1: currentLangStreet ? currentLangStreet.innerText : "",
     addressPart2: "",
     city,
     postalCode: postalCode,
