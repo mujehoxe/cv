@@ -29,7 +29,7 @@ async function handleSubmit(e: SubmitEvent) {
     const data = extractProfileInfo(language);
     try {
       const profileId = await CreateCVProfile(JSON.stringify(data));
-      const cvPath = await FetchCVAndSave(profileId);
+      const cvPath = await FetchCVAndSave(profileId, language);
       if (cvs.get(language) !== cvPath) {
         cvs.set(language, cvPath);
         renderPreviewPdf(cvPath, language);
