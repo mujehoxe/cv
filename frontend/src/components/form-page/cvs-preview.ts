@@ -1,5 +1,5 @@
 import { PDFDocumentProxy } from "pdfjs-dist";
-import { GetPdfFile, OpenPDF } from "../../wailsjs/go/main/App";
+import { GetPdfFile, OpenPDF } from "../../../wailsjs/go/main/App";
 
 // @ts-ignore
 const pdfjsLib = window["pdfjs-dist/build/pdf"];

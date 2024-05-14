@@ -1,9 +1,9 @@
-import { populateCountries } from "../utils/countries";
-import { EducationTraining } from "../utils/formDataExtraction";
-import { originalLanguage } from "../utils/languages";
+import { populateCountries } from "../../utils/countries";
+import { EducationTraining } from "../../utils/formDataExtraction";
+import { originalLanguage } from "../../utils/languages";
 import { elementTranslationsRendererFor } from "./translationsRenderer";
-import { CVProfileData } from "../utils/formDataExtraction";
-import { extractDateFrom } from "../utils/dateExtraction";
+import { CVProfileData } from "../../utils/formDataExtraction";
+import { extractDateFrom } from "../../utils/dateExtraction";
 
 function initEducationTrainingFields() {
   const addEducationTrainingButton = document.getElementById(

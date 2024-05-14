@@ -1,10 +1,10 @@
-import { extractDateFrom } from "../utils/dateExtraction";
+import { extractDateFrom } from "../../utils/dateExtraction";
 import {
   CVProfileData,
   CustomSection,
   CustomSectionsRecord,
-} from "../utils/formDataExtraction";
-import { originalLanguage } from "../utils/languages";
+} from "../../utils/formDataExtraction";
+import { originalLanguage } from "../../utils/languages";
 import { elementTranslationsRendererFor } from "./translationsRenderer";
 
 export function renderOtherSectionForm() {

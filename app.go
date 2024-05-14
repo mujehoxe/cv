@@ -241,7 +241,7 @@ func (a *App) fetchPdfFile(pdfID string) ([]byte, error) {
 }
 
 // FetchCVAndSave fetches the CV for the given profile and saves it to temp file.
-func (a *App) FetchCVAndSave(profileID string) (string, error) {
+func (a *App) FetchCVAndSave(profileID string, language string) (string, error) {
 	pdfID, err := a.getPdfId(profileID)
 	if err != nil {
 		return "", fmt.Errorf("failed to get pdf id: %w", err)
@@ -252,7 +252,7 @@ func (a *App) FetchCVAndSave(profileID string) (string, error) {
 		return "", fmt.Errorf("failed to get pdf file whith id %s: %w", pdfID, err)
 	}
 
-	fileName, err := saveToTempDir(pdfContent)
+	fileName, err := saveToTempDir(pdfContent, language)
 	if err != nil {
 		return "", fmt.Errorf("failed to save pdf file to temp dir: %w", err)
 	}
@@ -262,8 +262,8 @@ func (a *App) FetchCVAndSave(profileID string) (string, error) {
 
 // saveToTempDir saves the content of the PDF in a temporary directory,
 // returns the path to the created file
-func saveToTempDir(content []byte) (string, error) {
-	file, err := os.CreateTemp("", "*.pdf")
+func saveToTempDir(content []byte, filename string) (string, error) {
+	file, err := os.CreateTemp("", fmt.Sprintf("%s.pdf", filename))
 	if err != nil {
 		return "", fmt.Errorf("failed to create temporary file: %w", err)
 	}

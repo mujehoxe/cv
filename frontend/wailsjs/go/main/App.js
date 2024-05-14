@@ -6,8 +6,8 @@ export function CreateCVProfile(arg1) {
   return window['go']['main']['App']['CreateCVProfile'](arg1);
 }
 
-export function FetchCVAndSave(arg1) {
-  return window['go']['main']['App']['FetchCVAndSave'](arg1);
+export function FetchCVAndSave(arg1, arg2) {
+  return window['go']['main']['App']['FetchCVAndSave'](arg1, arg2);
 }
 
 export function FetchDigitalSkillsAutocomplete(arg1) {

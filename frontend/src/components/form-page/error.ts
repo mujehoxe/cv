@@ -1,6 +1,6 @@
 export function renderError(err: string) {
-  const cvsPreview = document.querySelector("#notification")!;
-  cvsPreview!.innerHTML = `
+  const notifaction = document.querySelector("#notification")!;
+  notifaction!.innerHTML = `
 <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
   <div class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-zinc-700 shadow-lg ring-1 ring-white ring-opacity-5">
     <div class="p-4">
@@ -30,6 +30,6 @@ export function renderError(err: string) {
   document
     .getElementById("close-error-button")
     ?.addEventListener("click", () => {
-      cvsPreview!.innerHTML = "";
+      notifaction!.innerHTML = "";
     });
 }
