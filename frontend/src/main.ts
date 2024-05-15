@@ -1,14 +1,11 @@
+import { renderDashboard } from "./components/dashboard-page/dashboard";
+import { renderFormPage } from "./components/form-page/form-page";
 import "./index.css";
 
-import { renderUserInfoForm } from "./components/form";
-import { renderCvsPreviewSlideOver } from "./components/cvs-preview";
-import { renderFormLanguages } from "./utils/languages";
-
 document.querySelector("#app")!.innerHTML = `
-  <div id="root" class='h-screen'>
-    <div class="px-12 pt-4" id="form-languages-containter"></div>
-    <div class="px-12 py-4" id="info-form-container"></div>
-    <div id="cvs-preview" class="hidden"></div>
+  <div id="root" class='relative h-screen'>
+    <div class="px-12 pt-4" id="dashboard"></div>
+    <div class="absolute left-0 top-0 right-0 z-10 bg-zinc-900" id="form-page" hidden></div>
     <div
       id="notification"
       aria-live="assertive"
@@ -17,8 +14,5 @@ document.querySelector("#app")!.innerHTML = `
   </div>
 `;
 
-renderFormLanguages();
-
-renderUserInfoForm();
-
-renderCvsPreviewSlideOver();
+renderDashboard();
+renderFormPage();

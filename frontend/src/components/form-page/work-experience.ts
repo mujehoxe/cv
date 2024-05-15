@@ -1,12 +1,12 @@
-import { populateCountries } from "../utils/countries";
-import { WorkExperience } from "../utils/formDataExtraction";
-import { originalLanguage } from "../utils/languages";
+import { populateCountries } from "../../utils/countries";
+import { WorkExperience } from "../../utils/formDataExtraction";
+import { originalLanguage } from "../../utils/languages";
 import {
   elementTranslationsRendererFor,
   renderEmptyInputDivsForAllLanguages,
 } from "./translationsRenderer";
-import { CVProfileData } from "../utils/formDataExtraction";
-import { extractDateFrom } from "../utils/dateExtraction";
+import { CVProfileData } from "../../utils/formDataExtraction";
+import { extractDateFrom } from "../../utils/dateExtraction";
 
 export function initWorkExperienceFields() {
   const addWorkExperienceButton = document.getElementById(

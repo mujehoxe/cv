@@ -1,7 +1,7 @@
-import { Hobby } from "../utils/formDataExtraction";
-import { originalLanguage } from "../utils/languages";
+import { Hobby } from "../../utils/formDataExtraction";
+import { originalLanguage } from "../../utils/languages";
 import { elementTranslationsRendererFor } from "./translationsRenderer";
-import { CVProfileData } from "../utils/formDataExtraction";
+import { CVProfileData } from "../../utils/formDataExtraction";
 
 function initEducationTrainingFields() {
   const addEducationTrainingButton = document.getElementById("add-hobby")!;

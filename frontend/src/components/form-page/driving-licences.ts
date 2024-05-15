@@ -1,5 +1,5 @@
-import { extractDateFrom } from "../utils/dateExtraction";
-import { CVProfileData } from "../utils/formDataExtraction";
+import { extractDateFrom } from "../../utils/dateExtraction";
+import { CVProfileData } from "../../utils/formDataExtraction";
 
 export function renderDrivingLicencesForm() {
   const drivingLicences = document.getElementById("driving-licences");

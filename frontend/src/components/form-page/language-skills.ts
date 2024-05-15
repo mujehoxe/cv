@@ -2,8 +2,8 @@ import {
   CVProfileData,
   LanguageSkill,
   NonNativeLang,
-} from "../utils/formDataExtraction";
-import { allLanguages } from "../utils/languages";
+} from "../../utils/formDataExtraction";
+import { allLanguages } from "../../utils/languages";
 
 export function renderLanguageSkillsForm() {
   const languageSkillsContainer = document.getElementById("language-skills");

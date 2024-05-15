@@ -1,5 +1,9 @@
-import { Translate } from "../../wailsjs/go/main/App";
-import { Language, formLanguages, originalLanguage } from "../utils/languages";
+import { Translate } from "../../../wailsjs/go/main/App";
+import {
+  Language,
+  formLanguages,
+  originalLanguage,
+} from "../../utils/languages";
 import {
   removeLoadingIndicator,
   renderLoadingIndicator,

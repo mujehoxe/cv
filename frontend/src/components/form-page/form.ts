@@ -1,10 +1,13 @@
-import { CreateCVProfile, FetchCVAndSave } from "../../wailsjs/go/main/App";
-import { populateCountries, populatePhoneExtentions } from "../utils/countries";
+import { CreateCVProfile, FetchCVAndSave } from "../../../wailsjs/go/main/App";
+import {
+  populateCountries,
+  populatePhoneExtentions,
+} from "../../utils/countries";
 import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
 import { renderError } from "./error";
-import { extractProfileInfo } from "../utils/formDataExtraction";
+import { extractProfileInfo } from "../../utils/formDataExtraction";
 import { elementTranslationsRendererFor } from "./translationsRenderer";
-import { formLanguages, originalLanguage } from "../utils/languages";
+import { formLanguages, originalLanguage } from "../../utils/languages";
 import { renderWorkExperiencesForm } from "./work-experience";
 import { renderEducationTrainingsForm } from "./education-tranings";
 import { renderDrivingLicencesForm } from "./driving-licences";
