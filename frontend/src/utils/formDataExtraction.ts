@@ -7,7 +7,7 @@ import { extractWorkExperiencesInto } from "../components/form-page/work-experie
 import { extractHobbiesInto } from "../components/form-page/hobbies";
 import { extractOtherSectionInto } from "../components/form-page/other-section";
 
-export function extractProfileInfo(language: string) {
+export function extractProfileInfo() {
   //get profilePicture
   const profilePicture = (
     document.querySelector("#preview-img") as HTMLImageElement
@@ -17,9 +17,7 @@ export function extractProfileInfo(language: string) {
     .value;
   const lastName = (document.getElementById("last-name") as HTMLInputElement)
     .value;
-  const personalDescription =
-    (document.getElementById(`about-${language}`) as HTMLElement)?.innerHTML ||
-    "";
+
   const sex =
     (document.getElementById("gender") as HTMLInputElement).value === "male" ||
     (document.getElementById("gender") as HTMLInputElement).value === "female"
@@ -35,11 +33,10 @@ export function extractProfileInfo(language: string) {
 
   const data: CVProfileData = {
     profile: {
-      language: language,
+      language: "",
       personalInformation: {
         firstName,
         lastName,
-        personalDescription,
         sex,
         nationalities,
         emails,
@@ -50,7 +47,8 @@ export function extractProfileInfo(language: string) {
         dateFormat: "dd/MM/yyyy",
       },
     },
-    profilePicture,
+    profilePicture:
+      profilePicture && profilePicture != "" ? profilePicture : null,
     template: {
       closingStatement: null,
       color: "dark-blue",
@@ -62,16 +60,29 @@ export function extractProfileInfo(language: string) {
   };
 
   extractPhoneInto(data);
-  extractAddressInto(data, language);
-  extractWorkExperiencesInto(data, language);
-  extractEducationTrainingsInto(data, language);
   extractDrivingLicencesInto(data);
   extractLanguageSkillsInto(data);
   extractDigitalSkillsInto(data);
-  extractHobbiesInto(data, language);
-  extractOtherSectionInto(data, language);
 
   return data;
+}
+
+export function extractLanguageSpecificData(
+  data: CVProfileData,
+  language: string
+) {
+  const personalDescription =
+    (document.getElementById(`about-${language}`) as HTMLElement)?.innerHTML ||
+    "";
+
+  data.profile.language = language;
+  data.profile.personalInformation.personalDescription = personalDescription;
+
+  extractAddressInto(data, language);
+  extractWorkExperiencesInto(data, language);
+  extractEducationTrainingsInto(data, language);
+  extractHobbiesInto(data, language);
+  extractOtherSectionInto(data, language);
 }
 
 function extractAddressInto(data: CVProfileData, language: string) {

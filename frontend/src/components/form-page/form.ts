@@ -1,11 +1,19 @@
-import { CreateCVProfile, FetchCVAndSave } from "../../../wailsjs/go/main/App";
+import {
+  CreateCVProfile,
+  CreateProfile,
+  CreateUser,
+  FetchCVAndSave,
+} from "../../../wailsjs/go/main/App";
 import {
   populateCountries,
   populatePhoneExtentions,
 } from "../../utils/countries";
 import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
 import { renderError } from "./error";
-import { extractProfileInfo } from "../../utils/formDataExtraction";
+import {
+  extractLanguageSpecificData,
+  extractProfileInfo,
+} from "../../utils/formDataExtraction";
 import { elementTranslationsRendererFor } from "./translationsRenderer";
 import { formLanguages, originalLanguage } from "../../utils/languages";
 import { renderWorkExperiencesForm } from "./work-experience";
@@ -19,33 +27,7 @@ import {
 } from "./loadingIndicator";
 import { renderHobbiesForm } from "./hobbies";
 import { renderOtherSectionForm } from "./other-section";
-
-async function handleSubmit(e: SubmitEvent) {
-  e.preventDefault();
-  const loadingDiv = document.getElementById("loading") as HTMLElement;
-  renderLoadingIndicator(loadingDiv);
-
-  document.body.style.cursor = "progress";
-  const cvs = new Map();
-
-  for (const language in formLanguages) {
-    const data = extractProfileInfo(language);
-    try {
-      const profileId = await CreateCVProfile(JSON.stringify(data));
-      const cvPath = await FetchCVAndSave(profileId, language);
-      if (cvs.get(language) !== cvPath) {
-        cvs.set(language, cvPath);
-        renderPreviewPdf(cvPath, language);
-      }
-    } catch (err) {
-      console.error(err);
-      renderError(err as string);
-    }
-    showCvsPreviewSlideOver();
-  }
-  document.body.style.cursor = "default";
-  removeLoadingIndicator(loadingDiv);
-}
+import { renderUsers } from "../dashboard-page/dashboard";
 
 export function renderUserInfoForm() {
   document.querySelector("#info-form-container")!.innerHTML = `
@@ -73,7 +55,7 @@ export function renderUserInfoForm() {
             id="photo-input"
             type="file"
             class="hidden"
-            accept=".jpg,.jpeg,.png"
+            accept="image/jpeg,image/png,image/webp"
           />
           <button
             id="photo-btn"
@@ -516,4 +498,60 @@ export function renderUserInfoForm() {
 
   const form = document.getElementById("info-form");
   form?.addEventListener("submit", (e) => handleSubmit(e));
+}
+
+async function handleSubmit(e: SubmitEvent) {
+  e.preventDefault();
+  const loadingDiv = showLoading();
+
+  const cvs = new Map();
+
+  const data = extractProfileInfo();
+  let userId: number;
+  try {
+    userId = await CreateUser(
+      data!.profile.personalInformation.firstName,
+      data!.profile.personalInformation.lastName,
+      data!.profilePicture!
+    );
+  } catch (err) {
+    renderError(err as string);
+    return;
+  }
+  for (const language in formLanguages) {
+    extractLanguageSpecificData(data, language);
+    try {
+      const profileId = await CreateCVProfile(JSON.stringify(data));
+      const cvPath = await FetchCVAndSave(profileId, language);
+      if (cvs.get(language) !== cvPath) {
+        cvs.set(language, cvPath);
+        renderPreviewPdf(cvPath, language);
+        try {
+          await CreateProfile(userId, language, profileId);
+        } catch (err) {
+          renderError(err as string);
+          return;
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      renderError(err as string);
+    }
+    showCvsPreviewSlideOver();
+  }
+
+  renderUsers();
+  hideLoading(loadingDiv);
+}
+
+function hideLoading(loadingDiv: HTMLElement) {
+  document.body.style.cursor = "default";
+  removeLoadingIndicator(loadingDiv);
+}
+
+function showLoading() {
+  const loadingDiv = document.getElementById("loading") as HTMLElement;
+  renderLoadingIndicator(loadingDiv);
+  document.body.style.cursor = "progress";
+  return loadingDiv;
 }
