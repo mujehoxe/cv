@@ -1,4 +1,5 @@
 import { DeleteUser, GetUsersPaginated } from "../../../wailsjs/go/main/App";
+import { main } from "../../../wailsjs/go/models";
 import { showFormPage } from "../form-page/form-page";
 
 export function renderDashboard() {
@@ -7,8 +8,9 @@ export function renderDashboard() {
 	<div class="flex flex-col h-screen">
 		<h1 class="text-xl font-bold text-gray-200">Dashboard</h1>
 		<button id='create-cv-btn' class="bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-2 rounded mt-10">Create CV</button>
-		<ul id="cvs" class="flex flex-wrap gap-4 mt-4"></ul>
+		<ul id="cvs" class="flex flex-wrap gap-6 my-8"></ul>
 		<nav aria-label="Page navigation example">
+			<ul id="pagination" class="justify-content-center p-2 m-4 mx-24 bg-zinc-800 rounded-full"></ul>
 		</nav>
 	</div>
 	`;
@@ -21,7 +23,7 @@ export function renderDashboard() {
 }
 
 export async function renderUsers() {
-  const users = await getUsers();
+  const { users, total_count } = await getUsers();
 
   const cvsDiv = document.getElementById("cvs") as HTMLDivElement;
   cvsDiv.innerHTML = "";
@@ -31,13 +33,14 @@ export async function renderUsers() {
     cvsDiv.innerHTML = `${users
       .map(
         (user) =>
-          `<li>
+          `
+					<li>
             <a href="#" data-id="${
               user.id
-            }" class="flex flex-col w-64 items-center justify-center bg-zinc-800 p-2 rounded my-2">
+            }" class="flex flex-col w-64 items-center justify-center bg-zinc-800 p-2 rounded-md my-2">
                 ${
-                  user.picture
-                    ? `<img src="${user.picture}" id="preview-img" class="h-32 w-32 m-4 rounded-full object-cover" alt="user" />`
+                  user.picture && user.picture.String !== ""
+                    ? `<img src="${user.picture.String}" id="preview-img" class="h-32 w-32 m-4 rounded-full object-cover" alt="user" />`
                     : `<i id="profile-icon" class="fa-solid m-4 fa-circle-user text-center text-9xl h-32 w-32 text-gray-500"></i>`
                 }
 								<div class="font-semibold max-w-64 line-clamp-1">
@@ -47,9 +50,10 @@ export async function renderUsers() {
                   user.id
                 }" class="delete-btn fa-solid fa-trash bg-red-500 hover:bg-red-400 text-white px-3 py-2 rounded mt-10"></i>
             </a>
-        </li>`
+        	</li>
+					`
       )
-      .join("\n")}`;
+      .join("")}`;
   }
 
   cvsDiv.addEventListener("click", async (event) => {
@@ -61,19 +65,79 @@ export async function renderUsers() {
       renderUsers();
     }
   });
+
+  renderPagination(total_count);
 }
 
-async function getUsers() {
-  var pageNumber = 0;
-  const pageSize = 20;
-  var users = [];
+let pageNumber = 1;
+const pageSize = 3;
+
+function renderPagination(total_count: number) {
+  const paginationDiv = document.getElementById("pagination") as HTMLElement;
+  const pagesCount = Math.ceil(total_count / pageSize);
+  paginationDiv.innerHTML = `
+		<ul class="flex justify-between items-center px-2">
+			<li>
+				<button class="prev-btn btn">
+					<i class="fa-solid fa-chevron-left"></i>
+				</button>
+			</li>
+			${Array.from({ length: pagesCount }, (_, i) => i + 1)
+        .map((p) =>
+          //if selected
+          p === pageNumber
+            ? `<li>
+								<button class="bg-indigo-500 rounded-3xl w-8 h-8 text-center" data-page="${p}">
+									${p}
+								</button>
+							</li>`
+            : `<li>
+								<button class="rounded-full border w-8 h-8 text-center" data-page="${p}">
+									${p}
+								</button>
+							</li>`
+        )
+        .join("")}
+			<li>
+				<button class="next-btn btn">
+					<i class="fa-solid fa-chevron-right"></i>
+				</button>
+			</li>
+		</ul>
+	`;
+
+  const pageBtns = Array.from(document.getElementsByTagName("button"));
+  pageBtns.forEach((btn) => {
+    if (!btn.hasAttribute("data-page")) return;
+    btn.addEventListener("click", () => {
+      pageNumber = parseInt(btn.getAttribute("data-page")!);
+      renderUsers();
+    });
+  });
+
+  const prevBtn = document.querySelector(".prev-btn") as HTMLButtonElement;
+  const nextBtn = document.querySelector(".next-btn") as HTMLButtonElement;
+  prevBtn.addEventListener("click", () => {
+    if (pageNumber <= 1) return;
+    pageNumber--;
+    renderUsers();
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (pageNumber >= pagesCount) return;
+    pageNumber++;
+    renderUsers();
+  });
+}
+
+async function getUsers(): Promise<main.paginatedUsersResult> {
   try {
-    users = await GetUsersPaginated(pageNumber, pageSize);
-    console.log(users);
+    const result = await GetUsersPaginated(pageNumber, pageSize);
+    console.log(result);
+    return result;
   } catch (error) {
     console.log(error);
-    return [];
+    const users: main.User[] = [];
+    return { users, total_count: 0, convertValues: () => {} };
   }
-
-  return users;
 }
