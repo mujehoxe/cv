@@ -6,6 +6,18 @@ export function CreateCVProfile(arg1) {
   return window['go']['main']['App']['CreateCVProfile'](arg1);
 }
 
+export function CreateProfile(arg1, arg2, arg3) {
+  return window['go']['main']['App']['CreateProfile'](arg1, arg2, arg3);
+}
+
+export function CreateUser(arg1, arg2, arg3) {
+  return window['go']['main']['App']['CreateUser'](arg1, arg2, arg3);
+}
+
+export function DeleteUser(arg1) {
+  return window['go']['main']['App']['DeleteUser'](arg1);
+}
+
 export function FetchCVAndSave(arg1, arg2) {
   return window['go']['main']['App']['FetchCVAndSave'](arg1, arg2);
 }
@@ -18,8 +30,20 @@ export function GetPdfFile(arg1) {
   return window['go']['main']['App']['GetPdfFile'](arg1);
 }
 
+export function GetProfilesOfUser(arg1) {
+  return window['go']['main']['App']['GetProfilesOfUser'](arg1);
+}
+
+export function GetUsersPaginated(arg1, arg2) {
+  return window['go']['main']['App']['GetUsersPaginated'](arg1, arg2);
+}
+
 export function OpenPDF(arg1) {
   return window['go']['main']['App']['OpenPDF'](arg1);
+}
+
+export function SearchUsers(arg1) {
+  return window['go']['main']['App']['SearchUsers'](arg1);
 }
 
 export function Translate(arg1, arg2, arg3) {
@@ -32,4 +56,12 @@ export function TranslateHTML(arg1, arg2, arg3) {
 
 export function UpdateCVProfile(arg1, arg2) {
   return window['go']['main']['App']['UpdateCVProfile'](arg1, arg2);
+}
+
+export function UpdateProfile(arg1, arg2, arg3) {
+  return window['go']['main']['App']['UpdateProfile'](arg1, arg2, arg3);
+}
+
+export function UpdateUser(arg1, arg2, arg3, arg4) {
+  return window['go']['main']['App']['UpdateUser'](arg1, arg2, arg3, arg4);
 }
