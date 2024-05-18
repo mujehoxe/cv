@@ -1,6 +1,6 @@
 import {
   CreateCVProfile,
-  CreateProfile,
+  CreateOrUpdateProfile,
   CreateUser,
   FetchCVAndSave,
 } from "../../../wailsjs/go/main/App";
@@ -28,8 +28,9 @@ import {
 import { renderHobbiesForm } from "./hobbies";
 import { renderOtherSectionForm } from "./other-section";
 import { fetchAndRenderUsers } from "../dashboard-page/dashboard";
+import { main } from "../../../wailsjs/go/models";
 
-export function renderUserInfoForm() {
+export function renderUserInfoForm(userId?: number) {
   document.querySelector("#info-form-container")!.innerHTML = `
 <form id="info-form">
   <details open>
@@ -45,8 +46,9 @@ export function renderUserInfoForm() {
           >Photo</label
         >
         <div class="mt-2 flex items-center gap-x-3">
-          <i id="profile-icon"
-            class="fa-solid fa-circle-user text-5xl h-12 w-12 text-gray-500"></i>
+          <div id="profile-icon">
+            <i class="fa-solid fa-circle-user text-5xl h-12 w-12 text-gray-500"></i>
+          </div>
           <div id="preview" hidden class="relative">
             <img id="preview-img" class="h-12 w-12 rounded-full object-cover"></img>
             <i id="remove-photo-btn" class="fa-regular absolute bottom-0 right-0 fa-times text-red-500 hover:text-red-700"></i>
@@ -431,17 +433,18 @@ export function renderUserInfoForm() {
       const file = event.target.files[0];
       if (file) {
         reader.onload = () => {
-          (document.getElementById("preview-img") as HTMLImageElement).src =
+          (form?.querySelector("#preview-img") as HTMLImageElement).src =
             reader.result as string;
-          document.getElementById("preview")!.removeAttribute("hidden");
-          document
-            .querySelector("#profile-icon")!
-            .setAttribute("hidden", "true");
+          form?.querySelector("#preview")!.removeAttribute("hidden");
+          form?.querySelector("#profile-icon")!.setAttribute("hidden", "true");
         };
         reader.readAsDataURL(file);
       }
     });
   });
+
+  const form = document.getElementById("info-form");
+  form?.addEventListener("submit", (e) => handleSubmit(e, userId));
 
   //remove photo btn clicked
   const removePhotoBtn = document.getElementById(
@@ -453,9 +456,9 @@ export function renderUserInfoForm() {
     ) as HTMLImageElement;
     previewImg.src = "";
 
-    document.getElementById("profile-icon")!.removeAttribute("hidden");
+    form?.querySelector("#preview")!.setAttribute("hidden", "true");
 
-    document.getElementById("preview")!.setAttribute("hidden", "true");
+    form?.querySelector("#profile-icon")!.removeAttribute("hidden");
   });
 
   const nationality = document.getElementById(
@@ -495,29 +498,33 @@ export function renderUserInfoForm() {
   addSectionButton.addEventListener("click", () => {
     renderOtherSectionForm();
   });
-
-  const form = document.getElementById("info-form");
-  form?.addEventListener("submit", (e) => handleSubmit(e));
 }
 
-async function handleSubmit(e: SubmitEvent) {
+async function handleSubmit(e: SubmitEvent, userId?: number) {
   e.preventDefault();
   const loadingDiv = showLoading();
 
   const cvs = new Map();
 
   const data = extractProfileInfo();
-  let userId: number;
-  try {
-    userId = await CreateUser(
-      data!.profile.personalInformation.firstName,
-      data!.profile.personalInformation.lastName,
-      data!.profilePicture!
-    );
-  } catch (err) {
-    renderError(err as string);
-    return;
+  let user = {
+    id: userId,
+    first_name: data!.profile.personalInformation.firstName,
+    last_name: data!.profile.personalInformation.lastName,
+  } as main.User;
+  if (data.profilePicture)
+    user.picture = { String: data.profilePicture, Valid: true };
+  else user.picture = { String: "", Valid: false };
+
+  if (!userId) {
+    try {
+      user.id = await CreateUser(user);
+    } catch (err) {
+      renderError(err as string);
+      return;
+    }
   }
+
   for (const language in formLanguages) {
     extractLanguageSpecificData(data, language);
     try {
@@ -527,7 +534,7 @@ async function handleSubmit(e: SubmitEvent) {
         cvs.set(language, cvPath);
         renderPreviewPdf(cvPath, language);
         try {
-          await CreateProfile(userId, language, profileId);
+          await CreateOrUpdateProfile(user, language, profileId);
         } catch (err) {
           renderError(err as string);
           return;

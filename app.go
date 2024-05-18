@@ -161,6 +161,31 @@ func (a *App) UpdateCVProfile(profileID string, jsonData string) (string, error)
 	return result.ID, nil
 }
 
+// GetProfile gets a profile by its ID from europass
+func (a *App) GetProfile(profileId string) (any, error) {
+	url := "https://europa.eu/europass/eportfolio/api/eprofile/cv/" + profileId
+	reqOps := NewRequestOptionsBuilder("GET", url).
+		ExpectedStatusCode(http.StatusOK).
+		ContentType("application/json").
+		Accept("application/json").
+		Build()
+
+	resp, err := a.makeRequest(reqOps)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// unmarchal
+	var result any
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
 // getPdfId retrieves the PDF ID for a given profile ID.
 func (a *App) getPdfId(profileID string) (string, error) {
 	data := map[string]interface{}{

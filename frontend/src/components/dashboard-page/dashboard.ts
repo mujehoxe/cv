@@ -5,7 +5,11 @@ import {
 } from "../../../wailsjs/go/main/App";
 import { main } from "../../../wailsjs/go/models";
 import { renderError } from "../form-page/error";
-import { showFormPage } from "../form-page/form-page";
+import { showFormPage, showUpdateProfileForm } from "../form-page/form-page";
+import {
+  closeFloatingLoadingIndicator,
+  renderFloatingLoadingIndicator,
+} from "../form-page/loadingIndicator";
 
 const pageSize = 10;
 let pageNumber = 1;
@@ -95,7 +99,7 @@ function renderUsers(users: main.User[], ondelete: () => {}) {
       .map(
         (user) => `
 					<li>
-            <a href="#" data-id="${
+            <div href="#" data-id="${
               user.id
             }" class="flex flex-col w-64 items-center justify-center bg-zinc-800 p-2 rounded-md my-2">
                 ${
@@ -109,16 +113,30 @@ function renderUsers(users: main.User[], ondelete: () => {}) {
 								<i data-id="${
                   user.id
                 }" class="delete-btn fa-solid fa-trash bg-red-500 hover:bg-red-400 text-white px-3 py-2 rounded mt-10"></i>
-            </a>
+            </div>
         	</li>
 					`
       )
       .join("")}`;
   }
 
+  const lis = Array.from(document.querySelectorAll("#cvs > li"));
+  lis.forEach((li) => {
+    li.addEventListener("click", async () => {
+      const userId = li.children[0].getAttribute("data-id");
+      if (!userId) return;
+      renderFloatingLoadingIndicator("Getting Profile");
+      await showUpdateProfileForm(parseInt(userId));
+      setTimeout(() => {
+        closeFloatingLoadingIndicator();
+      }, 2000);
+    });
+  });
+
   const deleteBtns = Array.from(document.getElementsByClassName("delete-btn"));
   deleteBtns.forEach((btn) => {
-    btn.addEventListener("click", async () => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
       const userId = btn.getAttribute("data-id");
       if (!userId || !confirm("Are you sure?")) return;
       try {

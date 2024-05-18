@@ -17,7 +17,7 @@ export namespace main {
 	    }
 	}
 	export class User {
-	    id: string;
+	    id: number;
 	    first_name: string;
 	    last_name: string;
 	    // Go type: sql

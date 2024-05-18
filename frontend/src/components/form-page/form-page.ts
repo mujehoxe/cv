@@ -1,10 +1,13 @@
 import { renderUserInfoForm } from "./form";
 import { renderCvsPreviewSlideOver } from "./cvs-preview";
+import { GetProfilesOfUser } from "../../../wailsjs/go/main/App";
+import { fillForm } from "../../utils/formDataExtraction";
+import { renderError } from "./error";
 // import { renderFormLanguages } from "../../utils/languages";
 
 let formPage: HTMLDivElement;
 
-export function renderFormPage() {
+export function renderFormPage(userId?: number) {
   formPage = document.querySelector("#form-page")!;
   formPage.innerHTML = `
     <button id="close-page-button" type="button" class="fixed right-4 top-4 rounded-md bg-zinc-700 text-gray-300 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
@@ -22,7 +25,7 @@ export function renderFormPage() {
 
   // renderFormLanguages();
 
-  renderUserInfoForm();
+  renderUserInfoForm(userId);
 
   renderCvsPreviewSlideOver();
 
@@ -33,10 +36,23 @@ export function renderFormPage() {
     });
 }
 
-export function showFormPage() {
+export function showFormPage(userId?: number) {
+  renderFormPage(userId);
   formPage.removeAttribute("hidden");
 }
 
 export function hideFormPage() {
   formPage.setAttribute("hidden", "true");
+}
+
+export async function showUpdateProfileForm(userId: number) {
+  let profiles;
+  try {
+    profiles = await GetProfilesOfUser(userId);
+    showFormPage(userId);
+    fillForm(profiles);
+  } catch (err) {
+    console.error(err);
+    renderError(err as string);
+  }
 }

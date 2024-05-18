@@ -2,11 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -14,7 +12,7 @@ import (
 )
 
 type User struct {
-	ID           string         `json:"id"`
+	ID           int64          `json:"id"`
 	FirstName    string         `json:"first_name"`
 	LastName     string         `json:"last_name"`
 	Picture      sql.NullString `json:"picture"`
@@ -34,28 +32,14 @@ type paginatedUsersResult struct {
 }
 
 // Create a new user in the database
-func (a *App) CreateUser(firstName, lastName, picture string) (int64, error) {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return -1, fmt.Errorf("error getting home directory: %w", err)
-	}
-
-	picturePath := ""
-	if picture != "" {
-		location := filepath.Join(homeDir, "images")
-		picturePath, err = saveBase64ImageToLocalStorage(picture, location)
-		if err != nil {
-			return -1, fmt.Errorf("error saving image to local storage: %w", err)
-		}
-	}
-
-	stmt, err := GetDBInstance().
-		Prepare(`INSERT INTO users (first_name, last_name, picture) VALUES ($1, $2, $3)`)
+func (a *App) CreateUser(user User) (int64, error) {
+	stmt, err := a.db.Prepare(
+		`INSERT INTO users (first_name, last_name, picture) VALUES ($1, $2, $3)`)
 	if err != nil {
 		return -1, fmt.Errorf("error preparing statement: %w", err)
 	}
 
-	result, err := stmt.Exec(firstName, lastName, picturePath)
+	result, err := stmt.Exec(user.FirstName, user.LastName, user.Picture)
 	if err != nil {
 		return -1, fmt.Errorf("error executing statement: %w", err)
 	}
@@ -70,8 +54,8 @@ func (a *App) CreateUser(firstName, lastName, picture string) (int64, error) {
 
 // Update an existing user in the database
 func (a *App) UpdateUser(id int64, firstName, lastName, picture string) error {
-	stmt, err := GetDBInstance().Prepare(
-		`UPDATE users SET first_name = ?, last_name = ?, picture = ? date_modified = NOW() WHERE user_id = ?`)
+	stmt, err := a.db.Prepare(
+		`UPDATE users SET first_name = ?, last_name = ?, picture = ? date_modified = CURRENT_TIMESTAMP WHERE user_id = ?`)
 	if err != nil {
 		return fmt.Errorf("error preparing statement: %w", err)
 	}
@@ -85,44 +69,45 @@ func (a *App) UpdateUser(id int64, firstName, lastName, picture string) error {
 }
 
 // Create a new profile for a given user
-func (a *App) CreateProfile(userID int64, language, profileID string) (string, error) {
-	stmt, err := GetDBInstance().Prepare(
+// returns the newly created profile ID
+func (a *App) CreateProfile(userID int64, language, profileID string) error {
+	stmt, err := a.db.Prepare(
 		`INSERT INTO profiles (user_id, language, profile_id)
 		VALUES(?, ?, ?)`)
 	if err != nil {
-		return "", fmt.Errorf("error preparing statement: %w", err)
+		return fmt.Errorf("error preparing statement: %w", err)
 	}
 
 	result, err := stmt.Exec(userID, language, profileID)
 
 	if err != nil {
-		return "", fmt.Errorf("error executing statement: %w", err)
+		return fmt.Errorf("error executing statement: %w", err)
 	}
 
-	lastID, err := result.LastInsertId()
+	_, err = result.LastInsertId()
 	if err != nil {
-		return "", fmt.Errorf("error getting last insert ID: %w", err)
+		return fmt.Errorf("error getting last insert ID: %w", err)
 	}
 
-	return strconv.Itoa(int(lastID)), nil
+	return nil
 }
 
-func (a *App) UpdateProfile(userID int64, language, profileID string) error {
-	tx, err := GetDBInstance().Begin()
+func (a *App) UpdateProfileID(user User, language, profileID string) error {
+	tx, err := a.db.Begin()
 	if err != nil {
 		return fmt.Errorf("error beginning transaction: %w", err)
 	}
 	defer tx.Rollback()
 
-	queryProfile := `UPDATE profiles SET language =?, profile_id =? WHERE user_id =?`
-	_, err = tx.Exec(queryProfile, language, profileID, userID)
+	query := `UPDATE profiles SET profile_id =? WHERE user_id =? AND language =?`
+	_, err = tx.Exec(query, profileID, user.ID, language)
 	if err != nil {
 		tx.Rollback()
 		return fmt.Errorf("error updating profile: %w", err)
 	}
 
-	queryUser := `UPDATE users SET date_modified = CURRENT_TIMESTAMP WHERE id =?`
-	_, err = tx.Exec(queryUser, userID)
+	query = `UPDATE users SET first_name=?, last_name=?, picture=?, date_modified = CURRENT_TIMESTAMP WHERE id =?`
+	_, err = tx.Exec(query, user.FirstName, user.LastName, user.Picture, user.ID)
 	if err != nil {
 		tx.Rollback()
 		return fmt.Errorf("error updating user date_modified: %w", err)
@@ -134,6 +119,36 @@ func (a *App) UpdateProfile(userID int64, language, profileID string) error {
 	}
 
 	return nil
+}
+
+// CreateOrUpdateProfile creates or updates the profile for the given user and language
+func (a *App) CreateOrUpdateProfile(user User, language, profileID string) error {
+	p, err := a.getProfileByUserIdAndLang(user.ID, language)
+	if err != nil {
+		return fmt.Errorf("error getting profile by user ID: %w", err)
+	}
+
+	if p == nil {
+		return a.CreateProfile(user.ID, language, profileID)
+	}
+
+	return a.UpdateProfileID(user, language, profileID)
+}
+
+func (a *App) GetUserByID(userID int64) (*User, error) {
+	query := `SELECT id, first_name, last_name, picture FROM users WHERE id=?`
+	row := a.db.QueryRow(query, userID)
+
+	u := &User{}
+	err := row.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Picture)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("error scanning user: %w", err)
+	}
+
+	return u, nil
 }
 
 func rowsToUsers(rows *sql.Rows) ([]*User, error) {
@@ -237,7 +252,7 @@ func paginate(users []*User, page, pageSize int) []*User {
 
 // DeleteUser deletes the user with the given ID
 func (a *App) DeleteUser(userID int64) error {
-	_, err := GetDBInstance().Exec(`DELETE FROM users WHERE id = ?`, userID)
+	_, err := a.db.Exec(`DELETE FROM users WHERE id = ?`, userID)
 
 	if err != nil {
 		return fmt.Errorf("error deleting user: %w", err)
@@ -247,19 +262,45 @@ func (a *App) DeleteUser(userID int64) error {
 }
 
 // GetProfilesOfUser given user_id
-func (a *App) GetProfilesOfUser(userID int64) ([]*Profile, error) {
-	rows, err := GetDBInstance().Query(`SELECT p.*, u.first_name, u.last_name, u.picture FROM profiles AS p INNER JOIN users AS u ON p.user_id=u.id WHERE p.user_id=?`, userID)
+func (a *App) GetProfilesOfUser(userID int64) ([]*any, error) {
+	rows, err := a.db.Query(`SELECT * FROM profiles WHERE user_id = ?`, userID)
 	if err != nil {
 		return nil, fmt.Errorf("error getting profiles of user: %w", err)
 	}
 	defer rows.Close()
 
-	profiles, err := rowsToProfiles(rows)
+	dbProfiles, err := rowsToProfiles(rows)
 	if err != nil {
 		return nil, fmt.Errorf("error converting rows to profiles: %w", err)
 	}
 
+	var profiles []*any
+
+	for _, dbProfile := range dbProfiles {
+		profile, err := a.GetProfile(dbProfile.ProfileID)
+		if err != nil {
+			return nil, fmt.Errorf("error getting profile: %w", err)
+		}
+		profiles = append(profiles, &profile)
+	}
+
 	return profiles, nil
+}
+
+// getProfile by userId and language
+func (a *App) getProfileByUserIdAndLang(userId int64, lang string) (*Profile, error) {
+	row := a.db.QueryRow(
+		`SELECT * FROM profiles WHERE user_id = ? AND language = ?`, userId, lang)
+	profile := Profile{}
+	err := row.Scan(&profile.ProfileID, &profile.UserID, &profile.Language)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("error getting profile: %w", err)
+	}
+
+	return &profile, nil
 }
 
 // rowsToProfiles converts a sql row into a profile
@@ -267,7 +308,7 @@ func rowsToProfiles(rows *sql.Rows) ([]*Profile, error) {
 	profiles := []*Profile{}
 	for rows.Next() {
 		profile := Profile{}
-		err := rows.Scan(&profile.UserID, &profile.Language, &profile.UserID)
+		err := rows.Scan(&profile.ProfileID, &profile.UserID, &profile.Language)
 		if err != nil {
 			return nil, fmt.Errorf("error scanning row to profile: %w", err)
 		}

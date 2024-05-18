@@ -6,12 +6,16 @@ export function CreateCVProfile(arg1) {
   return window['go']['main']['App']['CreateCVProfile'](arg1);
 }
 
+export function CreateOrUpdateProfile(arg1, arg2, arg3) {
+  return window['go']['main']['App']['CreateOrUpdateProfile'](arg1, arg2, arg3);
+}
+
 export function CreateProfile(arg1, arg2, arg3) {
   return window['go']['main']['App']['CreateProfile'](arg1, arg2, arg3);
 }
 
-export function CreateUser(arg1, arg2, arg3) {
-  return window['go']['main']['App']['CreateUser'](arg1, arg2, arg3);
+export function CreateUser(arg1) {
+  return window['go']['main']['App']['CreateUser'](arg1);
 }
 
 export function DeleteUser(arg1) {
@@ -30,8 +34,16 @@ export function GetPdfFile(arg1) {
   return window['go']['main']['App']['GetPdfFile'](arg1);
 }
 
+export function GetProfile(arg1) {
+  return window['go']['main']['App']['GetProfile'](arg1);
+}
+
 export function GetProfilesOfUser(arg1) {
   return window['go']['main']['App']['GetProfilesOfUser'](arg1);
+}
+
+export function GetUserByID(arg1) {
+  return window['go']['main']['App']['GetUserByID'](arg1);
 }
 
 export function GetUsersPaginated(arg1, arg2) {
@@ -58,8 +70,8 @@ export function UpdateCVProfile(arg1, arg2) {
   return window['go']['main']['App']['UpdateCVProfile'](arg1, arg2);
 }
 
-export function UpdateProfile(arg1, arg2, arg3) {
-  return window['go']['main']['App']['UpdateProfile'](arg1, arg2, arg3);
+export function UpdateProfileID(arg1, arg2, arg3) {
+  return window['go']['main']['App']['UpdateProfileID'](arg1, arg2, arg3);
 }
 
 export function UpdateUser(arg1, arg2, arg3, arg4) {

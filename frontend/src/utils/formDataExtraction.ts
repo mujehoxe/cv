@@ -1,4 +1,4 @@
-import { extractDateFrom } from "./dateExtraction";
+import { extractDateFrom, fillDate } from "./dateExtraction";
 import { extractDigitalSkillsData as extractDigitalSkillsInto } from "../components/form-page/digital-skills";
 import { extractDrivingLicencesInto } from "../components/form-page/driving-licences";
 import { extractEducationTrainingsInto } from "../components/form-page/education-tranings";
@@ -8,27 +8,27 @@ import { extractHobbiesInto } from "../components/form-page/hobbies";
 import { extractOtherSectionInto } from "../components/form-page/other-section";
 
 export function extractProfileInfo() {
-  //get profilePicture
+  const form = document.getElementById("info-form")!;
+
   const profilePicture = (
-    document.querySelector("#preview-img") as HTMLImageElement
+    form.querySelector("#preview-img") as HTMLImageElement
   ).src;
 
-  const firstName = (document.getElementById("first-name") as HTMLInputElement)
+  const firstName = (form.querySelector("#first-name") as HTMLInputElement)
     .value;
-  const lastName = (document.getElementById("last-name") as HTMLInputElement)
-    .value;
+  const lastName = (form.querySelector("#last-name") as HTMLInputElement).value;
 
+  const gender = (form.querySelector("#gender") as HTMLInputElement).value;
   const sex =
-    (document.getElementById("gender") as HTMLInputElement).value === "male" ||
-    (document.getElementById("gender") as HTMLInputElement).value === "female"
-      ? (document.getElementById("gender") as HTMLInputElement).value
+    gender === "male" || gender === "female"
+      ? (form.querySelector("#gender") as HTMLInputElement).value
       : undefined;
   const nationalities = [
-    (document.getElementById("nationality") as HTMLSelectElement).value,
+    (form.querySelector("#nationality") as HTMLSelectElement).value,
   ];
-  const emails = [(document.getElementById("email") as HTMLInputElement).value];
+  const emails = [(form.querySelector("#email") as HTMLInputElement).value];
 
-  const birthDiv = document.getElementById("birthday") as HTMLDivElement;
+  const birthDiv = form.querySelector("#birthday") as HTMLDivElement;
   const dateOfBirth = extractDateFrom(birthDiv);
 
   const data: CVProfileData = {
@@ -129,6 +129,43 @@ function extractPhoneInto(data: CVProfileData) {
       data.profile.personalInformation.phones!.push(phone);
     }
   });
+}
+
+export function fillForm(profiles: CVProfileData[]) {
+  fillPersonalInfo(profiles[0].profile.personalInformation);
+  // fillPhone(profile);
+  // fillDrivingLicences(profile);
+  // fillLanguageSkills(profile);
+  // fillDigitalSkills(profile);
+  // fillAddress(profile)
+  // fillWorkExperiences(profile);
+  // fillEducations(profile);
+  // fillHobbies(profile);
+  // fillOtherSection(profile);
+}
+
+function fillPersonalInfo(personalInformation: PersonalInformation) {
+  (document.getElementById("first-name") as HTMLInputElement).value =
+    personalInformation.firstName;
+
+  (document.getElementById("last-name") as HTMLInputElement).value =
+    personalInformation.lastName;
+
+  (document.getElementById("email") as HTMLInputElement).value =
+    personalInformation.emails![0];
+
+  if (personalInformation.sex)
+    (document.getElementById("gender") as HTMLInputElement).value =
+      personalInformation.sex;
+
+  (document.getElementById("nationality") as HTMLInputElement).value =
+    personalInformation.nationalities![0];
+
+  personalInformation.dateOfBirth &&
+    fillDate(
+      personalInformation.dateOfBirth,
+      document.getElementById("birthday") as HTMLDivElement
+    );
 }
 
 interface SocialMediaWebsite {

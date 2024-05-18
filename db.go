@@ -45,7 +45,7 @@ func createUsersTable() {
 
 func createProfilesTable() {
 	_, err := GetDBInstance().Exec(`CREATE TABLE IF NOT EXISTS profiles (
-			profileId INTEGER PRIMARY KEY,
+			profileId TEXT PRIMARY KEY,
 			user_id INTEGER,
 			language TEXT NOT NULL,
 			FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
