@@ -13,12 +13,12 @@ import (
 )
 
 type User struct {
-	ID           string    `json:"id"`
-	FirstName    string    `json:"first_name"`
-	LastName     string    `json:"last_name"`
-	Picture      string    `json:"picture"`
-	DateModified time.Time `json:"date_modified"`
-	Profiles     []Profile `json:"profiles"`
+	ID           string         `json:"id"`
+	FirstName    string         `json:"first_name"`
+	LastName     string         `json:"last_name"`
+	Picture      sql.NullString `json:"picture"`
+	DateModified time.Time      `json:"date_modified"`
+	Profiles     []Profile      `json:"profiles"`
 }
 
 type Profile struct {

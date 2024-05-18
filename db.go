@@ -35,7 +35,7 @@ func createUsersTable() {
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		first_name TEXT NOT NULL,
 		last_name TEXT NOT NULL,
-		picture TEXT NOT NULL,
+		picture TEXT,
 		date_modified DATETIME DEFAULT CURRENT_TIMESTAMP
 	)`)
 	if err != nil {
