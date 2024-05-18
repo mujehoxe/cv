@@ -39,7 +39,7 @@ export function renderDashboard() {
     showFormPage();
   });
 
-  document.getElementById("search-box")?.addEventListener("change", () => {
+  document.getElementById("search-box")?.addEventListener("keyup", () => {
     pageNumber = 1;
     searchAndRenderUsers();
   });
