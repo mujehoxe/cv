@@ -1,16 +1,36 @@
-import { DeleteUser, GetUsersPaginated } from "../../../wailsjs/go/main/App";
+import {
+  DeleteUser,
+  GetUsersPaginated,
+  SearchUsers,
+} from "../../../wailsjs/go/main/App";
 import { main } from "../../../wailsjs/go/models";
+import { renderError } from "../form-page/error";
 import { showFormPage } from "../form-page/form-page";
+
+const pageSize = 10;
+let pageNumber = 1;
 
 export function renderDashboard() {
   //apply tailwind css classes
   document.querySelector("#dashboard")!.innerHTML = `
-	<div class="flex flex-col h-screen">
+	<div class="flex flex-col justify-center text-sm">
 		<h1 class="text-xl font-bold text-gray-200">Dashboard</h1>
-		<button id='create-cv-btn' class="bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-2 rounded mt-10">Create CV</button>
-		<ul id="cvs" class="flex flex-wrap gap-6 my-8"></ul>
-		<nav aria-label="Page navigation example">
-			<ul id="pagination" class="justify-content-center p-2 m-4 mx-24 bg-zinc-800 rounded-full"></ul>
+    <div class="mt-10 gap-10 flex flex-row justify-between items-center mb-10">
+      <input
+        type="text" 
+        placeholder="Rechercher par 'Nom' et / ou 'Prenom' ..."
+        class="border border-gray-600 bg-gray-800 w-full p-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        id="search-box"
+      />
+      <button
+        id='create-cv-btn'
+        class="bg-indigo-500 hover:bg-indigo-700 whitespace-nowrap text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-4 focus:ring-indigo-300">
+        + Create CV
+      </button>
+    </div>
+		<ul id="cvs" class="flex flex-wrap gap-6 my-8 h-full min-h-96 justify-center items-center"></ul>
+		<nav aria-label="Page navigation example" class="p-2 mx-24 m-4">
+			<ul id="pagination" class="justify-content-center bg-zinc-800 rounded-full"></ul>
 		</nav>
 	</div>
 	`;
@@ -19,12 +39,53 @@ export function renderDashboard() {
     showFormPage();
   });
 
-  renderUsers();
+  document.getElementById("search-box")?.addEventListener("change", () => {
+    pageNumber = 1;
+    searchAndRenderUsers();
+  });
+
+  fetchAndRenderUsers();
 }
 
-export async function renderUsers() {
-  const { users, total_count } = await getUsers();
+async function searchAndRenderUsers() {
+  const searchText = (document.getElementById("search-box") as HTMLInputElement)
+    .value;
+  //@ts-ignore
+  if (!searchText || searchText === "") {
+    pageNumber = 1;
+    fetchAndRenderUsers();
+    return;
+  }
 
+  try {
+    const { users, total_count } = await SearchUsers(
+      searchText,
+      pageNumber,
+      pageSize
+    );
+    renderUsers(users, searchAndRenderUsers);
+    renderPagination(total_count, searchAndRenderUsers);
+  } catch (err) {
+    console.log(err);
+    renderError(err as string);
+  }
+}
+
+export async function fetchAndRenderUsers() {
+  try {
+    const { users, total_count } = await GetUsersPaginated(
+      pageNumber,
+      pageSize
+    );
+    renderUsers(users, fetchAndRenderUsers);
+    renderPagination(total_count, fetchAndRenderUsers);
+  } catch (err) {
+    console.log(err);
+    renderError(err as string);
+  }
+}
+
+function renderUsers(users: main.User[], ondelete: () => {}) {
   const cvsDiv = document.getElementById("cvs") as HTMLDivElement;
   cvsDiv.innerHTML = "";
   if (users.length === 0) {
@@ -32,8 +93,7 @@ export async function renderUsers() {
   } else {
     cvsDiv.innerHTML = `${users
       .map(
-        (user) =>
-          `
+        (user) => `
 					<li>
             <a href="#" data-id="${
               user.id
@@ -56,23 +116,23 @@ export async function renderUsers() {
       .join("")}`;
   }
 
-  cvsDiv.addEventListener("click", async (event) => {
-    const target = event.target as HTMLElement;
-    if (target.classList.contains("delete-btn")) {
-      const userId = target.getAttribute("data-id") as string;
-      if (!confirm("Are you sure?")) return;
-      await DeleteUser(parseInt(userId));
-      renderUsers();
-    }
+  const deleteBtns = Array.from(document.getElementsByClassName("delete-btn"));
+  deleteBtns.forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const userId = btn.getAttribute("data-id");
+      if (!userId || !confirm("Are you sure?")) return;
+      try {
+        await DeleteUser(parseInt(userId));
+        ondelete();
+      } catch (err) {
+        console.error(err);
+        renderError(err as string);
+      }
+    });
   });
-
-  renderPagination(total_count);
 }
 
-let pageNumber = 1;
-const pageSize = 3;
-
-function renderPagination(total_count: number) {
+function renderPagination(total_count: number, onchange: () => {}) {
   const paginationDiv = document.getElementById("pagination") as HTMLElement;
   const pagesCount = Math.ceil(total_count / pageSize);
   paginationDiv.innerHTML = `
@@ -111,7 +171,7 @@ function renderPagination(total_count: number) {
     if (!btn.hasAttribute("data-page")) return;
     btn.addEventListener("click", () => {
       pageNumber = parseInt(btn.getAttribute("data-page")!);
-      renderUsers();
+      onchange();
     });
   });
 
@@ -120,24 +180,12 @@ function renderPagination(total_count: number) {
   prevBtn.addEventListener("click", () => {
     if (pageNumber <= 1) return;
     pageNumber--;
-    renderUsers();
+    onchange();
   });
 
   nextBtn.addEventListener("click", () => {
     if (pageNumber >= pagesCount) return;
     pageNumber++;
-    renderUsers();
+    onchange();
   });
-}
-
-async function getUsers(): Promise<main.paginatedUsersResult> {
-  try {
-    const result = await GetUsersPaginated(pageNumber, pageSize);
-    console.log(result);
-    return result;
-  } catch (error) {
-    console.log(error);
-    const users: main.User[] = [];
-    return { users, total_count: 0, convertValues: () => {} };
-  }
 }

@@ -156,8 +156,8 @@ func rowsToUsers(rows *sql.Rows) ([]*User, error) {
 // GetUsersPaginated returns all users from the database,
 // Paginated by page number and size,
 // Along with the total count of users
-func (a *App) GetUsersPaginated(page int64, pageSize int64) (paginatedUsersResult,
-	error) {
+func (a *App) GetUsersPaginated(
+	page int64, pageSize int64) (paginatedUsersResult, error) {
 
 	countRow := a.db.QueryRow(`SELECT COUNT(*) FROM users`)
 	var count int64
@@ -203,15 +203,35 @@ func getAllUsers() ([]*User, error) {
 }
 
 // SearchUsers searches for users based on their first_name and/or last_name
-func (a *App) SearchUsers(searchTerm string) ([]*User, error) {
+// Along with totalCount of users that match the search term
+func (a *App) SearchUsers(
+	searchTerm string, page, pageSize int) (paginatedUsersResult, error) {
+
 	users, err := getAllUsers()
 	if err != nil {
-		return nil, fmt.Errorf("error searching users: %w", err)
+		return paginatedUsersResult{}, fmt.Errorf("error getting all users: %w", err)
 	}
 
-	fuzzySearchUsers(users, searchTerm)
+	filteredUsers := fuzzySearchUsers(users, searchTerm)
+	// paginated results
+	paginatedUsers := paginate(filteredUsers, page, pageSize)
+	return paginatedUsersResult{
+		Users: paginatedUsers, TotalCount: int64(len(filteredUsers))}, nil
+}
 
-	return users, nil
+func paginate(users []*User, page, pageSize int) []*User {
+	startIndex := (page - 1) * pageSize
+	endIndex := startIndex + pageSize
+
+	if endIndex > len(users) {
+		endIndex = len(users)
+	}
+
+	if startIndex < 0 {
+		startIndex = 0
+	}
+
+	return users[startIndex:endIndex]
 }
 
 // DeleteUser deletes the user with the given ID
@@ -257,18 +277,19 @@ func rowsToProfiles(rows *sql.Rows) ([]*Profile, error) {
 }
 
 // fuzzySearchUsers takes in an array of users and returns the ones that match the search term
-func fuzzySearchUsers(users []*User, searchTerm string) []User {
+func fuzzySearchUsers(users []*User, searchTerm string) []*User {
 	var userNames []string
 	for _, u := range users {
 		userNames = append(userNames, u.FirstName+" "+u.LastName)
 	}
 
 	ranks := fuzzy.RankFind(searchTerm, userNames)
-	sort.SliceStable(ranks, func(i, j int) bool { return ranks[i].Distance < ranks[j].Distance })
+	sort.SliceStable(ranks,
+		func(i, j int) bool { return ranks[i].Distance < ranks[j].Distance })
 
-	filteredUsers := make([]User, len(ranks))
-	for i, rank := range ranks {
-		filteredUsers[i] = *users[rank.OriginalIndex]
+	filteredUsers := []*User{}
+	for _, rank := range ranks {
+		filteredUsers = append(filteredUsers, users[rank.OriginalIndex])
 	}
 
 	return filteredUsers

@@ -22,7 +22,7 @@ export function GetUsersPaginated(arg1:number,arg2:number):Promise<main.paginate
 
 export function OpenPDF(arg1:string):Promise<void>;
 
-export function SearchUsers(arg1:string):Promise<Array<main.User>>;
+export function SearchUsers(arg1:string,arg2:number,arg3:number):Promise<main.paginatedUsersResult>;
 
 export function Translate(arg1:string,arg2:string,arg3:string):Promise<string>;
 

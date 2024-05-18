@@ -42,8 +42,8 @@ export function OpenPDF(arg1) {
   return window['go']['main']['App']['OpenPDF'](arg1);
 }
 
-export function SearchUsers(arg1) {
-  return window['go']['main']['App']['SearchUsers'](arg1);
+export function SearchUsers(arg1, arg2, arg3) {
+  return window['go']['main']['App']['SearchUsers'](arg1, arg2, arg3);
 }
 
 export function Translate(arg1, arg2, arg3) {

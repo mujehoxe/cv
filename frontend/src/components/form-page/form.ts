@@ -27,7 +27,7 @@ import {
 } from "./loadingIndicator";
 import { renderHobbiesForm } from "./hobbies";
 import { renderOtherSectionForm } from "./other-section";
-import { renderUsers } from "../dashboard-page/dashboard";
+import { fetchAndRenderUsers } from "../dashboard-page/dashboard";
 
 export function renderUserInfoForm() {
   document.querySelector("#info-form-container")!.innerHTML = `
@@ -540,7 +540,7 @@ async function handleSubmit(e: SubmitEvent) {
     showCvsPreviewSlideOver();
   }
 
-  renderUsers();
+  fetchAndRenderUsers();
   hideLoading(loadingDiv);
 }
 
