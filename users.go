@@ -27,6 +27,11 @@ type Profile struct {
 	UserID    int64  `json:"user_id"`
 }
 
+type paginatedUsersResult struct {
+	TotalCount int64   `json:"total_count"`
+	Users      []*User `json:"users"`
+}
+
 // Create a new user in the database
 func (a *App) CreateUser(firstName, lastName, picture string) (int64, error) {
 	homeDir, err := os.UserHomeDir()
@@ -130,15 +135,15 @@ func (a *App) UpdateProfile(userID int64, language, profileID string) error {
 	return nil
 }
 
-func rowsToUsers(rows *sql.Rows) ([]User, error) {
-	var users []User
+func rowsToUsers(rows *sql.Rows) ([]*User, error) {
+	var users []*User
 	for rows.Next() {
 		var u User
 		err := rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Picture)
 		if err != nil {
 			return nil, fmt.Errorf("error scanning user: %w", err)
 		}
-		users = append(users, u)
+		users = append(users, &u)
 	}
 
 	if err := rows.Err(); err != nil {
@@ -148,27 +153,40 @@ func rowsToUsers(rows *sql.Rows) ([]User, error) {
 	return users, nil
 }
 
-// GetUsersPaginated returns all users from the database, paginated by page number and size
-func (a *App) GetUsersPaginated(page int64, pageSize int64) ([]User, error) {
-	rows, err := GetDBInstance().Query(
-		`SELECT id, first_name, last_name, picture FROM users ORDER BY date_modified DESC LIMIT ? OFFSET ?`,
-		pageSize,
-		page*pageSize)
+// GetUsersPaginated returns all users from the database,
+// Paginated by page number and size,
+// Along with the total count of users
+func (a *App) GetUsersPaginated(page int64, pageSize int64) (paginatedUsersResult,
+	error) {
+
+	countRow := a.db.QueryRow(`SELECT COUNT(*) FROM users`)
+	var count int64
+	err := countRow.Scan(&count)
 	if err != nil {
-		return nil, fmt.Errorf("error getting users: %w", err)
+		return paginatedUsersResult{}, fmt.Errorf("error getting count of users: %w", err)
+	}
+
+	rows, err := a.db.Query(`SELECT id, first_name, last_name, picture FROM users ORDER BY date_modified DESC LIMIT ? OFFSET ?`,
+		pageSize,
+		(page-1)*pageSize)
+	if err != nil {
+		return paginatedUsersResult{}, fmt.Errorf("error querying users: %w", err)
 	}
 	defer rows.Close()
 
 	users, err := rowsToUsers(rows)
 	if err != nil {
-		return nil, fmt.Errorf("error converting rows to users: %w", err)
+		return paginatedUsersResult{}, fmt.Errorf("error converting rows to users: %w", err)
 	}
 
-	return users, nil
+	return paginatedUsersResult{
+		TotalCount: count,
+		Users:      users,
+	}, nil
 }
 
 // GetAllUsers returns all users from the database
-func getAllUsers() ([]User, error) {
+func getAllUsers() ([]*User, error) {
 	rows, err := GetDBInstance().Query(
 		`SELECT id, first_name, last_name, picture FROM users ORDER BY date_modified DESC`)
 	if err != nil {
@@ -185,7 +203,7 @@ func getAllUsers() ([]User, error) {
 }
 
 // SearchUsers searches for users based on their first_name and/or last_name
-func (a *App) SearchUsers(searchTerm string) ([]User, error) {
+func (a *App) SearchUsers(searchTerm string) ([]*User, error) {
 	users, err := getAllUsers()
 	if err != nil {
 		return nil, fmt.Errorf("error searching users: %w", err)
@@ -208,7 +226,7 @@ func (a *App) DeleteUser(userID int64) error {
 }
 
 // GetProfilesOfUser given user_id
-func (a *App) GetProfilesOfUser(userID int64) ([]Profile, error) {
+func (a *App) GetProfilesOfUser(userID int64) ([]*Profile, error) {
 	rows, err := GetDBInstance().Query(`SELECT p.*, u.first_name, u.last_name, u.picture FROM profiles AS p INNER JOIN users AS u ON p.user_id=u.id WHERE p.user_id=?`, userID)
 	if err != nil {
 		return nil, fmt.Errorf("error getting profiles of user: %w", err)
@@ -224,22 +242,22 @@ func (a *App) GetProfilesOfUser(userID int64) ([]Profile, error) {
 }
 
 // rowsToProfiles converts a sql row into a profile
-func rowsToProfiles(rows *sql.Rows) ([]Profile, error) {
-	profiles := make([]Profile, 0)
+func rowsToProfiles(rows *sql.Rows) ([]*Profile, error) {
+	profiles := []*Profile{}
 	for rows.Next() {
 		profile := Profile{}
 		err := rows.Scan(&profile.UserID, &profile.Language, &profile.UserID)
 		if err != nil {
 			return nil, fmt.Errorf("error scanning row to profile: %w", err)
 		}
-		profiles = append(profiles, profile)
+		profiles = append(profiles, &profile)
 	}
 
 	return profiles, nil
 }
 
 // fuzzySearchUsers takes in an array of users and returns the ones that match the search term
-func fuzzySearchUsers(users []User, searchTerm string) []User {
+func fuzzySearchUsers(users []*User, searchTerm string) []User {
 	var userNames []string
 	for _, u := range users {
 		userNames = append(userNames, u.FirstName+" "+u.LastName)
@@ -250,7 +268,7 @@ func fuzzySearchUsers(users []User, searchTerm string) []User {
 
 	filteredUsers := make([]User, len(ranks))
 	for i, rank := range ranks {
-		filteredUsers[i] = users[rank.OriginalIndex]
+		filteredUsers[i] = *users[rank.OriginalIndex]
 	}
 
 	return filteredUsers

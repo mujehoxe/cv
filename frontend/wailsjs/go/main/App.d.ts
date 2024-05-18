@@ -18,7 +18,7 @@ export function GetPdfFile(arg1:string):Promise<Array<number>>;
 
 export function GetProfilesOfUser(arg1:number):Promise<Array<main.Profile>>;
 
-export function GetUsersPaginated(arg1:number,arg2:number):Promise<Array<main.User>>;
+export function GetUsersPaginated(arg1:number,arg2:number):Promise<main.paginatedUsersResult>;
 
 export function OpenPDF(arg1:string):Promise<void>;
 
