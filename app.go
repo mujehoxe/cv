@@ -3,7 +3,10 @@ package main
 import (
 	"bytes"
 	"context"
+	"database/sql"
+	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -11,11 +14,12 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
 
-	translator "github.com/Conight/go-googletrans"
+	"github.com/google/uuid"
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -23,12 +27,17 @@ import (
 type App struct {
 	ctx    context.Context
 	client *http.Client
+	db     *sql.DB
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
+	createUsersTable()
+	createProfilesTable()
+
 	return &App{
 		client: &http.Client{},
+		db:     GetDBInstance(),
 	}
 }
 
@@ -284,7 +293,50 @@ func saveToTempDir(content []byte, fileName string) (string, error) {
 	return file.Name(), nil
 }
 
-// GetPdfFile returns byte[]
+func saveBase64ImageToLocalStorage(image, location string) (string, error) {
+	parts := strings.SplitN(image, ";", 2)
+	if len(parts) < 2 {
+		return "", errors.New("invalid image format")
+	}
+
+	mimeType := strings.Split(parts[0], ":")[1]
+	dataString := parts[1]
+	dataString = strings.TrimPrefix(dataString, "base64,")
+	data, err := base64.StdEncoding.DecodeString(dataString)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode image data: %w", err)
+	}
+
+	var extension string
+	switch mimeType {
+	case "image/jpeg":
+		extension = ".jpg"
+	case "image/png":
+		extension = ".png"
+	case "image/webp":
+		extension = ".webp"
+	default:
+		return "", fmt.Errorf("unsupported image type: %s", mimeType)
+	}
+
+	if _, err := os.Stat(location); os.IsNotExist(err) {
+		err := os.MkdirAll(location, 0755)
+		if err != nil {
+			return "", fmt.Errorf("failed to create directory: %w", err)
+		}
+	}
+
+	fileName := uuid.New().String() + extension
+	path := filepath.Join(location, fileName)
+	err = os.WriteFile(path, data, 0644)
+	if err != nil {
+		return "", fmt.Errorf("failed to write image to file: %w", err)
+	}
+
+	return path, nil
+}
+
+// GetPdfFile returns the content of the PDF file at the given path
 func (a *App) GetPdfFile(filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -317,58 +369,6 @@ func (a *App) OpenPDF(path string) error {
 	}
 
 	return nil
-}
-
-// Translate translates text from one language to another
-func (a *App) Translate(text string, sourceLanguage string, targetLanguage string) (string, error) {
-	t := translator.New()
-
-	result, err := t.Translate(text, sourceLanguage, targetLanguage)
-	if err != nil {
-		return "", fmt.Errorf("failed to translate: %w", err)
-	}
-
-	return result.Text, nil
-}
-
-// TranslateHTML takes an html string and returns the translated version of it
-func (a *App) TranslateHTML(html string, sourceLanguage string, targetLanguage string) (string, error) {
-	data := url.Values{
-		"q":      []string{html},
-		"source": []string{strings.ToLower(sourceLanguage)},
-		"target": []string{strings.ToLower(targetLanguage)},
-		"format": []string{"html"},
-	}
-
-	req, err := http.NewRequest("POST", "http://localhost:5000/translate", strings.NewReader(data.Encode()))
-	if err != nil {
-		return "", fmt.Errorf("failed to create request: %w", err)
-	}
-
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded") // Ensure the content type is set correctly for form data
-
-	resp, err := a.client.Do(req)
-	if err != nil {
-		return "", fmt.Errorf("failed to send request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		return "", fmt.Errorf("server responded with status code: %d, message: %s", resp.StatusCode, string(body))
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", fmt.Errorf("error reading response body: %w", err)
-	}
-
-	var result map[string]string
-	if err := json.Unmarshal(body, &result); err != nil {
-		return "", fmt.Errorf("error unmarshalling response body: %w", err)
-	}
-
-	return result["translatedText"], nil
 }
 
 // Get the list of digital skills from europass

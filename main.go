@@ -37,6 +37,7 @@ func (h *FileLoader) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 func main() {
 	app := NewApp()
+	defer app.db.Close()
 
 	err := wails.Run(&options.App{
 		Title:            "cv",
