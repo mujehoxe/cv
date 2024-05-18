@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/lithammer/fuzzysearch/fuzzy"
@@ -280,10 +281,10 @@ func rowsToProfiles(rows *sql.Rows) ([]*Profile, error) {
 func fuzzySearchUsers(users []*User, searchTerm string) []*User {
 	var userNames []string
 	for _, u := range users {
-		userNames = append(userNames, u.FirstName+" "+u.LastName)
+		userNames = append(userNames, strings.ToLower(u.FirstName+" "+u.LastName))
 	}
 
-	ranks := fuzzy.RankFind(searchTerm, userNames)
+	ranks := fuzzy.RankFind(strings.ToLower(searchTerm), userNames)
 	sort.SliceStable(ranks,
 		func(i, j int) bool { return ranks[i].Distance < ranks[j].Distance })
 
