@@ -331,14 +331,15 @@ function extractEducationTrainingData(
     startDate,
     endDate,
     ongoing,
-    studyFields: studyField
-      ? [
-          {
-            content: studyField.innerText,
-            studyFieldCategoryType: "freeText",
-          },
-        ]
-      : [],
+    studyFields:
+      studyField && studyField.innerText !== ""
+        ? [
+            {
+              content: studyField.innerText,
+              studyFieldCategoryType: "freeText",
+            },
+          ]
+        : [],
   };
 }
 
