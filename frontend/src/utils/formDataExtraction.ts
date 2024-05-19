@@ -133,6 +133,7 @@ function extractPhoneInto(data: CVProfileData) {
 
 export function fillForm(profiles: CVProfileData[]) {
   fillPersonalInfo(profiles[0].profile.personalInformation);
+  fillProfileImage(profiles[0].profilePicture);
   // fillPhone(profile);
   // fillDrivingLicences(profile);
   // fillLanguageSkills(profile);
@@ -166,6 +167,16 @@ function fillPersonalInfo(personalInformation: PersonalInformation) {
       personalInformation.dateOfBirth,
       document.getElementById("birthday") as HTMLDivElement
     );
+}
+
+function fillProfileImage(profilePicture: any) {
+  if (!profilePicture || profilePicture == "") return;
+  const form = document.getElementById("info-form")!;
+  const profilePic = form.querySelector("#preview-img") as HTMLImageElement;
+  profilePic.src = profilePicture;
+  profilePic.parentElement?.removeAttribute("hidden");
+  const profileIcon = form.querySelector("#profile-icon") as HTMLDivElement;
+  profileIcon.setAttribute("hidden", "true");
 }
 
 interface SocialMediaWebsite {
