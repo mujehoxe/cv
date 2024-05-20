@@ -22,8 +22,8 @@ import { renderDrivingLicencesForm } from "./driving-licences";
 import { renderLanguageSkillsForm } from "./language-skills";
 import { renderDigitalSkillsForm } from "./digital-skills";
 import {
-  removeLoadingIndicator,
-  renderLoadingIndicator,
+  closeFloatingLoadingIndicator,
+  renderFloatingLoadingIndicator,
 } from "./loadingIndicator";
 import { renderHobbiesForm } from "./hobbies";
 import { renderOtherSectionForm } from "./other-section";
@@ -500,7 +500,7 @@ export function renderUserInfoForm(userId?: number) {
 
 async function handleSubmit(e: SubmitEvent, userId?: number) {
   e.preventDefault();
-  const loadingDiv = showLoading();
+  showLoading();
 
   const cvs = new Map();
 
@@ -551,17 +551,15 @@ async function handleSubmit(e: SubmitEvent, userId?: number) {
   }
 
   fetchAndRenderUsers();
-  hideLoading(loadingDiv);
+  hideLoading();
 }
 
-function hideLoading(loadingDiv: HTMLElement) {
+function hideLoading() {
   document.body.style.cursor = "default";
-  removeLoadingIndicator(loadingDiv);
+  closeFloatingLoadingIndicator();
 }
 
 function showLoading() {
-  const loadingDiv = document.getElementById("loading") as HTMLElement;
-  renderLoadingIndicator(loadingDiv);
+  renderFloatingLoadingIndicator("Patienter pendant la création de CV");
   document.body.style.cursor = "progress";
-  return loadingDiv;
 }
