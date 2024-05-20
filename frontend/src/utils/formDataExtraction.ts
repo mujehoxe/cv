@@ -6,6 +6,7 @@ import { extractLanguageSkillsData as extractLanguageSkillsInto } from "../compo
 import { extractWorkExperiencesInto } from "../components/form-page/work-experience";
 import { extractHobbiesInto } from "../components/form-page/hobbies";
 import { extractOtherSectionInto } from "../components/form-page/other-section";
+import { main } from "../../wailsjs/go/models";
 
 export function extractProfileInfo() {
   const form = document.getElementById("info-form")!;
@@ -131,7 +132,13 @@ function extractPhoneInto(data: CVProfileData) {
   });
 }
 
-export function fillForm(profiles: CVProfileData[]) {
+export function fillForm(dbProfiles: main.Profile[]) {
+  //map transform main.Profile[] to CVProfileData[]
+  const profiles: CVProfileData[] = dbProfiles.map((profile) => {
+    if (profile.json.String == "" || !profile.json.Valid) return {};
+    return JSON.parse(profile.json.String);
+  });
+
   fillPersonalInfo(profiles[0].profile.personalInformation);
   fillProfileImage(profiles[0].profilePicture);
   // fillPhone(profile);

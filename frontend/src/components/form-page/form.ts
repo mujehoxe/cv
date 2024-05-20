@@ -534,7 +534,12 @@ async function handleSubmit(e: SubmitEvent, userId?: number) {
         cvs.set(language, cvPath);
         renderPreviewPdf(cvPath, language);
         try {
-          await CreateOrUpdateProfile(user, language, profileId);
+          await CreateOrUpdateProfile(
+            user,
+            language,
+            profileId,
+            JSON.stringify(data)
+          );
         } catch (err) {
           renderError(err as string);
           return;

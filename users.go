@@ -21,9 +21,10 @@ type User struct {
 }
 
 type Profile struct {
-	ProfileID string `json:"profile_id"`
-	Language  string `json:"language"`
-	UserID    int64  `json:"user_id"`
+	ProfileID string         `json:"profile_id"`
+	Language  string         `json:"language"`
+	UserID    int64          `json:"user_id"`
+	Json      sql.NullString `json:"json"`
 }
 
 type paginatedUsersResult struct {
@@ -70,15 +71,15 @@ func (a *App) UpdateUser(id int64, firstName, lastName, picture string) error {
 
 // Create a new profile for a given user
 // returns the newly created profile ID
-func (a *App) CreateProfile(userID int64, language, profileID string) error {
+func (a *App) CreateProfile(userID int64, language, profileID, json string) error {
 	stmt, err := a.db.Prepare(
-		`INSERT INTO profiles (user_id, language, profile_id)
-		VALUES(?, ?, ?)`)
+		`INSERT INTO profiles (user_id, language, profile_id, json)
+		VALUES(?, ?, ?, ?)`)
 	if err != nil {
 		return fmt.Errorf("error preparing statement: %w", err)
 	}
 
-	result, err := stmt.Exec(userID, language, profileID)
+	result, err := stmt.Exec(userID, language, profileID, json)
 
 	if err != nil {
 		return fmt.Errorf("error executing statement: %w", err)
@@ -121,18 +122,47 @@ func (a *App) UpdateProfileID(user User, language, profileID string) error {
 	return nil
 }
 
+func (a *App) updateProfile(user User, language, json string) error {
+	tx, err := a.db.Begin()
+	if err != nil {
+		return fmt.Errorf("error beginning transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	query := `UPDATE profiles SET json =? WHERE user_id =? AND language =?`
+	_, err = tx.Exec(query, json, user.ID, language)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("error updating profile: %w", err)
+	}
+
+	query = `UPDATE users SET first_name=?, last_name=?, picture=?, date_modified = CURRENT_TIMESTAMP WHERE id =?`
+	_, err = tx.Exec(query, user.FirstName, user.LastName, user.Picture, user.ID)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("error updating user date_modified: %w", err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("error committing transaction: %w", err)
+	}
+
+	return nil
+}
+
 // CreateOrUpdateProfile creates or updates the profile for the given user and language
-func (a *App) CreateOrUpdateProfile(user User, language, profileID string) error {
+func (a *App) CreateOrUpdateProfile(user User, language, profileID, json string) error {
 	p, err := a.getProfileByUserIdAndLang(user.ID, language)
 	if err != nil {
 		return fmt.Errorf("error getting profile by user ID: %w", err)
 	}
 
 	if p == nil {
-		return a.CreateProfile(user.ID, language, profileID)
+		return a.CreateProfile(user.ID, language, profileID, json)
 	}
 
-	return a.UpdateProfileID(user, language, profileID)
+	return a.updateProfile(user, language, json)
 }
 
 func (a *App) GetUserByID(userID int64) (*User, error) {
@@ -262,26 +292,16 @@ func (a *App) DeleteUser(userID int64) error {
 }
 
 // GetProfilesOfUser given user_id
-func (a *App) GetProfilesOfUser(userID int64) ([]*any, error) {
+func (a *App) GetProfilesOfUser(userID int64) ([]*Profile, error) {
 	rows, err := a.db.Query(`SELECT * FROM profiles WHERE user_id = ?`, userID)
 	if err != nil {
 		return nil, fmt.Errorf("error getting profiles of user: %w", err)
 	}
 	defer rows.Close()
 
-	dbProfiles, err := rowsToProfiles(rows)
+	profiles, err := rowsToProfiles(rows)
 	if err != nil {
 		return nil, fmt.Errorf("error converting rows to profiles: %w", err)
-	}
-
-	var profiles []*any
-
-	for _, dbProfile := range dbProfiles {
-		profile, err := a.GetProfile(dbProfile.ProfileID)
-		if err != nil {
-			return nil, fmt.Errorf("error getting profile: %w", err)
-		}
-		profiles = append(profiles, &profile)
 	}
 
 	return profiles, nil
@@ -292,7 +312,7 @@ func (a *App) getProfileByUserIdAndLang(userId int64, lang string) (*Profile, er
 	row := a.db.QueryRow(
 		`SELECT * FROM profiles WHERE user_id = ? AND language = ?`, userId, lang)
 	profile := Profile{}
-	err := row.Scan(&profile.ProfileID, &profile.UserID, &profile.Language)
+	err := row.Scan(&profile.ProfileID, &profile.UserID, &profile.Language, &profile.Json)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -308,7 +328,8 @@ func rowsToProfiles(rows *sql.Rows) ([]*Profile, error) {
 	profiles := []*Profile{}
 	for rows.Next() {
 		profile := Profile{}
-		err := rows.Scan(&profile.ProfileID, &profile.UserID, &profile.Language)
+		err := rows.Scan(
+			&profile.ProfileID, &profile.UserID, &profile.Language, &profile.Json)
 		if err != nil {
 			return nil, fmt.Errorf("error scanning row to profile: %w", err)
 		}

@@ -6,12 +6,12 @@ export function CreateCVProfile(arg1) {
   return window['go']['main']['App']['CreateCVProfile'](arg1);
 }
 
-export function CreateOrUpdateProfile(arg1, arg2, arg3) {
-  return window['go']['main']['App']['CreateOrUpdateProfile'](arg1, arg2, arg3);
+export function CreateOrUpdateProfile(arg1, arg2, arg3, arg4) {
+  return window['go']['main']['App']['CreateOrUpdateProfile'](arg1, arg2, arg3, arg4);
 }
 
-export function CreateProfile(arg1, arg2, arg3) {
-  return window['go']['main']['App']['CreateProfile'](arg1, arg2, arg3);
+export function CreateProfile(arg1, arg2, arg3, arg4) {
+  return window['go']['main']['App']['CreateProfile'](arg1, arg2, arg3, arg4);
 }
 
 export function CreateUser(arg1) {

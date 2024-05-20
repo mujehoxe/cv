@@ -7,7 +7,7 @@ toolchain go1.22.0
 require (
 	github.com/Conight/go-googletrans v0.2.4
 	github.com/google/uuid v1.3.0
-	github.com/lithammer/fuzzysearch v1.1.8
+	github.com/lithammer/fuzzysearch v1.1.5
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/wailsapp/wails/v2 v2.8.0
 )

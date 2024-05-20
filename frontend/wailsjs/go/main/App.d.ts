@@ -4,9 +4,9 @@ import {main} from '../models';
 
 export function CreateCVProfile(arg1:string):Promise<string>;
 
-export function CreateOrUpdateProfile(arg1:main.User,arg2:string,arg3:string):Promise<void>;
+export function CreateOrUpdateProfile(arg1:main.User,arg2:string,arg3:string,arg4:string):Promise<void>;
 
-export function CreateProfile(arg1:number,arg2:string,arg3:string):Promise<void>;
+export function CreateProfile(arg1:number,arg2:string,arg3:string,arg4:string):Promise<void>;
 
 export function CreateUser(arg1:main.User):Promise<number>;
 
@@ -20,7 +20,7 @@ export function GetPdfFile(arg1:string):Promise<Array<number>>;
 
 export function GetProfile(arg1:string):Promise<any>;
 
-export function GetProfilesOfUser(arg1:number):Promise<Array<any>>;
+export function GetProfilesOfUser(arg1:number):Promise<Array<main.Profile>>;
 
 export function GetUserByID(arg1:number):Promise<main.User>;
 
