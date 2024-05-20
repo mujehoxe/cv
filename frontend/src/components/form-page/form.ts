@@ -447,14 +447,12 @@ export function renderUserInfoForm(userId?: number) {
   form?.addEventListener("submit", (e) => handleSubmit(e, userId));
 
   //remove photo btn clicked
-  const removePhotoBtn = document.getElementById(
-    "remove-photo-btn"
+  const removePhotoBtn = form?.querySelector(
+    "#remove-photo-btn"
   ) as HTMLButtonElement;
   removePhotoBtn.addEventListener("click", () => {
-    const previewImg = document.getElementById(
-      "preview-img"
-    ) as HTMLImageElement;
-    previewImg.src = "";
+    const previewImg = form?.querySelector("#preview-img") as HTMLImageElement;
+    previewImg.removeAttribute("src");
 
     form?.querySelector("#preview")!.setAttribute("hidden", "true");
 
