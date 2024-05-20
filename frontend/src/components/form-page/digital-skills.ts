@@ -2,9 +2,14 @@
 import { FetchDigitalSkillsAutocomplete } from "../../../wailsjs/go/main/App";
 import { CVProfileData } from "../../utils/formDataExtraction";
 
+let selectedSkills: Set<string>;
+
 export function renderDigitalSkillsForm() {
   const digitalSkillsContainer = document.getElementById("digital-skills");
+
   if (!digitalSkillsContainer) return;
+
+  selectedSkills = new Set();
 
   digitalSkillsContainer.innerHTML = `
 <details>
@@ -29,23 +34,20 @@ export function renderDigitalSkillsForm() {
 </details>
  `;
 
-  const combobox = digitalSkillsContainer.querySelector(
-    "#combobox"
-  ) as HTMLInputElement;
-  const options = digitalSkillsContainer.querySelector(
-    "#options"
-  ) as HTMLUListElement;
-  const selectedSkillsDiv = document.getElementById(
-    "selected-skills"
-  ) as HTMLDivElement;
-  const selectedSkills = new Set();
-
   const addDigitalSkillButton = digitalSkillsContainer.querySelector(
     "#add-digital-skill"
   ) as HTMLButtonElement;
   addDigitalSkillButton.addEventListener("click", (e) => {
     addSkillCard(e);
   });
+
+  const combobox = digitalSkillsContainer?.querySelector(
+    "#combobox"
+  ) as HTMLInputElement;
+
+  const options = digitalSkillsContainer?.querySelector(
+    "#options"
+  ) as HTMLUListElement;
 
   combobox.addEventListener("keydown", (e) => {
     if (e.code === "Enter") addSkillCard(e);
@@ -81,47 +83,50 @@ export function renderDigitalSkillsForm() {
         option.innerHTML = `<span class="block truncate">${skill}</span>`;
         options.appendChild(option);
 
-        option.addEventListener("click", () => {
-          renderSkillCard(skill);
-          selectedSkills.add(skill);
+        option.addEventListener("click", (e) => {
+          combobox.value = option.textContent!;
+          addSkillCard(e);
         });
       });
     options.classList.remove("hidden");
   });
+
+  const selectedSkillsContainer = digitalSkillsContainer.querySelector(
+    "#selected-skills"
+  ) as HTMLDivElement;
 
   function addSkillCard(e: Event) {
     e.preventDefault();
     if (!combobox.value && combobox.value === "") return;
     const s = combobox.value;
     if (!selectedSkills.has(s)) {
-      renderSkillCard(s);
+      renderSkillCard(s, selectedSkillsContainer);
+      combobox.value = "";
+      options.classList.add("hidden");
       selectedSkills.add(s);
     }
   }
+}
 
-  function renderSkillCard(skill: string) {
-    const selectedSkill = document.createElement("div");
+function renderSkillCard(skill: string, parent: HTMLElement) {
+  const selectedSkillCard = document.createElement("div");
 
-    selectedSkill.innerHTML = `
+  selectedSkillCard.innerHTML = `
 		<div class="flex justify-between gap-1 bg-zinc-800 rounded-md p-1 text-sm">
 			${skill}
 			<button id="delete-digital-skill" type="button" class="text-red-400 float-right ml-1">
 				<i class="fa fa-times"></i>
 			</button>
 		</div>
-		`;
-    selectedSkillsDiv.appendChild(selectedSkill);
+	`;
+  parent.appendChild(selectedSkillCard);
 
-    selectedSkill
-      .querySelector("#delete-digital-skill")
-      ?.addEventListener("click", () => {
-        selectedSkills.delete(skill);
-        selectedSkill.remove();
-      });
-
-    combobox.value = "";
-    options.classList.add("hidden");
-  }
+  selectedSkillCard
+    .querySelector("#delete-digital-skill")
+    ?.addEventListener("click", () => {
+      selectedSkills.delete(skill);
+      selectedSkillCard.remove();
+    });
 }
 
 export function extractDigitalSkillsData(data: CVProfileData) {
@@ -138,5 +143,17 @@ export function extractDigitalSkillsData(data: CVProfileData) {
     data.profile.digitalSkills = {
       other: digitalSkills,
     };
+  }
+}
+
+export function fillDigitalSkills(skills?: string[]) {
+  if (!skills) return;
+  const selectedSkillsContainer = document.querySelector(
+    "#selected-skills"
+  ) as HTMLDivElement;
+  if (!selectedSkillsContainer) return;
+  for (const skill of skills) {
+    renderSkillCard(skill, selectedSkillsContainer);
+    selectedSkills.add(skill);
   }
 }

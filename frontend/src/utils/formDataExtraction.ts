@@ -1,5 +1,8 @@
 import { extractDateFrom, fillDate } from "./dateExtraction";
-import { extractDigitalSkillsData as extractDigitalSkillsInto } from "../components/form-page/digital-skills";
+import {
+  extractDigitalSkillsData as extractDigitalSkillsInto,
+  fillDigitalSkills,
+} from "../components/form-page/digital-skills";
 import {
   extractDrivingLicencesInto,
   fillDrivingLicences,
@@ -149,8 +152,8 @@ export function fillForm(dbProfiles: main.Profile[]) {
   fillProfileImage(profiles[0].profilePicture);
   fillDrivingLicences(profiles[0].profile.drivingLicence?.licences);
   fillLanguageSkills(profiles[0].profile.languageSkills);
+  fillDigitalSkills(profiles[0].profile.digitalSkills?.other);
   // fillAddress(profiles)
-  // fillDigitalSkills(profile);
   // fillWorkExperiences(profile);
   // fillEducations(profile);
   // fillHobbies(profile);
