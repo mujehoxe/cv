@@ -1,5 +1,5 @@
-import { extractDateFrom } from "../../utils/dateExtraction";
-import { CVProfileData } from "../../utils/formDataExtraction";
+import { extractDateFrom, fillDate } from "../../utils/dateExtraction";
+import { CVProfileData, DrivingLicence } from "../../utils/formDataExtraction";
 
 export function renderDrivingLicencesForm() {
   const drivingLicences = document.getElementById("driving-licences");
@@ -155,20 +155,21 @@ function renderDrivingLicenceType(
   ) as HTMLInputElement;
   checkbox.disabled = true;
 
-  licenceContainer.children[0].children[0].addEventListener(
-    "click",
-    function () {
-      checkbox.checked = !checkbox.checked;
-      const datesContainer = licenceContainer.querySelector(
-        `#licence-dates`
-      ) as HTMLDivElement;
-
-      datesContainer.classList.toggle("hidden");
-      datesContainer.classList.toggle("flex");
-    }
-  );
+  licenceContainer.children[0].children[0].addEventListener("click", () => {
+    toggleChecked(checkbox, licenceContainer);
+  });
 
   return licenceContainer;
+}
+
+function toggleChecked(checkbox: HTMLInputElement, licenceContainer: Element) {
+  checkbox.checked = !checkbox.checked;
+  const datesContainer = licenceContainer.querySelector(
+    `#licence-dates`
+  ) as HTMLDivElement;
+
+  datesContainer.classList.toggle("hidden");
+  datesContainer.classList.toggle("flex");
 }
 
 function renderDrivingLicenceTypes() {
@@ -236,6 +237,41 @@ export function extractDrivingLicencesInto(data: CVProfileData) {
         licences: [],
       };
       data.profile.drivingLicence.licences.push(drivingLicenceData);
+    }
+  });
+}
+
+export function fillDrivingLicences(licences?: DrivingLicence[]) {
+  if (!licences) return;
+
+  const drivingLicencesContainer = document.getElementById(
+    "driving-licences-container"
+  )!;
+  const drivingLicencesCards = drivingLicencesContainer.querySelectorAll(
+    ".driving-licence-item"
+  );
+
+  drivingLicencesCards.forEach((drivingLicenceCard, index) => {
+    const checkbox = drivingLicenceCard.querySelector(
+      "input[type='checkbox']"
+    ) as HTMLInputElement;
+
+    for (const licence of licences) {
+      if (licence.licence === checkbox.id) {
+        toggleChecked(checkbox, drivingLicenceCard);
+        if (licence.timeRange) {
+          if (licence.timeRange.startDate)
+            fillDate(
+              licence.timeRange.startDate!,
+              drivingLicenceCard.querySelector(`#from-date`)!
+            );
+          if (licence.timeRange.endDate)
+            fillDate(
+              licence.timeRange.endDate!,
+              drivingLicenceCard.querySelector(`#to-date`)!
+            );
+        }
+      }
     }
   });
 }

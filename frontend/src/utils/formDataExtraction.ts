@@ -1,8 +1,14 @@
 import { extractDateFrom, fillDate } from "./dateExtraction";
 import { extractDigitalSkillsData as extractDigitalSkillsInto } from "../components/form-page/digital-skills";
-import { extractDrivingLicencesInto } from "../components/form-page/driving-licences";
+import {
+  extractDrivingLicencesInto,
+  fillDrivingLicences,
+} from "../components/form-page/driving-licences";
 import { extractEducationTrainingsInto } from "../components/form-page/education-tranings";
-import { extractLanguageSkillsData as extractLanguageSkillsInto } from "../components/form-page/language-skills";
+import {
+  extractLanguageSkillsData as extractLanguageSkillsInto,
+  fillLanguageSkills,
+} from "../components/form-page/language-skills";
 import { extractWorkExperiencesInto } from "../components/form-page/work-experience";
 import { extractHobbiesInto } from "../components/form-page/hobbies";
 import { extractOtherSectionInto } from "../components/form-page/other-section";
@@ -141,10 +147,10 @@ export function fillForm(dbProfiles: main.Profile[]) {
 
   fillPersonalInfo(profiles[0].profile.personalInformation);
   fillProfileImage(profiles[0].profilePicture);
-  // fillDrivingLicences(profile);
-  // fillLanguageSkills(profile);
+  fillDrivingLicences(profiles[0].profile.drivingLicence?.licences);
+  fillLanguageSkills(profiles[0].profile.languageSkills);
+  // fillAddress(profiles)
   // fillDigitalSkills(profile);
-  // fillAddress(profile)
   // fillWorkExperiences(profile);
   // fillEducations(profile);
   // fillHobbies(profile);
@@ -328,7 +334,7 @@ export type NonNativeLang = LanguageSkill & {
   languageCategory: string;
 };
 
-interface LanguageSkills {
+export interface LanguageSkills {
   nativeLanguages: LanguageSkill[];
   otherLanguages?: NonNativeLang[];
 }
