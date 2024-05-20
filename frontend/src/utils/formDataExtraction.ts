@@ -141,7 +141,6 @@ export function fillForm(dbProfiles: main.Profile[]) {
 
   fillPersonalInfo(profiles[0].profile.personalInformation);
   fillProfileImage(profiles[0].profilePicture);
-  // fillPhone(profile);
   // fillDrivingLicences(profile);
   // fillLanguageSkills(profile);
   // fillDigitalSkills(profile);
@@ -174,6 +173,20 @@ function fillPersonalInfo(personalInformation: PersonalInformation) {
       personalInformation.dateOfBirth,
       document.getElementById("birthday") as HTMLDivElement
     );
+
+  fillPhone(personalInformation.phones);
+}
+
+function fillPhone(phones?: Phone[]) {
+  if (!phones) return;
+  const phoneNumbers = document.querySelectorAll("#phone-number");
+  phoneNumbers.forEach((element, index) => {
+    if (!phones[index]) return;
+    (element as HTMLInputElement).value = phones[index].phoneNumber;
+    (
+      document.querySelectorAll("#phone-extention")[index] as HTMLSelectElement
+    ).value = JSON.stringify(phones[index].phonePrefix);
+  });
 }
 
 function fillProfileImage(profilePicture: any) {
