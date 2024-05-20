@@ -24,13 +24,16 @@ export function extractDateFrom(parent: HTMLDivElement): DataDate | null {
 }
 
 export function fillDate(date: DataDate, parent: HTMLDivElement) {
-  const [year, month, day] = date.date.split("-");
+  const [year, month, dayWithTime] = date.date.split("-");
 
-  const dayInput = parent.querySelector("#day") as HTMLInputElement;
-  const monthInput = parent.querySelector("#month") as HTMLInputElement;
   const yearInput = parent.querySelector("#year") as HTMLInputElement;
-
-  dayInput.value = day;
-  monthInput.value = month;
   yearInput.value = year;
+
+  if (date.dateType == "DAY") {
+    const [day, _] = dayWithTime.split("T");
+    const dayInput = parent.querySelector("#day") as HTMLInputElement;
+    const monthInput = parent.querySelector("#month") as HTMLInputElement;
+    dayInput.value = day;
+    monthInput.value = month;
+  }
 }
