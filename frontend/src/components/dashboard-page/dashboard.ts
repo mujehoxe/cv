@@ -98,7 +98,7 @@ function renderUsers(users: main.User[], ondelete: () => {}) {
     cvsDiv.innerHTML = `${users
       .map(
         (user) => `
-					<li>
+					<li class="cursor-pointer">
             <div href="#" data-id="${
               user.id
             }" class="flex flex-col w-64 items-center justify-center bg-zinc-800 p-2 rounded-md my-2">
