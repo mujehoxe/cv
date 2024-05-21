@@ -251,7 +251,7 @@ export function fillDrivingLicences(licences?: DrivingLicence[]) {
     ".driving-licence-item"
   );
 
-  drivingLicencesCards.forEach((drivingLicenceCard, index) => {
+  drivingLicencesCards.forEach((drivingLicenceCard) => {
     const checkbox = drivingLicenceCard.querySelector(
       "input[type='checkbox']"
     ) as HTMLInputElement;
@@ -263,12 +263,12 @@ export function fillDrivingLicences(licences?: DrivingLicence[]) {
           if (licence.timeRange.startDate)
             fillDate(
               licence.timeRange.startDate!,
-              drivingLicenceCard.querySelector(`#from-date`)!
+              drivingLicenceCard.querySelector(`#from-date`) as HTMLDivElement
             );
           if (licence.timeRange.endDate)
             fillDate(
               licence.timeRange.endDate!,
-              drivingLicenceCard.querySelector(`#to-date`)!
+              drivingLicenceCard.querySelector(`#to-date`) as HTMLDivElement
             );
         }
       }
