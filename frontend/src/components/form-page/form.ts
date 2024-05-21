@@ -571,7 +571,9 @@ function showLoading() {
   document.body.style.cursor = "progress";
 }
 
-export function fillPersonalInfo(personalInformation: PersonalInformation) {
+export function fillPersonalInfo(personalInformation?: PersonalInformation) {
+  if (!personalInformation) return;
+
   (document.getElementById("first-name") as HTMLInputElement).value =
     personalInformation.firstName;
 
@@ -620,7 +622,8 @@ export function fillProfileImage(profilePicture: any) {
 }
 
 export function fillAboutMe(profiles: CVProfileData[]) {
-  if (!profiles[0].profile.personalInformation.personalDescription) return;
+  if (!profiles[0].profile?.personalInformation.personalDescription) return;
+
   const originalAbout = document.getElementById(
     `about-${originalLanguage.short}`
   ) as HTMLDivElement;

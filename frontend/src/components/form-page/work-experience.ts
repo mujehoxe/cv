@@ -6,7 +6,7 @@ import {
   renderEmptyInputDivsForAllLanguages,
 } from "./translationsRenderer";
 import { CVProfileData } from "../../utils/formDataExtraction";
-import { extractDateFrom } from "../../utils/dateExtraction";
+import { extractDateFrom, fillDate } from "../../utils/dateExtraction";
 
 export function initWorkExperienceFields() {
   const addWorkExperienceButton = document.getElementById(
@@ -322,22 +322,118 @@ export function extractWorkExperiencesInto(
   data: CVProfileData,
   language: string
 ) {
-  const workExperienceContainer = document.getElementById(
+  const workExperiencesContainer = document.getElementById(
     "work-experiences-container"
   )!;
   const workExperiences =
-    workExperienceContainer.querySelectorAll(".work-experience");
+    workExperiencesContainer.querySelectorAll(".work-experience");
 
   if (workExperiences.length > 0) {
-    data.profile.preference.profileStructure.push("work-experience");
+    if (!data.profile.preference.profileStructure.includes("work-experience"))
+      data.profile.preference.profileStructure.push("work-experience");
   }
+
+  data.profile.workExperiences = [];
 
   workExperiences.forEach((workExperience) => {
     const workExperienceData = extractWorkExperienceData(
       language,
       workExperience
     );
-    data.profile.workExperiences = data.profile.workExperiences || [];
-    data.profile.workExperiences.push(workExperienceData);
+    data.profile.workExperiences?.push(workExperienceData);
   });
+}
+
+export function fillWorkExperiences(profiles: CVProfileData[]) {
+  const workExperiencesContainer = document.getElementById(
+    "work-experiences-container"
+  )!;
+
+  if (!profiles[0].profile?.workExperiences) return;
+
+  for (const _ in profiles[0].profile.workExperiences) {
+    renderWorkExperienceFields();
+  }
+
+  const workExperiencesDivs =
+    workExperiencesContainer.querySelectorAll(".work-experience");
+
+  workExperiencesDivs.forEach((workExperienceDiv, index) => {
+    fillLanguageAgnosticFields(workExperienceDiv, profiles, index);
+
+    fillLanguageSpecificFields(workExperienceDiv, profiles, index);
+  });
+}
+
+function fillLanguageAgnosticFields(
+  workExperienceDiv: Element,
+  profiles: CVProfileData[],
+  index: number
+) {
+  if (
+    !profiles[0].profile?.workExperiences ||
+    !profiles[0].profile.workExperiences[index]
+  )
+    return;
+
+  (workExperienceDiv.querySelector(`#work-city`) as HTMLInputElement)!.value =
+    profiles[0].profile?.workExperiences[index].organisationAddress.city!;
+
+  (workExperienceDiv.querySelector(
+    `#work-country`
+  ) as HTMLSelectElement)!.value =
+    profiles[0].profile?.workExperiences[index].organisationAddress.country!;
+
+  const startDate = workExperienceDiv.querySelector(
+    `#from-date`
+  ) as HTMLDivElement;
+  fillDate(profiles[0].profile.workExperiences[index].startDate!, startDate);
+
+  const endDate = workExperienceDiv.querySelector(`#to-date`) as HTMLDivElement;
+  fillDate(profiles[0].profile.workExperiences[index].endDate!, endDate);
+
+  (workExperienceDiv.querySelector(`#ongoing`) as HTMLInputElement)!.checked =
+    profiles[0].profile?.workExperiences[index].ongoing!;
+}
+
+function fillLanguageSpecificFields(
+  workExperienceDiv: Element,
+  profiles: CVProfileData[],
+  index: number
+) {
+  const occupation = workExperienceDiv.querySelector(
+    `#occupation-${originalLanguage.short}`
+  ) as HTMLDivElement;
+  renderEmptyInputDivsForAllLanguages(occupation, true);
+
+  const employer = workExperienceDiv.querySelector(
+    `#employer-${originalLanguage.short}`
+  ) as HTMLDivElement;
+  renderEmptyInputDivsForAllLanguages(employer, true);
+
+  const activites = workExperienceDiv.querySelector(
+    `#activities-${originalLanguage.short}`
+  ) as HTMLDivElement;
+  renderEmptyInputDivsForAllLanguages(activites, false);
+
+  for (const p of profiles) {
+    if (!p.profile?.workExperiences || !p.profile.workExperiences[index])
+      return;
+    (workExperienceDiv.querySelector(
+      `#occupation-${p.profile.language}`
+    ) as HTMLDivElement)!.innerText =
+      p.profile?.workExperiences[index].occupation?.label!;
+
+    (workExperienceDiv.querySelector(
+      `#employer-${p.profile.language}`
+    ) as HTMLDivElement)!.innerText =
+      p.profile?.workExperiences[index].employer!;
+
+    (workExperienceDiv.querySelector(
+      `#activities-${p.profile.language}`
+    ) as HTMLDivElement)!.innerHTML =
+      p.profile?.workExperiences[index].mainActivities!;
+  }
+
+  occupation.dispatchEvent(new Event("input"));
 }
