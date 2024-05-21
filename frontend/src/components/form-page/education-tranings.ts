@@ -1,9 +1,12 @@
 import { populateCountries } from "../../utils/countries";
 import { EducationTraining } from "../../utils/formDataExtraction";
 import { originalLanguage } from "../../utils/languages";
-import { elementTranslationsRendererFor } from "./translationsRenderer";
+import {
+  elementTranslationsRendererFor,
+  renderEmptyInputDivsForAllLanguages,
+} from "./translationsRenderer";
 import { CVProfileData } from "../../utils/formDataExtraction";
-import { extractDateFrom } from "../../utils/dateExtraction";
+import { extractDateFrom, fillDate } from "../../utils/dateExtraction";
 
 function initEducationTrainingFields() {
   const addEducationTrainingButton = document.getElementById(
@@ -213,7 +216,7 @@ function renderEducationTrainingFields() {
         <label
           for="study-field"
           class="block text-sm font-medium leading-6 text-white"
-          >Field of study</label
+          >Domaine d'études</label
         >
         <div id="study-field" name="study-field" class="mt-2 mx-2">
           <label class="text-xs font-medium text-white"
@@ -350,20 +353,118 @@ export function extractEducationTrainingsInto(
   const educationTrainingsContainer = document.getElementById(
     "education-trainings-container"
   )!;
+
   const educationTrainings = educationTrainingsContainer.querySelectorAll(
     ".education-training"
   );
 
   if (educationTrainings.length > 0) {
-    data.profile.preference.profileStructure.push("education-training");
+    if (
+      !data.profile.preference.profileStructure.includes("education-training")
+    ) {
+      data.profile.preference.profileStructure.push("education-training");
+    }
   }
+
+  data.profile.educationTrainings = [];
 
   educationTrainings.forEach((educationTraining) => {
     const educationTrainingData = extractEducationTrainingData(
       language,
       educationTraining
     );
-    data.profile.educationTrainings = data.profile.educationTrainings || [];
-    data.profile.educationTrainings.push(educationTrainingData);
+    data.profile.educationTrainings?.push(educationTrainingData);
   });
+}
+
+export function fillEducationTranings(profiles: CVProfileData[]) {
+  const educationTrainingsContainer = document.getElementById(
+    "education-trainings-container"
+  )!;
+
+  if (!profiles[0].profile?.educationTrainings) return;
+
+  for (const _ in profiles[0].profile.workExperiences) {
+    renderEducationTrainingFields();
+  }
+
+  const educationTrainingDivs = educationTrainingsContainer.querySelectorAll(
+    ".education-training"
+  );
+
+  educationTrainingDivs.forEach((educationTrainingDiv, index) => {
+    fillLanguageAgnosticFields(
+      educationTrainingDiv,
+      profiles[0].profile.educationTrainings![index]
+    );
+
+    fillLanguageSpecificFields(educationTrainingDiv, profiles, index);
+  });
+}
+
+function fillLanguageAgnosticFields(
+  educationTrainingDiv: Element,
+  educationTraning?: EducationTraining
+) {
+  if (!educationTraning) return;
+
+  (educationTrainingDiv.querySelector(
+    `#education-city`
+  ) as HTMLInputElement)!.value = educationTraning.city!;
+
+  (educationTrainingDiv.querySelector(
+    `#education-country`
+  ) as HTMLSelectElement)!.value = educationTraning.country!;
+
+  const startDate = educationTrainingDiv.querySelector(
+    `#from-date`
+  ) as HTMLDivElement;
+  fillDate(educationTraning.startDate!, startDate);
+
+  const endDate = educationTrainingDiv.querySelector(
+    `#to-date`
+  ) as HTMLDivElement;
+  fillDate(educationTraning.endDate!, endDate);
+}
+
+function fillLanguageSpecificFields(
+  educationTrainingDiv: Element,
+  profiles: CVProfileData[],
+  index: number
+) {
+  const degree = educationTrainingDiv.querySelector(
+    `#degree-${originalLanguage.short}`
+  ) as HTMLDivElement;
+  renderEmptyInputDivsForAllLanguages(degree, true);
+
+  const institution = educationTrainingDiv.querySelector(
+    `#institution-${originalLanguage.short}`
+  ) as HTMLDivElement;
+  renderEmptyInputDivsForAllLanguages(institution, true);
+
+  const studyField = educationTrainingDiv.querySelector(
+    `#study-field-${originalLanguage.short}`
+  ) as HTMLDivElement;
+  renderEmptyInputDivsForAllLanguages(studyField, true);
+
+  for (const p of profiles) {
+    if (!p.profile?.educationTrainings || !p.profile.educationTrainings[index])
+      return;
+    (educationTrainingDiv.querySelector(
+      `#degree-${p.profile.language}`
+    ) as HTMLDivElement)!.innerText =
+      p.profile?.educationTrainings[index].qualification!;
+
+    (educationTrainingDiv.querySelector(
+      `#institution-${p.profile.language}`
+    ) as HTMLDivElement)!.innerText =
+      p.profile?.educationTrainings[index].organisationName!;
+
+    (educationTrainingDiv.querySelector(
+      `#study-field-${p.profile.language}`
+    ) as HTMLDivElement)!.innerHTML =
+      p.profile?.educationTrainings[index].studyFields![0].content!;
+  }
+
+  degree.dispatchEvent(new Event("input"));
 }

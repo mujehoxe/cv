@@ -345,15 +345,15 @@ export function extractWorkExperiencesInto(
 }
 
 export function fillWorkExperiences(profiles: CVProfileData[]) {
-  const workExperiencesContainer = document.getElementById(
-    "work-experiences-container"
-  )!;
-
   if (!profiles[0].profile?.workExperiences) return;
 
   for (const _ in profiles[0].profile.workExperiences) {
     renderWorkExperienceFields();
   }
+
+  const workExperiencesContainer = document.getElementById(
+    "work-experiences-container"
+  )!;
 
   const workExperiencesDivs =
     workExperiencesContainer.querySelectorAll(".work-experience");

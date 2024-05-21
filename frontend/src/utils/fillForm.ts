@@ -1,6 +1,7 @@
 import { main } from "../../wailsjs/go/models";
 import { fillDigitalSkills } from "../components/form-page/digital-skills";
 import { fillDrivingLicences } from "../components/form-page/driving-licences";
+import { fillEducationTranings } from "../components/form-page/education-tranings";
 import {
   fillAboutMe,
   fillPersonalInfo,
@@ -28,4 +29,5 @@ export function fillForm(dbProfiles: main.Profile[]) {
 function fillLanguageSpecificFields(profiles: CVProfileData[]) {
   fillAboutMe(profiles);
   fillWorkExperiences(profiles);
+  fillEducationTranings(profiles);
 }

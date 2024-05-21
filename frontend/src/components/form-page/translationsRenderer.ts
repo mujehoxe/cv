@@ -114,7 +114,7 @@ function renderInputDivForTranslation(
     `<label class="block text-xs font-medium text-white">${translation.language.long}</label>`
   );
   inputDiv.classList.add(
-    ...`p-2 overflow-hidden block w-full h-max rounded-md py-1.5 text-white/40 shadow-sm ring-1 ring-inset ring-white/5 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6`.split(
+    ...`p-2 overflow-hidden block w-full h-max min-h-9 rounded-md py-1.5 text-white/40 shadow-sm ring-1 ring-inset ring-white/5 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6`.split(
       " "
     )
   );
