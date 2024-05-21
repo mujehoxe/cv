@@ -7,6 +7,7 @@ import {
   fillPersonalInfo,
   fillProfileImage,
 } from "../components/form-page/form";
+import { fillHobbies } from "../components/form-page/hobbies";
 import { fillLanguageSkills } from "../components/form-page/language-skills";
 import { fillWorkExperiences } from "../components/form-page/work-experience";
 import { CVProfileData } from "./formDataExtraction";
@@ -30,4 +31,5 @@ function fillLanguageSpecificFields(profiles: CVProfileData[]) {
   fillAboutMe(profiles);
   fillWorkExperiences(profiles);
   fillEducationTranings(profiles);
+  fillHobbies(profiles);
 }

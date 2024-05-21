@@ -1,6 +1,9 @@
 import { Hobby } from "../../utils/formDataExtraction";
 import { originalLanguage } from "../../utils/languages";
-import { elementTranslationsRendererFor } from "./translationsRenderer";
+import {
+  elementTranslationsRendererFor,
+  renderEmptyInputDivsForAllLanguages,
+} from "./translationsRenderer";
 import { CVProfileData } from "../../utils/formDataExtraction";
 
 function initEducationTrainingFields() {
@@ -8,7 +11,7 @@ function initEducationTrainingFields() {
 
   addEducationTrainingButton.addEventListener("click", (e) => {
     e.preventDefault();
-    renderEducationTrainingFields();
+    renderHobbyFields();
   });
 }
 
@@ -30,7 +33,7 @@ export function renderHobbiesForm() {
   initEducationTrainingFields();
 }
 
-function renderEducationTrainingFields() {
+function renderHobbyFields() {
   const hobbiesContainer = document.getElementById("hobbies-container")!;
 
   const hobby = document.createElement("div");
@@ -101,12 +104,48 @@ export function extractHobbiesInto(data: CVProfileData, language: string) {
   const hobbies = hobbiesContainer.querySelectorAll(".hobby");
 
   if (hobbies.length > 0) {
-    data.profile.preference.profileStructure.push("hobbies-interests");
+    if (
+      !data.profile.preference.profileStructure.includes("hobbies-interests")
+    ) {
+      data.profile.preference.profileStructure.push("hobbies-interests");
+    }
   }
+
+  data.profile.hobbiesInterests = [];
 
   hobbies.forEach((hobby) => {
     const hobbyData = extractHobbyData(language, hobby);
-    data.profile.hobbiesInterests = data.profile.hobbiesInterests || [];
-    data.profile.hobbiesInterests.push(hobbyData);
+    data.profile.hobbiesInterests?.push(hobbyData);
+  });
+}
+
+export function fillHobbies(profiles: CVProfileData[]) {
+  const hobbies = profiles[0].profile.hobbiesInterests;
+  if (!hobbies || !hobbies.length) {
+    return;
+  }
+
+  for (const _ of hobbies) {
+    renderHobbyFields();
+  }
+
+  const hobbiesContainer = document.getElementById("hobbies-container")!;
+  const hobbiesDivs = hobbiesContainer.querySelectorAll(".hobby");
+
+  hobbiesDivs.forEach((hobbyDiv, index) => {
+    const hobbyName = hobbyDiv.querySelector(
+      `#hobby-name-${originalLanguage.short}`
+    ) as HTMLDivElement;
+    renderEmptyInputDivsForAllLanguages(hobbyName, true);
+
+    for (const p of profiles) {
+      if (!p.profile?.hobbiesInterests || !p.profile.hobbiesInterests[index])
+        return;
+
+      (hobbyDiv.querySelector(
+        `#hobby-name-${p.profile.language}`
+      ) as HTMLDivElement)!.innerHTML =
+        p.profile?.hobbiesInterests[index].title;
+    }
   });
 }
