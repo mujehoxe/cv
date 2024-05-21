@@ -1,13 +1,16 @@
-import { extractDateFrom } from "../../utils/dateExtraction";
+import { extractDateFrom, fillDate } from "../../utils/dateExtraction";
 import {
   CVProfileData,
   CustomSection,
   CustomSectionsRecord,
 } from "../../utils/formDataExtraction";
 import { originalLanguage } from "../../utils/languages";
-import { elementTranslationsRendererFor } from "./translationsRenderer";
+import {
+  elementTranslationsRendererFor,
+  renderEmptyInputDivsForAllLanguages,
+} from "./translationsRenderer";
 
-export function renderOtherSectionForm() {
+export function renderOtherSectionForm(title?: string) {
   const otherSectionsDiv = document.getElementById(
     "other-sections"
   ) as HTMLDivElement;
@@ -17,7 +20,9 @@ export function renderOtherSectionForm() {
   <div id='other-sections-form'>
      <details class="border-b border-white/10">
       <summary class="text-base py-2 font-semibold text-white cursor-pointer flex justify-between items-center"
-				><span id="section-label" class="font-semibold">Section</span>
+				><span id="section-label" class="font-semibold">${
+          title ? title : "Section"
+        }</span>
 				<button
 					type="button"
 					id="delete"
@@ -29,7 +34,9 @@ export function renderOtherSectionForm() {
 			<label
 				class="block text-sm font-medium leading-6 text-white">Nom de Section</label>
 			<div class="mx-2">
-				<label for="section-name-${originalLanguage.short}" class="text-xs font-medium text-white"
+				<label for="section-name-${
+          originalLanguage.short
+        }" class="text-xs font-medium text-white"
 				>${originalLanguage.long}</label>
 				<div
 					contenteditable="true"
@@ -42,7 +49,7 @@ export function renderOtherSectionForm() {
 			<div id="records" class="px-4 pt-4"></div>
 			<button type="button" id="add-record" 
 				class="rounded-md bg-indigo-500 p-2 m-2 mx-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-colors duration-200">
-			+ Ajouter une Enregistrement</button>
+			+ Ajouter une ${title ? title : "Enregistrement"}</button>
      </details>
   </div>
   `;
@@ -77,6 +84,8 @@ export function renderOtherSectionForm() {
   deleteButton.addEventListener("click", () =>
     otherSectionsDiv.removeChild(sectionDiv)
   );
+
+  return sectionDiv;
 }
 
 function renderRecord(parent: Element) {
@@ -98,7 +107,7 @@ function renderRecord(parent: Element) {
 		</summary>
 		<div>
 			<label
-				class="block text-sm font-medium leading-6 text-white">Nom de Section</label>
+				class="block text-sm font-medium leading-6 text-white">Nom d'Enregistrement</label>
 			<div class="mx-2">
 				<label for="record-name-${originalLanguage.short}" class="text-xs font-medium text-white"
 					>${originalLanguage.long}</label>
@@ -244,6 +253,8 @@ function renderRecord(parent: Element) {
   deleteButton.addEventListener("click", () =>
     recordsDiv.removeChild(recordDiv)
   );
+
+  return recordDiv;
 }
 
 function extractRecordData(
@@ -321,4 +332,69 @@ function generateUUID() {
       v = c == "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+}
+
+export function fillOtherSections(profiles: CVProfileData[]) {
+  let originalProfile;
+  for (const p of profiles) {
+    if (p.profile.language == originalLanguage.short) originalProfile = p;
+  }
+
+  originalProfile?.profile.customSections?.forEach((section) => {
+    const sectionDiv = renderOtherSectionForm(section.title);
+    fillSectionName(sectionDiv, profiles, section);
+
+    section.records?.forEach((record) => {
+      const recordDiv = renderRecord(sectionDiv);
+
+      (recordDiv.querySelector("#record-label") as HTMLSpanElement).innerText! =
+        record.title!;
+
+      const startDate = recordDiv.querySelector("#from-date") as HTMLDivElement;
+      fillDate(record.startDate!, startDate);
+      const endDate = recordDiv.querySelector("#to-date") as HTMLDivElement;
+      fillDate(record.endDate!, endDate);
+
+      const recordName = recordDiv.querySelector(
+        `#record-name-${originalLanguage.short}`
+      ) as HTMLDivElement;
+      record.title && renderEmptyInputDivsForAllLanguages(recordName, true);
+
+      const recordDescription = recordDiv.querySelector(
+        `#description-${originalLanguage.short}`
+      ) as HTMLDivElement;
+      record.content &&
+        renderEmptyInputDivsForAllLanguages(recordDescription, true);
+
+      for (const p of profiles) {
+        const langRecordName = recordDiv.querySelector(
+          `#record-name-${p.profile.language}`
+        );
+        if (langRecordName instanceof HTMLDivElement)
+          langRecordName.innerText = record.title!;
+        const langRecordDescription = recordDiv.querySelector(
+          `#description-${p.profile.language}`
+        );
+        if (langRecordDescription instanceof HTMLDivElement)
+          langRecordDescription.innerHTML = record.content!;
+      }
+    });
+  });
+}
+function fillSectionName(
+  sectionDiv: HTMLDivElement,
+  profiles: CVProfileData[],
+  section: CustomSection
+) {
+  const sectionName = sectionDiv.querySelector(
+    `#section-name-${originalLanguage.short}`
+  ) as HTMLDivElement;
+  renderEmptyInputDivsForAllLanguages(sectionName, true);
+  for (const p of profiles) {
+    const langSectionName = sectionDiv.querySelector(
+      `#section-name-${p.profile.language}`
+    );
+    if (langSectionName instanceof HTMLDivElement)
+      langSectionName.innerText = section.title;
+  }
 }

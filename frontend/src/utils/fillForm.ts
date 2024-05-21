@@ -9,6 +9,7 @@ import {
 } from "../components/form-page/form";
 import { fillHobbies } from "../components/form-page/hobbies";
 import { fillLanguageSkills } from "../components/form-page/language-skills";
+import { fillOtherSections } from "../components/form-page/other-section";
 import { fillWorkExperiences } from "../components/form-page/work-experience";
 import { CVProfileData } from "./formDataExtraction";
 
@@ -32,4 +33,5 @@ function fillLanguageSpecificFields(profiles: CVProfileData[]) {
   fillWorkExperiences(profiles);
   fillEducationTranings(profiles);
   fillHobbies(profiles);
+  fillOtherSections(profiles);
 }
