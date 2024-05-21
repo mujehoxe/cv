@@ -359,7 +359,10 @@ export function fillWorkExperiences(profiles: CVProfileData[]) {
     workExperiencesContainer.querySelectorAll(".work-experience");
 
   workExperiencesDivs.forEach((workExperienceDiv, index) => {
-    fillLanguageAgnosticFields(workExperienceDiv, profiles, index);
+    fillLanguageAgnosticFields(
+      workExperienceDiv,
+      profiles[0].profile.workExperiences![index]
+    );
 
     fillLanguageSpecificFields(workExperienceDiv, profiles, index);
   });
@@ -367,33 +370,27 @@ export function fillWorkExperiences(profiles: CVProfileData[]) {
 
 function fillLanguageAgnosticFields(
   workExperienceDiv: Element,
-  profiles: CVProfileData[],
-  index: number
+  workExperience: WorkExperience
 ) {
-  if (
-    !profiles[0].profile?.workExperiences ||
-    !profiles[0].profile.workExperiences[index]
-  )
-    return;
+  if (!workExperience) return;
 
   (workExperienceDiv.querySelector(`#work-city`) as HTMLInputElement)!.value =
-    profiles[0].profile?.workExperiences[index].organisationAddress.city!;
+    workExperience.organisationAddress.city!;
 
   (workExperienceDiv.querySelector(
     `#work-country`
-  ) as HTMLSelectElement)!.value =
-    profiles[0].profile?.workExperiences[index].organisationAddress.country!;
+  ) as HTMLSelectElement)!.value = workExperience.organisationAddress.country!;
 
   const startDate = workExperienceDiv.querySelector(
     `#from-date`
   ) as HTMLDivElement;
-  fillDate(profiles[0].profile.workExperiences[index].startDate!, startDate);
+  fillDate(workExperience.startDate!, startDate);
 
   const endDate = workExperienceDiv.querySelector(`#to-date`) as HTMLDivElement;
-  fillDate(profiles[0].profile.workExperiences[index].endDate!, endDate);
+  fillDate(workExperience.endDate!, endDate);
 
   (workExperienceDiv.querySelector(`#ongoing`) as HTMLInputElement)!.checked =
-    profiles[0].profile?.workExperiences[index].ongoing!;
+    workExperience.ongoing!;
 }
 
 function fillLanguageSpecificFields(
