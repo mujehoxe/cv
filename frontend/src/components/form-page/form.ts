@@ -11,10 +11,16 @@ import {
 import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
 import { renderError } from "./error";
 import {
+  CVProfileData,
+  PersonalInformation,
+  Phone,
   extractLanguageSpecificData,
   extractProfileInfo,
 } from "../../utils/formDataExtraction";
-import { elementTranslationsRendererFor } from "./translationsRenderer";
+import {
+  elementTranslationsRendererFor,
+  renderEmptyInputDivsForAllLanguages,
+} from "./translationsRenderer";
 import { formLanguages, originalLanguage } from "../../utils/languages";
 import { renderWorkExperiencesForm } from "./work-experience";
 import { renderEducationTrainingsForm } from "./education-tranings";
@@ -29,6 +35,7 @@ import { renderHobbiesForm } from "./hobbies";
 import { renderOtherSectionForm } from "./other-section";
 import { fetchAndRenderUsers } from "../dashboard-page/dashboard";
 import { main } from "../../../wailsjs/go/models";
+import { fillDate } from "../../utils/dateExtraction";
 
 export function renderUserInfoForm(userId?: number) {
   document.querySelector("#info-form-container")!.innerHTML = `
@@ -562,4 +569,68 @@ function hideLoading() {
 function showLoading() {
   renderFloatingLoadingIndicator("Patienter pendant la création de CV");
   document.body.style.cursor = "progress";
+}
+
+export function fillPersonalInfo(personalInformation: PersonalInformation) {
+  (document.getElementById("first-name") as HTMLInputElement).value =
+    personalInformation.firstName;
+
+  (document.getElementById("last-name") as HTMLInputElement).value =
+    personalInformation.lastName;
+
+  (document.getElementById("email") as HTMLInputElement).value =
+    personalInformation.emails![0];
+
+  if (personalInformation.sex)
+    (document.getElementById("gender") as HTMLInputElement).value =
+      personalInformation.sex;
+
+  (document.getElementById("nationality") as HTMLInputElement).value =
+    personalInformation.nationalities![0];
+
+  personalInformation.dateOfBirth &&
+    fillDate(
+      personalInformation.dateOfBirth,
+      document.getElementById("birthday") as HTMLDivElement
+    );
+
+  fillPhones(personalInformation.phones);
+}
+
+function fillPhones(phones?: Phone[]) {
+  if (!phones) return;
+  const phoneNumbers = document.querySelectorAll("#phone-number");
+  phoneNumbers.forEach((element, index) => {
+    if (!phones[index]) return;
+    (element as HTMLInputElement).value = phones[index].phoneNumber;
+    (
+      document.querySelectorAll("#phone-extention")[index] as HTMLSelectElement
+    ).value = JSON.stringify(phones[index].phonePrefix);
+  });
+}
+
+export function fillProfileImage(profilePicture: any) {
+  if (!profilePicture || profilePicture == "") return;
+  const form = document.getElementById("info-form")!;
+  const profilePic = form.querySelector("#preview-img") as HTMLImageElement;
+  profilePic.src = profilePicture;
+  profilePic.parentElement?.removeAttribute("hidden");
+  const profileIcon = form.querySelector("#profile-icon") as HTMLDivElement;
+  profileIcon.setAttribute("hidden", "true");
+}
+
+export function fillAboutMe(profiles: CVProfileData[]) {
+  if (!profiles[0].profile.personalInformation.personalDescription) return;
+  const originalAbout = document.getElementById(
+    `about-${originalLanguage.short}`
+  ) as HTMLDivElement;
+  renderEmptyInputDivsForAllLanguages(originalAbout, false);
+
+  for (const p of profiles) {
+    if (!p.profile.personalInformation.personalDescription) continue;
+    const about = document.getElementById(
+      `about-${p.profile.language}`
+    ) as HTMLDivElement;
+    about.innerHTML = p.profile.personalInformation.personalDescription;
+  }
 }

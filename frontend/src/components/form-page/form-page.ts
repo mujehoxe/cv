@@ -1,7 +1,7 @@
 import { renderUserInfoForm } from "./form";
 import { renderCvsPreviewSlideOver } from "./cvs-preview";
 import { GetProfilesOfUser } from "../../../wailsjs/go/main/App";
-import { fillForm } from "../../utils/formDataExtraction";
+import { fillForm } from "../../utils/fillForm";
 import { renderError } from "./error";
 // import { renderFormLanguages } from "../../utils/languages";
 

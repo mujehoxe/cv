@@ -1,21 +1,11 @@
-import { extractDateFrom, fillDate } from "./dateExtraction";
-import {
-  extractDigitalSkillsData as extractDigitalSkillsInto,
-  fillDigitalSkills,
-} from "../components/form-page/digital-skills";
-import {
-  extractDrivingLicencesInto,
-  fillDrivingLicences,
-} from "../components/form-page/driving-licences";
+import { extractDateFrom } from "./dateExtraction";
+import { extractDigitalSkillsData as extractDigitalSkillsInto } from "../components/form-page/digital-skills";
+import { extractDrivingLicencesInto } from "../components/form-page/driving-licences";
 import { extractEducationTrainingsInto } from "../components/form-page/education-tranings";
-import {
-  extractLanguageSkillsData as extractLanguageSkillsInto,
-  fillLanguageSkills,
-} from "../components/form-page/language-skills";
+import { extractLanguageSkillsData as extractLanguageSkillsInto } from "../components/form-page/language-skills";
 import { extractWorkExperiencesInto } from "../components/form-page/work-experience";
 import { extractHobbiesInto } from "../components/form-page/hobbies";
 import { extractOtherSectionInto } from "../components/form-page/other-section";
-import { main } from "../../wailsjs/go/models";
 
 export function extractProfileInfo() {
   const form = document.getElementById("info-form")!;
@@ -141,73 +131,6 @@ function extractPhoneInto(data: CVProfileData) {
   });
 }
 
-export function fillForm(dbProfiles: main.Profile[]) {
-  //map transform main.Profile[] to CVProfileData[]
-  const profiles: CVProfileData[] = dbProfiles.map((profile) => {
-    if (profile.json.String == "" || !profile.json.Valid) return {};
-    return JSON.parse(profile.json.String);
-  });
-
-  fillPersonalInfo(profiles[0].profile.personalInformation);
-  fillProfileImage(profiles[0].profilePicture);
-  fillDrivingLicences(profiles[0].profile.drivingLicence?.licences);
-  fillLanguageSkills(profiles[0].profile.languageSkills);
-  fillDigitalSkills(profiles[0].profile.digitalSkills?.other);
-  // fillAddress(profiles)
-  // fillWorkExperiences(profile);
-  // fillEducations(profile);
-  // fillHobbies(profile);
-  // fillOtherSection(profile);
-}
-
-function fillPersonalInfo(personalInformation: PersonalInformation) {
-  (document.getElementById("first-name") as HTMLInputElement).value =
-    personalInformation.firstName;
-
-  (document.getElementById("last-name") as HTMLInputElement).value =
-    personalInformation.lastName;
-
-  (document.getElementById("email") as HTMLInputElement).value =
-    personalInformation.emails![0];
-
-  if (personalInformation.sex)
-    (document.getElementById("gender") as HTMLInputElement).value =
-      personalInformation.sex;
-
-  (document.getElementById("nationality") as HTMLInputElement).value =
-    personalInformation.nationalities![0];
-
-  personalInformation.dateOfBirth &&
-    fillDate(
-      personalInformation.dateOfBirth,
-      document.getElementById("birthday") as HTMLDivElement
-    );
-
-  fillPhones(personalInformation.phones);
-}
-
-function fillPhones(phones?: Phone[]) {
-  if (!phones) return;
-  const phoneNumbers = document.querySelectorAll("#phone-number");
-  phoneNumbers.forEach((element, index) => {
-    if (!phones[index]) return;
-    (element as HTMLInputElement).value = phones[index].phoneNumber;
-    (
-      document.querySelectorAll("#phone-extention")[index] as HTMLSelectElement
-    ).value = JSON.stringify(phones[index].phonePrefix);
-  });
-}
-
-function fillProfileImage(profilePicture: any) {
-  if (!profilePicture || profilePicture == "") return;
-  const form = document.getElementById("info-form")!;
-  const profilePic = form.querySelector("#preview-img") as HTMLImageElement;
-  profilePic.src = profilePicture;
-  profilePic.parentElement?.removeAttribute("hidden");
-  const profileIcon = form.querySelector("#profile-icon") as HTMLDivElement;
-  profileIcon.setAttribute("hidden", "true");
-}
-
 interface SocialMediaWebsite {
   mediaType: string;
   mediaURL: string;
@@ -245,7 +168,7 @@ export interface DataDate {
   dateType: string;
 }
 
-interface PersonalInformation {
+export interface PersonalInformation {
   firstName: string;
   lastName: string;
   personalDescription?: string;
