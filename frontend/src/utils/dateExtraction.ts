@@ -23,7 +23,9 @@ export function extractDateFrom(parent: HTMLDivElement): DataDate | null {
   return null;
 }
 
-export function fillDate(date: DataDate, parent: HTMLDivElement) {
+export function fillDate(date?: DataDate, parent?: HTMLDivElement) {
+  if (!date || !parent) return;
+
   const [year, month, dayWithTime] = date.date.split("-");
 
   const yearInput = parent.querySelector("#year") as HTMLInputElement;
