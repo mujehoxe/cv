@@ -92,14 +92,14 @@ export async function fetchAndRenderUsers() {
 function renderUsers(users: main.User[], ondelete: () => {}) {
   const cvsDiv = document.getElementById("cvs") as HTMLDivElement;
   cvsDiv.innerHTML = "";
-  if (users.length === 0) {
+  if (!users || users.length === 0) {
     cvsDiv.innerText = "No CVs found.";
   } else {
     cvsDiv.innerHTML = `${users
       .map(
         (user) => `
-					<li class="cursor-pointer">
-            <div href="#" data-id="${
+					<li class="cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110">
+            <div data-id="${
               user.id
             }" class="flex flex-col w-64 items-center justify-center bg-zinc-800 p-2 rounded-md my-2">
                 ${
