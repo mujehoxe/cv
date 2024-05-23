@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
-	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -14,12 +12,10 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -316,49 +312,6 @@ func saveToTempDir(content []byte, fileName string) (string, error) {
 	}
 
 	return file.Name(), nil
-}
-
-func saveBase64ImageToLocalStorage(image, location string) (string, error) {
-	parts := strings.SplitN(image, ";", 2)
-	if len(parts) < 2 {
-		return "", errors.New("invalid image format")
-	}
-
-	mimeType := strings.Split(parts[0], ":")[1]
-	dataString := parts[1]
-	dataString = strings.TrimPrefix(dataString, "base64,")
-	data, err := base64.StdEncoding.DecodeString(dataString)
-	if err != nil {
-		return "", fmt.Errorf("failed to decode image data: %w", err)
-	}
-
-	var extension string
-	switch mimeType {
-	case "image/jpeg":
-		extension = ".jpg"
-	case "image/png":
-		extension = ".png"
-	case "image/webp":
-		extension = ".webp"
-	default:
-		return "", fmt.Errorf("unsupported image type: %s", mimeType)
-	}
-
-	if _, err := os.Stat(location); os.IsNotExist(err) {
-		err := os.MkdirAll(location, 0755)
-		if err != nil {
-			return "", fmt.Errorf("failed to create directory: %w", err)
-		}
-	}
-
-	fileName := uuid.New().String() + extension
-	path := filepath.Join(location, fileName)
-	err = os.WriteFile(path, data, 0644)
-	if err != nil {
-		return "", fmt.Errorf("failed to write image to file: %w", err)
-	}
-
-	return path, nil
 }
 
 // GetPdfFile returns the content of the PDF file at the given path
