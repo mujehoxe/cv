@@ -3,14 +3,24 @@ package main
 import (
 	"database/sql"
 	"log"
+	"os"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 var db *sql.DB
 
 func connectToDatabase() *sql.DB {
-	db, err := sql.Open("sqlite3", "./cv.db")
+	//how to ask for permission to create cv.db file
+
+	dir, _ := os.UserHomeDir()
+	path := dir + "/Documents/" + "cv.db"
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		os.Create(path)
+	}
+
+	db, err := sql.Open("sqlite", path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,11 +42,11 @@ func GetDBInstance() *sql.DB {
 
 func createUsersTable() {
 	_, err := GetDBInstance().Exec(`CREATE TABLE IF NOT EXISTS users (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		first_name TEXT NOT NULL,
-		last_name TEXT NOT NULL,
-		picture TEXT,
-		date_modified DATETIME DEFAULT CURRENT_TIMESTAMP
+		id            INTEGER primary key autoincrement,
+    first_name    TEXT not null,
+    last_name     TEXT not null,
+    picture       TEXT,
+    date_modified DATETIME default CURRENT_TIMESTAMP
 	)`)
 	if err != nil {
 		log.Fatal(err)
@@ -45,10 +55,14 @@ func createUsersTable() {
 
 func createProfilesTable() {
 	_, err := GetDBInstance().Exec(`CREATE TABLE IF NOT EXISTS profiles (
-			profileId TEXT PRIMARY KEY,
-			user_id INTEGER,
-			language TEXT NOT NULL,
-			FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+		profile_id TEXT
+		constraint profiles_pk unique,
+		user_id    INTEGER
+				references users
+						on delete cascade,
+		language   TEXT not null,
+		json       TEXT,
+		primary key (user_id, language)
 	)`)
 	if err != nil {
 		log.Fatal(err)
