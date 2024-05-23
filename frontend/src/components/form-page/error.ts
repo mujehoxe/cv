@@ -12,7 +12,7 @@ export function renderError(err: string) {
         </div>
         <div class="ml-3 w-0 flex-1 pt-0.5">
           <p class="text-sm font-medium text-gray-200">Encountered and error, please try again</p>
-          <p class="mt-1 text-sm text-gray-400 capitalize">${err}</p>
+          <p class="mt-1 text-sm text-gray-400">${err}</p>
         </div>
         <div class="ml-4 flex flex-shrink-0">
           <button id="close-error-button" type="button" class="inline-flex rounded-md bg-zinc-500 text-gray-200 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
