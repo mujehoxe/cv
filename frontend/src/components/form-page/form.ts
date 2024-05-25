@@ -636,4 +636,33 @@ export function fillAboutMe(profiles: CVProfileData[]) {
     ) as HTMLDivElement;
     about.innerHTML = p.profile.personalInformation.personalDescription;
   }
+export function fillAddress(profiles: CVProfileData[]) {
+  if (
+    !profiles[0].profile?.personalInformation.addresses &&
+    !profiles[0].profile?.personalInformation.addresses![0]
+  )
+    return;
+
+  const originalStreet = document.getElementById(
+    `street-${originalLanguage.short}`
+  ) as HTMLDivElement;
+  renderEmptyInputDivsForAllLanguages(originalStreet, false);
+
+  const city = document.getElementById(`city`) as HTMLInputElement;
+  city.value = profiles[0].profile.personalInformation.addresses![0].city;
+
+  const postal = document.getElementById(`postal-code`) as HTMLInputElement;
+  postal.value =
+    profiles[0].profile.personalInformation.addresses![0].postalCode;
+
+  const country = document.getElementById(`country`) as HTMLInputElement;
+  country.value = profiles[0].profile.personalInformation.addresses![0].country;
+
+  for (const p of profiles) {
+    const streetInput = document.getElementById(
+      `street-${p.profile.language}`
+    ) as HTMLDivElement;
+    streetInput.innerHTML =
+      p.profile.personalInformation.addresses![0].addressPart1!;
+  }
 }

@@ -4,6 +4,7 @@ import { fillDrivingLicences } from "../components/form-page/driving-licences";
 import { fillEducationTranings } from "../components/form-page/education-tranings";
 import {
   fillAboutMe,
+  fillAddress,
   fillPersonalInfo,
   fillProfileImage,
 } from "../components/form-page/form";
@@ -30,6 +31,7 @@ export function fillForm(dbProfiles: main.Profile[]) {
 
 function fillLanguageSpecificFields(profiles: CVProfileData[]) {
   fillAboutMe(profiles);
+  fillAddress(profiles);
   fillWorkExperiences(profiles);
   fillEducationTranings(profiles);
   fillHobbies(profiles);
