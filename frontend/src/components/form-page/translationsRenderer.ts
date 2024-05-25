@@ -5,7 +5,9 @@ import {
   originalLanguage,
 } from "../../utils/languages";
 import {
+  closeFloatingLoadingIndicator,
   removeLoadingIndicator,
+  renderFloatingLoadingIndicator,
   renderLoadingIndicator,
 } from "./loadingIndicator";
 
@@ -63,6 +65,7 @@ async function renderTranslations(
   parent: HTMLDivElement,
   isSingleLine: boolean
 ): Promise<void> {
+  renderFloatingLoadingIndicator(`Translating...`);
   renderLoadingIndicator(parent);
   for (const [_, otherLanguage] of Object.entries(formLanguages)) {
     if (areLanguagesEqual(originalLanguage, otherLanguage)) continue;
@@ -80,8 +83,8 @@ async function renderTranslations(
       console.error("Error translating text:", error);
     }
   }
-
   removeLoadingIndicator(parent);
+  closeFloatingLoadingIndicator();
 }
 
 export function renderEmptyInputDivsForAllLanguages(
@@ -94,7 +97,10 @@ export function renderEmptyInputDivsForAllLanguages(
     if (areLanguagesEqual(originalLanguage, otherLanguage)) continue;
 
     renderInputDivForTranslation(
-      { content: element.innerText, language: otherLanguage },
+      {
+        content: element.innerHTML,
+        language: otherLanguage,
+      },
       parent,
       isSingleLine
     );

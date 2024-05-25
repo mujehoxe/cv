@@ -1,9 +1,12 @@
 import {
   DeleteUser,
   GetUsersPaginated,
+  ImportCV,
   SearchUsers,
 } from "../../../wailsjs/go/main/App";
 import { main } from "../../../wailsjs/go/models";
+import { fillFormUsingProfiles } from "../../utils/fillForm";
+import { CVProfileData } from "../../utils/formDataExtraction";
 import { renderError } from "../form-page/error";
 import { showFormPage, showUpdateProfileForm } from "../form-page/form-page";
 import {
@@ -19,12 +22,17 @@ export function renderDashboard() {
   document.querySelector("#dashboard")!.innerHTML = `
 	<div class="flex flex-col justify-center text-sm">
 		<h1 class="text-xl font-bold text-gray-200">Dashboard</h1>
-    <div class="mt-10 gap-10 flex flex-row justify-between items-center mb-10">
+    <div class="my-6 gap-10 flex flex-row justify-center items-center">
+      <button
+        id='import-cv-btn'
+        class="bg-emerald-500 hover:bg-emerald-700 whitespace-nowrap text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-4 focus:ring-indigo-300">
+        + Import CV
+      </button>
       <input
-        type="text" 
-        placeholder="Rechercher par 'Nom' et / ou 'Prenom' ..."
-        class="border border-gray-600 bg-gray-800 w-full p-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        id="search-box"
+        id="pdf-input"
+        type="file"
+        class="hidden"
+        accept="application/pdf"
       />
       <button
         id='create-cv-btn'
@@ -32,16 +40,40 @@ export function renderDashboard() {
         + Create CV
       </button>
     </div>
-		<ul id="cvs" class="flex flex-wrap gap-6 my-8 h-full min-h-96 justify-center items-center"></ul>
-		<nav aria-label="Page navigation example" class="p-2 mx-24 m-4">
-			<ul id="pagination" class="justify-content-center bg-zinc-800 rounded-full"></ul>
-		</nav>
+    <div class="mx-24">
+      <input
+        type="text"
+        placeholder="Rechercher par 'Nom' et / ou 'Prenom' ..."
+        class="border border-gray-600 bg-gray-800 w-full p-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        id="search-box"
+      />
+      <ul id="cvs" class="flex flex-wrap gap-6 my-8 h-full min-h-96 justify-center items-center"></ul>
+      <nav aria-label="Page navigation example" class="p-2 m-4">
+        <ul id="pagination" class="justify-content-center bg-zinc-800 rounded-full"></ul>
+      </nav>
+    </div>
 	</div>
 	`;
 
   document.getElementById("create-cv-btn")?.addEventListener("click", () => {
     showFormPage();
   });
+
+  document
+    .getElementById("import-cv-btn")
+    ?.addEventListener("click", async () => {
+      try {
+        renderFloatingLoadingIndicator("Uploading CV...");
+        const data: CVProfileData = await ImportCV();
+        data.profile.language = data.profile.language.toUpperCase();
+        console.log(data);
+        closeFloatingLoadingIndicator();
+        showFormPage(undefined, data.profile.preference.profileStructure);
+        fillFormUsingProfiles([data]);
+      } catch (error) {
+        renderError(error as string);
+      }
+    });
 
   document.getElementById("search-box")?.addEventListener("keyup", () => {
     pageNumber = 1;
@@ -125,7 +157,7 @@ function renderUsers(users: main.User[], ondelete: () => {}) {
     li.addEventListener("click", async () => {
       const userId = li.children[0].getAttribute("data-id");
       if (!userId) return;
-      renderFloatingLoadingIndicator("Getting Profile");
+      renderFloatingLoadingIndicator("Getting Profile...");
       await showUpdateProfileForm(parseInt(userId));
       setTimeout(() => {
         closeFloatingLoadingIndicator();

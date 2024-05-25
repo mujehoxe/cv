@@ -147,5 +147,7 @@ export function fillHobbies(profiles: CVProfileData[]) {
       ) as HTMLDivElement)!.innerHTML =
         p.profile?.hobbiesInterests[index].title;
     }
+
+    if (profiles[0].errors) hobbyName.dispatchEvent(new Event("blur"));
   });
 }

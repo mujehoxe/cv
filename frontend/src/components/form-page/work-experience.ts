@@ -287,7 +287,7 @@ function extractWorkExperienceData(
 
   const mainActivities = (
     workExperience?.querySelector(`#activities-${language}`) as HTMLDivElement
-  )?.innerText;
+  )?.innerHTML;
   const ongoing = (workExperience.querySelector("#ongoing") as HTMLInputElement)
     .checked;
 
@@ -408,10 +408,10 @@ function fillLanguageSpecificFields(
   ) as HTMLDivElement;
   renderEmptyInputDivsForAllLanguages(employer, true);
 
-  const activites = workExperienceDiv.querySelector(
+  const activities = workExperienceDiv.querySelector(
     `#activities-${originalLanguage.short}`
   ) as HTMLDivElement;
-  renderEmptyInputDivsForAllLanguages(activites, false);
+  renderEmptyInputDivsForAllLanguages(activities, false);
 
   for (const p of profiles) {
     if (!p.profile?.workExperiences || !p.profile.workExperiences[index])
@@ -426,11 +426,17 @@ function fillLanguageSpecificFields(
     ) as HTMLDivElement)!.innerText =
       p.profile?.workExperiences[index].employer!;
 
-    (workExperienceDiv.querySelector(
+    const langActivities = (workExperienceDiv.querySelector(
       `#activities-${p.profile.language}`
-    ) as HTMLDivElement)!.innerHTML =
+    ) as HTMLDivElement)!;
+    langActivities.innerHTML =
       p.profile?.workExperiences[index].mainActivities!;
   }
 
   occupation.dispatchEvent(new Event("input"));
+  if (profiles[0].errors) {
+    occupation.dispatchEvent(new Event("blur"));
+    employer.dispatchEvent(new Event("blur"));
+    activities.dispatchEvent(new Event("blur"));
+  }
 }

@@ -298,4 +298,5 @@ export interface CVProfileData {
   profile: Profile;
   profilePicture?: null | string;
   template: Template;
+  errors?: any;
 }

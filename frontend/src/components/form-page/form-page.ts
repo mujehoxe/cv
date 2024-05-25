@@ -1,13 +1,13 @@
 import { renderUserInfoForm } from "./form";
 import { renderCvsPreviewSlideOver } from "./cvs-preview";
 import { GetProfilesOfUser } from "../../../wailsjs/go/main/App";
-import { fillForm } from "../../utils/fillForm";
+import { fillFormUsingDBProfiles } from "../../utils/fillForm";
 import { renderError } from "./error";
 // import { renderFormLanguages } from "../../utils/languages";
 
 let formPage: HTMLDivElement;
 
-export function renderFormPage(userId?: number) {
+export function renderFormPage(userId?: number, profileStructure?: string[]) {
   formPage = document.querySelector("#form-page")!;
   formPage.innerHTML = `
     <button id="close-page-button" type="button" class="fixed right-4 top-4 rounded-md bg-zinc-700 text-gray-300 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
@@ -25,7 +25,7 @@ export function renderFormPage(userId?: number) {
 
   // renderFormLanguages();
 
-  renderUserInfoForm(userId);
+  renderUserInfoForm(userId, profileStructure);
 
   renderCvsPreviewSlideOver();
 
@@ -36,8 +36,8 @@ export function renderFormPage(userId?: number) {
     });
 }
 
-export function showFormPage(userId?: number) {
-  renderFormPage(userId);
+export function showFormPage(userId?: number, profileStructure?: string[]) {
+  renderFormPage(userId, profileStructure);
   formPage.removeAttribute("hidden");
 }
 
@@ -50,7 +50,7 @@ export async function showUpdateProfileForm(userId: number) {
   try {
     profiles = await GetProfilesOfUser(userId);
     showFormPage(userId);
-    fillForm(profiles);
+    fillFormUsingDBProfiles(profiles);
   } catch (err) {
     console.error(err);
     renderError(err as string);

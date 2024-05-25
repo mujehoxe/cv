@@ -37,7 +37,10 @@ import { fetchAndRenderUsers } from "../dashboard-page/dashboard";
 import { main } from "../../../wailsjs/go/models";
 import { fillDate } from "../../utils/dateExtraction";
 
-export function renderUserInfoForm(userId?: number) {
+export function renderUserInfoForm(
+  userId?: number,
+  profileStructure?: string[]
+) {
   document.querySelector("#info-form-container")!.innerHTML = `
 <form id="info-form">
   <details open>
@@ -253,8 +256,8 @@ export function renderUserInfoForm(userId?: number) {
             <label for="phone-extention" class="sr-only">Phone extention</label>
             <select
               id="phone-extention"
-              name="country"
-              autocomplete="country"
+              name="phone-extention"
+              autocomplete="phone-extention"
               class="bg-transparent h-full rounded-md border-0 py-0 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
             >
               <option disabled>Selectioner</option>
@@ -278,8 +281,8 @@ export function renderUserInfoForm(userId?: number) {
             <label for="phone-extention" class="sr-only">Phone extention</label>
             <select
               id="phone-extention"
-              name="country"
-              autocomplete="country"
+              name="phone-extention"
+              autocomplete="phone-extention"
               class="bg-transparent h-full rounded-md border-0 py-0 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
             >
               <option disabled>Selectioner</option>
@@ -427,6 +430,11 @@ export function renderUserInfoForm(userId?: number) {
 </form>
 `;
 
+  const form = document.getElementById("info-form");
+  form?.addEventListener("submit", (e) =>
+    handleSubmit(e, userId, profileStructure)
+  );
+
   const photoBtn = document.getElementById("photo-btn") as HTMLInputElement;
   photoBtn.addEventListener("click", () => {
     const photoInput = document.getElementById(
@@ -449,9 +457,6 @@ export function renderUserInfoForm(userId?: number) {
       }
     });
   });
-
-  const form = document.getElementById("info-form");
-  form?.addEventListener("submit", (e) => handleSubmit(e, userId));
 
   //remove photo btn clicked
   const removePhotoBtn = form?.querySelector(
@@ -505,13 +510,20 @@ export function renderUserInfoForm(userId?: number) {
   });
 }
 
-async function handleSubmit(e: SubmitEvent, userId?: number) {
+async function handleSubmit(
+  e: SubmitEvent,
+  userId?: number,
+  profileStructure?: string[]
+) {
   e.preventDefault();
   showLoading();
 
   const cvs = new Map();
 
   const data = extractProfileInfo();
+  if (profileStructure)
+    data.profile.preference.profileStructure = profileStructure;
+
   let user = {
     id: userId,
     first_name: data!.profile.personalInformation.firstName,
@@ -631,11 +643,16 @@ export function fillAboutMe(profiles: CVProfileData[]) {
 
   for (const p of profiles) {
     if (!p.profile.personalInformation.personalDescription) continue;
+
     const about = document.getElementById(
       `about-${p.profile.language}`
     ) as HTMLDivElement;
     about.innerHTML = p.profile.personalInformation.personalDescription;
   }
+
+  if (profiles[0].errors) originalAbout.dispatchEvent(new Event("blur"));
+}
+
 export function fillAddress(profiles: CVProfileData[]) {
   if (
     !profiles[0].profile?.personalInformation.addresses &&

@@ -14,19 +14,29 @@ import { fillOtherSections } from "../components/form-page/other-section";
 import { fillWorkExperiences } from "../components/form-page/work-experience";
 import { CVProfileData } from "./formDataExtraction";
 
-export function fillForm(dbProfiles: main.Profile[]) {
+export function fillFormUsingDBProfiles(dbProfiles: main.Profile[]) {
   //map transform main.Profile[] to CVProfileData[]
   const profiles: CVProfileData[] = dbProfiles.map((profile) => {
     if (profile.json.String == "" || !profile.json.Valid) return {};
     return JSON.parse(profile.json.String);
   });
 
-  fillPersonalInfo(profiles[0].profile?.personalInformation);
-  fillProfileImage(profiles[0].profilePicture);
-  fillDrivingLicences(profiles[0].profile?.drivingLicence?.licences);
-  fillLanguageSkills(profiles[0].profile?.languageSkills);
-  fillDigitalSkills(profiles[0].profile?.digitalSkills?.other);
+  fillLanguageAgnosticFields(profiles[0]);
+
   fillLanguageSpecificFields(profiles);
+}
+
+export function fillFormUsingProfiles(profiles: CVProfileData[]) {
+  fillLanguageAgnosticFields(profiles[0]);
+  fillLanguageSpecificFields(profiles);
+}
+
+function fillLanguageAgnosticFields(profile: CVProfileData) {
+  fillPersonalInfo(profile.profile?.personalInformation);
+  fillProfileImage(profile.profilePicture);
+  fillDrivingLicences(profile.profile?.drivingLicence?.licences);
+  fillLanguageSkills(profile.profile?.languageSkills);
+  fillDigitalSkills(profile.profile?.digitalSkills?.other);
 }
 
 function fillLanguageSpecificFields(profiles: CVProfileData[]) {
