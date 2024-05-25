@@ -50,6 +50,10 @@ export function GetUsersPaginated(arg1, arg2) {
   return window['go']['main']['App']['GetUsersPaginated'](arg1, arg2);
 }
 
+export function ImportCV() {
+  return window['go']['main']['App']['ImportCV']();
+}
+
 export function OpenPDF(arg1) {
   return window['go']['main']['App']['OpenPDF'](arg1);
 }

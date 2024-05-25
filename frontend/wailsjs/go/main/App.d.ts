@@ -26,6 +26,8 @@ export function GetUserByID(arg1:number):Promise<main.User>;
 
 export function GetUsersPaginated(arg1:number,arg2:number):Promise<main.paginatedUsersResult>;
 
+export function ImportCV():Promise<any>;
+
 export function OpenPDF(arg1:string):Promise<void>;
 
 export function SearchUsers(arg1:string,arg2:number,arg3:number):Promise<main.paginatedUsersResult>;

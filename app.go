@@ -1,20 +1,15 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
-	"math"
 	"net/http"
-	"net/url"
 	"os"
 	"os/exec"
 	"runtime"
-	"strings"
-	"time"
 
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -65,7 +60,7 @@ func (a *App) confirmClose(ctx context.Context) (prevent bool) {
 }
 
 // setHeaders sets the necessary headers for the request.
-func (a *App) setHeaders(req *http.Request, ro RequestOptions) {
+func setHeaders(req *http.Request, ro RequestOptions) {
 	req.Header.Set("Content-Type", ro.ContentType)
 	if ro.Accept != "" {
 		req.Header.Set("Accept", ro.Accept)
@@ -84,7 +79,7 @@ func (a *App) makeRequest(ro RequestOptions) (*http.Response, error) {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	a.setHeaders(req, ro)
+	setHeaders(req, ro)
 
 	resp, err := a.client.Do(req)
 	if err != nil {
@@ -111,163 +106,6 @@ func (a *App) unmarshalJSONResponse(resp *http.Response) (*struct {
 	}
 
 	return result, nil
-}
-
-// CreateCVProfile creates a CV profile and returns the profile ID.
-func (a *App) CreateCVProfile(jsonData string) (string, error) {
-	reqOps := NewRequestOptionsBuilder("POST", "https://europa.eu/europass/eportfolio/api/eprofile/cv").
-		Body(bytes.NewBuffer([]byte(jsonData))).
-		ExpectedStatusCode(http.StatusCreated).
-		ContentType("application/json").
-		Build()
-
-	resp, err := a.makeRequest(reqOps)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	result, err := a.unmarshalJSONResponse(resp)
-	if err != nil {
-		return "", err
-	}
-
-	return result.ID, nil
-}
-
-// UpdateCVProfile updates a CV profile and returns the profile ID.
-func (a *App) UpdateCVProfile(profileID string, jsonData string) (string, error) {
-	reqOps := NewRequestOptionsBuilder("PUT", fmt.Sprintf("https://europa.eu/europass/eportfolio/api/eprofile/cv/%s", profileID)).
-		Body(bytes.NewBuffer([]byte(jsonData))).
-		ExpectedStatusCode(http.StatusOK).
-		ContentType("application/json").
-		Build()
-
-	resp, err := a.makeRequest(reqOps)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	result, err := a.unmarshalJSONResponse(resp)
-	if err != nil {
-		return "", err
-	}
-
-	return result.ID, nil
-}
-
-// GetProfile gets a profile by its ID from europass
-func (a *App) GetProfile(profileId string) (any, error) {
-	url := "https://europa.eu/europass/eportfolio/api/eprofile/cv/" + profileId
-	reqOps := NewRequestOptionsBuilder("GET", url).
-		ExpectedStatusCode(http.StatusOK).
-		ContentType("application/json").
-		Accept("application/json").
-		Build()
-
-	resp, err := a.makeRequest(reqOps)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	// unmarchal
-	var result any
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		return "", err
-	}
-
-	return result, nil
-}
-
-// getPdfId retrieves the PDF ID for a given profile ID.
-func (a *App) getPdfId(profileID string) (string, error) {
-	data := map[string]interface{}{
-		"headers": map[string]string{
-			"accept": "application/json",
-		},
-		"params": map[string]interface{}{
-			"updates":   nil,
-			"cloneFrom": nil,
-			"encoder":   map[string]interface{}{},
-			"map":       nil,
-		},
-		"responseType": "json",
-	}
-
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return "", fmt.Errorf("error marshaling data: %w", err)
-	}
-
-	reqOps := NewRequestOptionsBuilder("POST",
-		fmt.Sprintf("https://europa.eu/europass/eportfolio/api/eprofile/cv/%s", profileID)).
-		Body(bytes.NewBuffer([]byte(jsonData))).
-		ExpectedStatusCode(http.StatusOK).
-		ContentType("application/json").
-		Build()
-
-	resp, err := a.makeRequest(reqOps)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	result, err := a.unmarshalJSONResponse(resp)
-	if err != nil {
-		return "", err
-	}
-
-	return result.ID, nil
-}
-
-// fetchPdfFile retrieves the PDF file given its ID.
-func (a *App) fetchPdfFile(pdfID string) ([]byte, error) {
-	maxRetries := 10
-	initialDelay := 100 * time.Millisecond
-	maxDelay := 2 * time.Second
-
-	var body []byte
-	var err error
-	for i := 0; i < maxRetries; i++ {
-		reqOps := NewRequestOptionsBuilder(
-			"GET",
-			fmt.Sprintf("https://europa.eu/europass/eportfolio/api/office/download/pdf/%s", pdfID)).
-			ExpectedStatusCode(http.StatusOK).
-			ContentType("application/json").
-			Accept("application/pdf").
-			Build()
-
-		var resp *http.Response
-		resp, err = a.makeRequest(reqOps)
-
-		if err != nil {
-			if strings.Contains(err.Error(), fmt.Sprint(http.StatusNoContent)) {
-				delay := initialDelay * time.Duration(math.Pow(2, float64(i)))
-				if delay > maxDelay {
-					delay = maxDelay
-				}
-				time.Sleep(delay)
-			}
-			continue
-		}
-		defer resp.Body.Close()
-
-		body, err = io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, fmt.Errorf("error reading response body: %w", err)
-		}
-
-		break
-	}
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to get pdf file with id %s after %d retries", pdfID, maxRetries)
-	}
-
-	return body, nil
 }
 
 // FetchCVAndSave fetches the CV for the given profile and saves it to temp file.
@@ -347,26 +185,4 @@ func (a *App) OpenPDF(path string) error {
 	}
 
 	return nil
-}
-
-// Get the list of digital skills from europass
-func (a *App) FetchDigitalSkillsAutocomplete(search string) ([]string, error) {
-	reqOps := NewRequestOptionsBuilder("GET", fmt.Sprintf("https://europa.eu/europass/eportfolio/api/eprofile/digital-skills/autocomplete?search=%s&language=en&size=10", url.QueryEscape(search))).
-		ExpectedStatusCode(http.StatusOK).
-		ContentType("application/json").
-		Build()
-
-	resp, err := a.makeRequest(reqOps)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	var result []string
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		return nil, fmt.Errorf("error unmarshaling response: %w", err)
-	}
-
-	return result, nil
 }
