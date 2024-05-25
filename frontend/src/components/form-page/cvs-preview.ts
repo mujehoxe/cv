@@ -46,18 +46,14 @@ export function renderCvsPreviewSlideOver() {
     ?.addEventListener("click", () => {
       cvsPreview!.classList.toggle("hidden", true);
       const rootElement = document.querySelector("#root");
-      if (rootElement) {
-        rootElement.classList.remove("overflow-hidden");
-      }
+      rootElement && rootElement.classList.remove("overflow-hidden");
     });
 }
 
 export function showCvsPreviewSlideOver() {
   cvsPreview!.classList.toggle("hidden", false);
   const rootElement = document.querySelector("#root");
-  if (rootElement) {
-    rootElement.classList.add("overflow-hidden");
-  }
+  rootElement && rootElement.classList.add("overflow-hidden");
 }
 
 export async function renderPreviewPdf(pdfPath: string, language: string) {
