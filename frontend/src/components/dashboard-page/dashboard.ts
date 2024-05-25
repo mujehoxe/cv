@@ -66,7 +66,6 @@ export function renderDashboard() {
         renderFloatingLoadingIndicator("Uploading CV...");
         const data: CVProfileData = await ImportCV();
         data.profile.language = data.profile.language.toUpperCase();
-        console.log(data);
         closeFloatingLoadingIndicator();
         showFormPage(undefined, data.profile.preference.profileStructure);
         fillFormUsingProfiles([data]);

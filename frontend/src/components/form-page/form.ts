@@ -650,7 +650,7 @@ export function fillAboutMe(profiles: CVProfileData[]) {
     about.innerHTML = p.profile.personalInformation.personalDescription;
   }
 
-  if (profiles[0].errors) originalAbout.dispatchEvent(new Event("blur"));
+  if (profiles[0].errors) originalAbout.dispatchEvent(new CustomEvent("blur"));
 }
 
 export function fillAddress(profiles: CVProfileData[]) {

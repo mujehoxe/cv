@@ -358,14 +358,6 @@ export function extractEducationTrainingsInto(
     ".education-training"
   );
 
-  if (educationTrainings.length > 0) {
-    if (
-      !data.profile.preference.profileStructure.includes("education-training")
-    ) {
-      data.profile.preference.profileStructure.push("education-training");
-    }
-  }
-
   data.profile.educationTrainings = [];
 
   educationTrainings.forEach((educationTraining) => {
@@ -375,6 +367,18 @@ export function extractEducationTrainingsInto(
     );
     data.profile.educationTrainings?.push(educationTrainingData);
   });
+
+  if (educationTrainings.length > 0) {
+    if (
+      !data.profile.preference.profileStructure.includes("education-training")
+    )
+      if (data.profile.preference.profileStructure[0] !== "work-education")
+        data.profile.preference.profileStructure = [
+          data.profile.preference.profileStructure[0],
+          "education-training",
+          ...data.profile.preference.profileStructure.slice(1),
+        ];
+  }
 }
 
 export function fillEducationTranings(profiles: CVProfileData[]) {
@@ -384,7 +388,7 @@ export function fillEducationTranings(profiles: CVProfileData[]) {
 
   if (!profiles[0].profile?.educationTrainings) return;
 
-  for (const _ in profiles[0].profile.workExperiences) {
+  for (const _ in profiles[0].profile.educationTrainings) {
     renderEducationTrainingFields();
   }
 
@@ -445,8 +449,7 @@ function fillLanguageSpecificFields(
   const studyField = educationTrainingDiv.querySelector(
     `#study-field-${originalLanguage.short}`
   ) as HTMLDivElement;
-  if (!profiles[0].profile.educationTrainings![index].studyFields)
-    renderEmptyInputDivsForAllLanguages(studyField, true);
+  renderEmptyInputDivsForAllLanguages(studyField, true);
 
   for (const p of profiles) {
     if (!p.profile?.educationTrainings || !p.profile.educationTrainings[index])
@@ -458,9 +461,10 @@ function fillLanguageSpecificFields(
       `#degree-${p.profile.language}`
     ) as HTMLDivElement)!.innerText = educationTraining.qualification!;
 
-    (educationTrainingDiv.querySelector(
-      `#institution-${p.profile.language}`
-    ) as HTMLDivElement)!.innerText = educationTraining.organisationName!;
+    if (educationTraining.organisationName)
+      (educationTrainingDiv.querySelector(
+        `#institution-${p.profile.language}`
+      ) as HTMLDivElement)!.innerText = educationTraining.organisationName!;
 
     if (educationTraining.studyFields && educationTraining.studyFields[0])
       (educationTrainingDiv.querySelector(
@@ -469,10 +473,10 @@ function fillLanguageSpecificFields(
         educationTraining.studyFields![0].content!;
   }
 
-  degree.dispatchEvent(new Event("input"));
+  degree.dispatchEvent(new CustomEvent("input"));
   if (profiles[0].errors) {
-    degree.dispatchEvent(new Event("blur"));
-    institution.dispatchEvent(new Event("blur"));
-    studyField.dispatchEvent(new Event("blur"));
+    degree.dispatchEvent(new CustomEvent("blur"));
+    institution.dispatchEvent(new CustomEvent("blur"));
+    studyField.dispatchEvent(new CustomEvent("blur"));
   }
 }

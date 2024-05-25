@@ -208,10 +208,6 @@ export function extractDrivingLicencesInto(data: CVProfileData) {
     ".driving-licence-item"
   );
 
-  if (drivingLicences.length > 0) {
-    data.profile.preference.profileStructure.push("driving-licence");
-  }
-
   drivingLicences.forEach((drivingLicence) => {
     const checkbox = drivingLicence.querySelector(
       "input[type='checkbox']"
@@ -239,6 +235,10 @@ export function extractDrivingLicencesInto(data: CVProfileData) {
       data.profile.drivingLicence.licences.push(drivingLicenceData);
     }
   });
+
+  if (drivingLicences.length > 0) {
+    data.profile.preference.profileStructure.push("driving-licence");
+  }
 }
 
 export function fillDrivingLicences(licences?: DrivingLicence[]) {

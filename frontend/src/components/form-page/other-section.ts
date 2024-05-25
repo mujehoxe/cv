@@ -310,7 +310,6 @@ export function extractOtherSectionInto(data: CVProfileData, language: string) {
     };
 
     data.profile.customSections?.push(sectionData);
-    data.profile.preference.profileStructure.push(id);
 
     const records = otherSection.querySelectorAll("#other-record");
     if (records.length > 0) {
@@ -321,6 +320,8 @@ export function extractOtherSectionInto(data: CVProfileData, language: string) {
       const recordData = extractRecordData(language, record);
       sectionData.records?.push(recordData);
     });
+
+    data.profile.preference.profileStructure.push(id);
   });
 
   data.profile.customSections;

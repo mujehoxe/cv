@@ -103,6 +103,13 @@ export function extractHobbiesInto(data: CVProfileData, language: string) {
   const hobbiesContainer = document.getElementById("hobbies-container")!;
   const hobbies = hobbiesContainer.querySelectorAll(".hobby");
 
+  data.profile.hobbiesInterests = [];
+
+  hobbies.forEach((hobby) => {
+    const hobbyData = extractHobbyData(language, hobby);
+    data.profile.hobbiesInterests?.push(hobbyData);
+  });
+
   if (hobbies.length > 0) {
     if (
       !data.profile.preference.profileStructure.includes("hobbies-interests")
@@ -110,13 +117,6 @@ export function extractHobbiesInto(data: CVProfileData, language: string) {
       data.profile.preference.profileStructure.push("hobbies-interests");
     }
   }
-
-  data.profile.hobbiesInterests = [];
-
-  hobbies.forEach((hobby) => {
-    const hobbyData = extractHobbyData(language, hobby);
-    data.profile.hobbiesInterests?.push(hobbyData);
-  });
 }
 
 export function fillHobbies(profiles: CVProfileData[]) {
@@ -148,6 +148,6 @@ export function fillHobbies(profiles: CVProfileData[]) {
         p.profile?.hobbiesInterests[index].title;
     }
 
-    if (profiles[0].errors) hobbyName.dispatchEvent(new Event("blur"));
+    if (profiles[0].errors) hobbyName.dispatchEvent(new CustomEvent("blur"));
   });
 }

@@ -287,7 +287,7 @@ function extractWorkExperienceData(
 
   const mainActivities = (
     workExperience?.querySelector(`#activities-${language}`) as HTMLDivElement
-  )?.innerHTML;
+  )?.innerText;
   const ongoing = (workExperience.querySelector("#ongoing") as HTMLInputElement)
     .checked;
 
@@ -328,11 +328,6 @@ export function extractWorkExperiencesInto(
   const workExperiences =
     workExperiencesContainer.querySelectorAll(".work-experience");
 
-  if (workExperiences.length > 0) {
-    if (!data.profile.preference.profileStructure.includes("work-experience"))
-      data.profile.preference.profileStructure.push("work-experience");
-  }
-
   data.profile.workExperiences = [];
 
   workExperiences.forEach((workExperience) => {
@@ -342,6 +337,14 @@ export function extractWorkExperiencesInto(
     );
     data.profile.workExperiences?.push(workExperienceData);
   });
+
+  if (workExperiences.length > 0) {
+    if (!data.profile.preference.profileStructure.includes("work-experience"))
+      data.profile.preference.profileStructure = [
+        "work-experience",
+        ...data.profile.preference.profileStructure,
+      ];
+  }
 }
 
 export function fillWorkExperiences(profiles: CVProfileData[]) {
@@ -416,10 +419,11 @@ function fillLanguageSpecificFields(
   for (const p of profiles) {
     if (!p.profile?.workExperiences || !p.profile.workExperiences[index])
       return;
-    (workExperienceDiv.querySelector(
-      `#occupation-${p.profile.language}`
-    ) as HTMLDivElement)!.innerText =
-      p.profile?.workExperiences[index].occupation?.label!;
+    if (p.profile?.workExperiences[index].occupation?.label)
+      (workExperienceDiv.querySelector(
+        `#occupation-${p.profile.language}`
+      ) as HTMLDivElement)!.innerText =
+        p.profile?.workExperiences[index].occupation?.label!;
 
     (workExperienceDiv.querySelector(
       `#employer-${p.profile.language}`
@@ -433,10 +437,10 @@ function fillLanguageSpecificFields(
       p.profile?.workExperiences[index].mainActivities!;
   }
 
-  occupation.dispatchEvent(new Event("input"));
+  occupation.dispatchEvent(new CustomEvent("input"));
   if (profiles[0].errors) {
-    occupation.dispatchEvent(new Event("blur"));
-    employer.dispatchEvent(new Event("blur"));
-    activities.dispatchEvent(new Event("blur"));
+    occupation.dispatchEvent(new CustomEvent("blur"));
+    employer.dispatchEvent(new CustomEvent("blur"));
+    activities.dispatchEvent(new CustomEvent("blur"));
   }
 }

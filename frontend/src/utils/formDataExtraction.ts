@@ -60,9 +60,9 @@ export function extractProfileInfo() {
   };
 
   extractPhoneInto(data);
-  extractDrivingLicencesInto(data);
   extractLanguageSkillsInto(data);
   extractDigitalSkillsInto(data);
+  extractDrivingLicencesInto(data);
 
   return data;
 }

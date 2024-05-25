@@ -186,14 +186,14 @@ export function extractLanguageSkillsData(data: CVProfileData) {
   const nativeLanguages = extractNativeLanguagesData();
   const otherLanguages = extractOtherLanguagesData();
 
-  if (nativeLanguages.length > 0 || otherLanguages.length > 0) {
-    data.profile.preference.profileStructure.push("language");
-  }
-
   data.profile.languageSkills = {
     nativeLanguages,
     otherLanguages,
   };
+
+  if (nativeLanguages.length > 0 || otherLanguages.length > 0) {
+    data.profile.preference.profileStructure.push("language");
+  }
 }
 
 export function fillLanguageSkills(languageSkills?: LanguageSkills) {
