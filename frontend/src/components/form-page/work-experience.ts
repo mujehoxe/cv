@@ -221,10 +221,7 @@ export function renderWorkExperienceFields() {
     `#employer-${originalLanguage.short}`
   ) as HTMLInputElement;
 
-  employer.addEventListener("blur", () => {
-    if (employer.innerText != "")
-      renderEmptyInputDivsForAllLanguages(employer, true);
-  });
+  elementTranslationsRendererFor(employer, true);
 
   const workCountry = workExperience.querySelector(
     'select[name="work-country"]'
