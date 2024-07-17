@@ -61,13 +61,12 @@ export function extractProfileInfo() {
 
   extractPhoneInto(data);
   extractLanguageSkillsInto(data);
-  extractDigitalSkillsInto(data);
   extractDrivingLicencesInto(data);
 
   return data;
 }
 
-export function extractLanguageSpecificData(
+export async function extractLanguageSpecificData(
   data: CVProfileData,
   language: string
 ) {
@@ -81,6 +80,7 @@ export function extractLanguageSpecificData(
   extractAddressInto(data, language);
   extractWorkExperiencesInto(data, language);
   extractEducationTrainingsInto(data, language);
+  await extractDigitalSkillsInto(data, language);
   extractHobbiesInto(data, language);
   extractOtherSectionInto(data, language);
 }

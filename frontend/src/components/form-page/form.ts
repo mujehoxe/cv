@@ -543,7 +543,7 @@ async function handleSubmit(
   }
 
   for (const language in formLanguages) {
-    extractLanguageSpecificData(data, language);
+    await extractLanguageSpecificData(data, language);
     try {
       const profileId = await CreateCVProfile(JSON.stringify(data));
       const cvPath = await FetchCVAndSave(profileId, language);

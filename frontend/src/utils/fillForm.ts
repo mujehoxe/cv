@@ -21,13 +21,13 @@ export function fillFormUsingDBProfiles(dbProfiles: main.Profile[]) {
     return JSON.parse(profile.json.String);
   });
 
-  fillLanguageAgnosticFields(profiles[0]);
+  fillLanguageAgnosticFields(profiles[3]);
 
   fillLanguageSpecificFields(profiles);
 }
 
 export function fillFormUsingProfiles(profiles: CVProfileData[]) {
-  fillLanguageAgnosticFields(profiles[0]);
+  fillLanguageAgnosticFields(profiles[3]);
   fillLanguageSpecificFields(profiles);
 }
 
