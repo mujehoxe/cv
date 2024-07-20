@@ -1,6 +1,7 @@
 // digital-skills.ts
-import { FetchDigitalSkillsAutocomplete } from "../../../wailsjs/go/main/App";
+import { FetchDigitalSkillsAutocomplete, Translate } from "../../../wailsjs/go/main/App";
 import { CVProfileData } from "../../utils/formDataExtraction";
+import { originalLanguage } from "../../utils/languages";
 
 let selectedSkills: Set<string>;
 
@@ -129,17 +130,26 @@ function renderSkillCard(skill: string, parent: HTMLElement) {
     });
 }
 
-export function extractDigitalSkillsData(data: CVProfileData) {
+export async function extractDigitalSkillsData(data: CVProfileData, language: string) {
   const selectedSkills = document.getElementById("selected-skills");
 
   if (!selectedSkills) return;
 
-  const digitalSkills = Array.from(selectedSkills.children).map((skill) => {
-    return (skill as HTMLElement).innerText;
+  data.profile.digitalSkills = {
+    other: [],
+  };
+
+  const digitalSkillsPromises = Array.from(selectedSkills.children).map((skill) => {
+    const skillName = (skill as HTMLElement).innerText;
+    return Translate(skillName, originalLanguage.short, language);
   });
 
+  const digitalSkills = await Promise.all(digitalSkillsPromises);
+
+  !data.profile.preference?.profileStructure?.includes("digital-skills") 
+    && data.profile.preference.profileStructure.push("digital-skills");
+  
   if (digitalSkills.length > 0) {
-    data.profile.preference.profileStructure.push("digital-skills");
     data.profile.digitalSkills = {
       other: digitalSkills,
     };
