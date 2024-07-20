@@ -7,12 +7,13 @@ import {
 import { main } from "../../../wailsjs/go/models";
 import { fillFormUsingProfiles } from "../../utils/fillForm";
 import { CVProfileData } from "../../utils/formDataExtraction";
-import { renderError } from "../form-page/error";
+import { renderError } from "../common/error";
 import { showFormPage, showUpdateProfileForm } from "../form-page/form-page";
 import {
   closeFloatingLoadingIndicator,
   renderFloatingLoadingIndicator,
-} from "../form-page/loadingIndicator";
+} from "../common/loadingIndicator";
+import { showCoverLetterForm } from "../cover-letter-form/cover-letter-form";
 
 const pageSize = 10;
 let pageNumber = 1;
@@ -24,9 +25,19 @@ export function renderDashboard() {
 		<h1 class="text-xl font-bold text-gray-200">Dashboard</h1>
     <div class="my-6 gap-10 flex flex-row justify-center items-center">
       <button
+        id='create-cv-btn'
+        class="bg-indigo-500 hover:bg-indigo-700 whitespace-nowrap text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-4 focus:ring-indigo-300">
+        + Créer CV
+      </button>
+      <button
+        id='create-cover-btn'
+        class="bg-rose-500 hover:bg-rose-700 whitespace-nowrap text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-4 focus:ring-indigo-300">
+        + Créer Lettre de Motivation
+      </button>
+      <button
         id='import-cv-btn'
         class="bg-emerald-500 hover:bg-emerald-700 whitespace-nowrap text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-4 focus:ring-indigo-300">
-        + Import CV
+        + Importer CV
       </button>
       <input
         id="pdf-input"
@@ -34,11 +45,6 @@ export function renderDashboard() {
         class="hidden"
         accept="application/pdf"
       />
-      <button
-        id='create-cv-btn'
-        class="bg-indigo-500 hover:bg-indigo-700 whitespace-nowrap text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-4 focus:ring-indigo-300">
-        + Create CV
-      </button>
     </div>
     <div class="mx-24">
       <input
@@ -57,6 +63,10 @@ export function renderDashboard() {
 
   document.getElementById("create-cv-btn")?.addEventListener("click", () => {
     showFormPage();
+  });
+
+  document.getElementById("create-cover-btn")?.addEventListener("click", () => {
+    showCoverLetterForm();
   });
 
   document

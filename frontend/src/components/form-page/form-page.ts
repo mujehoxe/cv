@@ -2,7 +2,7 @@ import { renderUserInfoForm } from "./form";
 import { renderCvsPreviewSlideOver } from "./cvs-preview";
 import { GetProfilesOfUser } from "../../../wailsjs/go/main/App";
 import { fillFormUsingDBProfiles } from "../../utils/fillForm";
-import { renderError } from "./error";
+import { renderError } from "../common/error";
 // import { renderFormLanguages } from "../../utils/languages";
 
 let formPage: HTMLDivElement;

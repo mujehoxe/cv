@@ -8,7 +8,7 @@ import { originalLanguage } from "../../utils/languages";
 import {
   elementTranslationsRendererFor,
   renderEmptyInputDivsForAllLanguages,
-} from "./translationsRenderer";
+} from "../common/translationsRenderer";
 
 export function renderOtherSectionForm(title?: string) {
   const otherSectionsDiv = document.getElementById(

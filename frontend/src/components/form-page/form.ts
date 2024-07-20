@@ -9,7 +9,7 @@ import {
   populatePhoneExtentions,
 } from "../../utils/countries";
 import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
-import { renderError } from "./error";
+import { renderError } from "../common/error";
 import {
   CVProfileData,
   PersonalInformation,
@@ -20,7 +20,7 @@ import {
 import {
   elementTranslationsRendererFor,
   renderEmptyInputDivsForAllLanguages,
-} from "./translationsRenderer";
+} from "../common/translationsRenderer";
 import { formLanguages, originalLanguage } from "../../utils/languages";
 import { renderWorkExperiencesForm } from "./work-experience";
 import { renderEducationTrainingsForm } from "./education-tranings";
@@ -30,7 +30,7 @@ import { renderDigitalSkillsForm } from "./digital-skills";
 import {
   closeFloatingLoadingIndicator,
   renderFloatingLoadingIndicator,
-} from "./loadingIndicator";
+} from "../common/loadingIndicator";
 import { renderHobbiesForm } from "./hobbies";
 import { renderOtherSectionForm } from "./other-section";
 import { fetchAndRenderUsers } from "../dashboard-page/dashboard";

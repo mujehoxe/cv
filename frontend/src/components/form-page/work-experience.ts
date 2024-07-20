@@ -4,7 +4,7 @@ import { originalLanguage } from "../../utils/languages";
 import {
   elementTranslationsRendererFor,
   renderEmptyInputDivsForAllLanguages,
-} from "./translationsRenderer";
+} from "../common/translationsRenderer";
 import { CVProfileData } from "../../utils/formDataExtraction";
 import { extractDateFrom, fillDate } from "../../utils/dateExtraction";
 

@@ -6,6 +6,7 @@ document.querySelector("#app")!.innerHTML = `
   <div id="root" class='relative h-screen'>
     <div class="px-12 pt-4" id="dashboard"></div>
     <div class="absolute left-0 top-0 right-0 z-10 bg-zinc-900" id="form-page" hidden></div>
+    <div class="absolute left-0 top-0 right-0 z-10 bg-zinc-900" id="cover-letter-form" hidden></div>
     <div
       id="notification"
       aria-live="assertive"
