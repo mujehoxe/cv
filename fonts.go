@@ -22,7 +22,12 @@ type Font struct {
 	Family string `json:"family"`
 }
 
-const configPath = "./cvApp.config.json"
+func documentsDir() string {
+	documentsDir, _ := os.UserHomeDir()
+	return documentsDir + "/Documents/"
+}
+
+var configPath = documentsDir() + "cvApp.config.json"
 
 type Config struct {
 	DefaultFont string `json:"defaultFont"`
