@@ -131,7 +131,7 @@ func (a *App) FetchCVAndSave(profileID string, language string) (string, error) 
 // saveToTempDir saves the content of the PDF in a temporary directory,
 // returns the path to the created file
 func saveToTempDir(content []byte, fileName string) (string, error) {
-	file, err := os.CreateTemp("", fmt.Sprintf("%s.pdf", fileName))
+	file, err := os.CreateTemp("", fmt.Sprintf("*%s.pdf", fileName))
 	if err != nil {
 		return "", fmt.Errorf("failed to create temporary file: %w", err)
 	}
