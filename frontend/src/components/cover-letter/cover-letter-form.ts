@@ -167,7 +167,7 @@ function renderUserInfoForm() {
               id="phone-extention"
               name="phone-extention"
               autocomplete="phone-extention"
-              class="bg-transparent h-full rounded-md border-0 py-0 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
+              class="h-full rounded-md border-0 py-0 px-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
             >
               <option disabled>Selectioner</option>
             </select>
@@ -192,7 +192,7 @@ function renderUserInfoForm() {
               id="phone-extention"
               name="phone-extention"
               autocomplete="phone-extention"
-              class="bg-transparent h-full rounded-md border-0 py-0 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
+              class="h-full rounded-md border-0 py-0 px-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
             >
               <option disabled>Selectioner</option>
             </select>
@@ -334,11 +334,11 @@ function renderUserInfoForm() {
   </div>
 
   <div class="flex items-center gap-4">
-    <label for="phone-extention">Police</label>
+    <label for="font">Police</label>
     <select
         id="font"
         name="font"
-        class="bg-transparent w-72 h-full rounded-md border-0 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+        class="w-72 h-full rounded-md border-0 py-0 px-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
     >
     </select>
   </div>

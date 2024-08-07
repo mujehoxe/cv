@@ -194,7 +194,7 @@ export function renderUserInfoForm(
               id="gender"
               name="gender"
               autocomplete="gender"
-              class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
+              class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-600 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
             >
               <option value="" selected disabled hidden>
                 Sélectionnez Une Valuer
@@ -216,7 +216,7 @@ export function renderUserInfoForm(
               id="nationality"
               name="nationality"
               autocomplete="nationality"
-              class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
+              class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-600 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
             >
               <option disabled>Selectioner</option>
             </select>
@@ -258,7 +258,7 @@ export function renderUserInfoForm(
               id="phone-extention"
               name="phone-extention"
               autocomplete="phone-extention"
-              class="bg-transparent h-full rounded-md border-0 py-0 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
+              class="bg-transparent h-full rounded-md border-0 py-0 px-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
             >
               <option disabled>Selectioner</option>
             </select>
@@ -283,7 +283,7 @@ export function renderUserInfoForm(
               id="phone-extention"
               name="phone-extention"
               autocomplete="phone-extention"
-              class="bg-transparent h-full rounded-md border-0 py-0 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
+              class="bg-transparent h-full rounded-md border-0 py-0 px-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
             >
               <option disabled>Selectioner</option>
             </select>
@@ -380,7 +380,7 @@ export function renderUserInfoForm(
               id="country"
               name="country"
               autocomplete="country"
-              class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-700 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
+              class="p-2 block w-full rounded-md border-0 py-1.5 text-slate-600 shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
             >
               <option disabled>Sélectionner</option>
             </select>

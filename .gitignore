@@ -6,3 +6,4 @@ exampleCvsLyna
 .env
 db/
 cv.db
+cvApp.config.json
