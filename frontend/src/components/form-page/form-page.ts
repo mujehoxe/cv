@@ -1,5 +1,5 @@
 import { renderUserInfoForm } from "./form";
-import { renderCvsPreviewSlideOver } from "./cvs-preview";
+import { renderPdfsPreviewSlideOver } from "../common/pdfs-preview";
 import { GetProfilesOfUser } from "../../../wailsjs/go/main/App";
 import { fillFormUsingDBProfiles } from "../../utils/fillForm";
 import { renderError } from "../common/error";
@@ -19,7 +19,7 @@ export function renderFormPage(userId?: number, profileStructure?: string[]) {
     <div class="px-12 pt-4">
       <div class="px-12 pt-4" id="form-languages-containter"></div>
       <div class="px-12 py-4" id="info-form-container"></div>
-      <div id="cvs-preview" class="hidden"></div>
+      <div id="pdfs-preview" class="hidden"></div>
     </div>
 	`;
 
@@ -27,7 +27,7 @@ export function renderFormPage(userId?: number, profileStructure?: string[]) {
 
   renderUserInfoForm(userId, profileStructure);
 
-  renderCvsPreviewSlideOver();
+  renderPdfsPreviewSlideOver();
 
   document
     .getElementById("close-page-button")!

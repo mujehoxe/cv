@@ -13,7 +13,7 @@ import {
   closeFloatingLoadingIndicator,
   renderFloatingLoadingIndicator,
 } from "../common/loadingIndicator";
-import { showCoverLetterForm } from "../cover-letter-form/cover-letter-form";
+import { showCoverLetterForm } from "../cover-letter/cover-letter-form";
 
 const pageSize = 10;
 let pageNumber = 1;

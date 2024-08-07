@@ -30,6 +30,18 @@ export function FetchDigitalSkillsAutocomplete(arg1) {
   return window['go']['main']['App']['FetchDigitalSkillsAutocomplete'](arg1);
 }
 
+export function GenerateCoverLetter(arg1) {
+  return window['go']['main']['App']['GenerateCoverLetter'](arg1);
+}
+
+export function GetAllFonts() {
+  return window['go']['main']['App']['GetAllFonts']();
+}
+
+export function GetDefaultFont() {
+  return window['go']['main']['App']['GetDefaultFont']();
+}
+
 export function GetPdfFile(arg1) {
   return window['go']['main']['App']['GetPdfFile'](arg1);
 }
@@ -60,6 +72,10 @@ export function OpenPDF(arg1) {
 
 export function SearchUsers(arg1, arg2, arg3) {
   return window['go']['main']['App']['SearchUsers'](arg1, arg2, arg3);
+}
+
+export function SetDefaultFont(arg1) {
+  return window['go']['main']['App']['SetDefaultFont'](arg1);
 }
 
 export function Translate(arg1, arg2, arg3) {

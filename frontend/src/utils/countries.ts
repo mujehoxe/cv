@@ -272,6 +272,19 @@ export async function populateCountries(select: HTMLSelectElement) {
   select.selectedIndex = 3;
 }
 
+export async function populateCountriesNames(select: HTMLSelectElement) {
+  countries
+    .sort((a, b) => (a.name > b.name ? 1 : -1))
+    .forEach((country: Country) => {
+      const option = document.createElement("option");
+      option.value = country.name;
+      option.textContent = country.name;
+      select?.appendChild(option);
+    });
+
+  select.selectedIndex = 3;
+}
+
 export async function populatePhoneExtentions(select: HTMLSelectElement) {
   countries
     .sort((a, b) => (a.name > b.name ? 1 : -1))

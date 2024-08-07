@@ -8,7 +8,7 @@ import {
   populateCountries,
   populatePhoneExtentions,
 } from "../../utils/countries";
-import { renderPreviewPdf, showCvsPreviewSlideOver } from "./cvs-preview";
+import { renderPreviewPdf, showPdfsPreviewSlideOver } from "../common/pdfs-preview";
 import { renderError } from "../common/error";
 import {
   CVProfileData,
@@ -566,7 +566,7 @@ async function handleSubmit(
       console.error(err);
       renderError(err as string);
     }
-    showCvsPreviewSlideOver();
+    showPdfsPreviewSlideOver();
   }
 
   fetchAndRenderUsers();

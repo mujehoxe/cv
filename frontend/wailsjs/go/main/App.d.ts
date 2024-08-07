@@ -16,6 +16,12 @@ export function FetchCVAndSave(arg1:string,arg2:string):Promise<string>;
 
 export function FetchDigitalSkillsAutocomplete(arg1:string):Promise<Array<string>>;
 
+export function GenerateCoverLetter(arg1:string):Promise<string>;
+
+export function GetAllFonts():Promise<Array<main.Font>>;
+
+export function GetDefaultFont():Promise<string>;
+
 export function GetPdfFile(arg1:string):Promise<Array<number>>;
 
 export function GetProfile(arg1:string):Promise<any>;
@@ -31,6 +37,8 @@ export function ImportCV():Promise<any>;
 export function OpenPDF(arg1:string):Promise<void>;
 
 export function SearchUsers(arg1:string,arg2:number,arg3:number):Promise<main.paginatedUsersResult>;
+
+export function SetDefaultFont(arg1:string):Promise<void>;
 
 export function Translate(arg1:string,arg2:string,arg3:string):Promise<string>;
 

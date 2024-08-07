@@ -4,11 +4,14 @@ import { GetPdfFile, OpenPDF } from "../../../wailsjs/go/main/App";
 // @ts-ignore
 const pdfjsLib = window["pdfjs-dist/build/pdf"];
 
-let cvsPreview = document.querySelector("#cvs-preview");
+let pdfsPreview = document.querySelector("#pdfs-preview");
 
-export function renderCvsPreviewSlideOver() {
-  cvsPreview = document.querySelector("#cvs-preview");
-  cvsPreview!.innerHTML = `
+export function renderPdfsPreviewSlideOver(parent? : HTMLElement) {
+  pdfsPreview = document.querySelector("#pdfs-preview");
+
+  if (parent) pdfsPreview = parent.querySelector("#pdfs-preview");
+
+  pdfsPreview!.innerHTML = `
 <div class="relative z-10" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
   <div class="fixed inset-0 bg-gray-900 opacity-80"></div>
 
@@ -19,7 +22,7 @@ export function renderCvsPreviewSlideOver() {
           <div class="flex h-full flex-col overflow-y-scroll bg-zinc-900 py-6 shadow-xl">
             <div class="px-4 sm:px-6">
               <div class="flex items-start justify-between">
-                <h2 class="text-base font-semibold leading-6 text-gray-100" id="slide-over-title">Cvs Preview</h2>
+                <h2 class="text-base font-semibold leading-6 text-gray-100" id="slide-over-title">Preview</h2>
                 <div class="ml-3 flex h-7 items-center">
                   <button id="close-slide-over-button" type="button" class="rounded-md bg-zinc-700 text-gray-300 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                     <span class="sr-only">Close panel</span>
@@ -41,17 +44,17 @@ export function renderCvsPreviewSlideOver() {
   </div>
 </div>
 `;
-  document
-    .getElementById("close-slide-over-button")
+  pdfsPreview
+    ?.querySelector("#close-slide-over-button")
     ?.addEventListener("click", () => {
-      cvsPreview!.classList.toggle("hidden", true);
+      pdfsPreview!.classList.toggle("hidden", true);
       const rootElement = document.querySelector("#root");
       rootElement && rootElement.classList.remove("overflow-hidden");
     });
 }
 
-export function showCvsPreviewSlideOver() {
-  cvsPreview!.classList.toggle("hidden", false);
+export function showPdfsPreviewSlideOver() {
+  pdfsPreview!.classList.toggle("hidden", false);
   const rootElement = document.querySelector("#root");
   rootElement && rootElement.classList.add("overflow-hidden");
 }
@@ -104,32 +107,34 @@ export async function renderPreviewPdf(pdfPath: string, language: string) {
 }
 
 function renderPdfFrame(language: string, pdfSrc: string) {
-  let pdfContainer = document.getElementById(`pdf-${language}`);
+  let pdfContainer = pdfsPreview?.querySelector(`#pdf-${language}`);
   if (pdfContainer === null) {
     pdfContainer = document.createElement("div");
     pdfContainer.id = `pdf-${language}`;
     pdfContainer.classList.add("relative", "p-2", "overflow-hidden");
-    document.getElementById("pdfs-container")?.appendChild(pdfContainer);
+    pdfsPreview?.querySelector("#pdfs-container")?.appendChild(pdfContainer);
   }
 
-  pdfContainer.innerHTML = `
-  <h1 class='static font-bold text-xl uppercase p-1'>
-    ${language}
-  </h1>
-  <div id="display-btn" class="absolute top-9 rounded-md inset-0 bg-zinc-900 bg-opacity-85 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
-    Afficher
-    <i class="fas fa-eye ml-2"></i>
-  </div>
-  `;
+  if (pdfContainer) {
+    pdfContainer.innerHTML = `
+      <h1 class='static font-bold text-xl uppercase p-1'>
+        ${language}
+      </h1>
+      <div id="display-btn" class="absolute top-9 rounded-md inset-0 bg-zinc-900 bg-opacity-85 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+        Afficher
+        <i class="fas fa-eye ml-2"></i>
+      </div>
+    `;
 
-  pdfContainer
-    .querySelector("#display-btn")
-    ?.addEventListener("click", async () => {
-      document.body.style.cursor = "wait";
-      await OpenPDF(pdfSrc);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      document.body.style.cursor = "";
-    });
+    pdfContainer
+      .querySelector("#display-btn")
+      ?.addEventListener("click", async () => {
+        document.body.style.cursor = "wait";
+        await OpenPDF(pdfSrc);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        document.body.style.cursor = "";
+      });
+  }
 
-  return pdfContainer;
+  return pdfContainer!;
 }

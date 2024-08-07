@@ -1,4 +1,6 @@
+import { extractPhoneInto } from "../components/cover-letter/dataExtraction";
 import { DataDate } from "./formDataExtraction";
+import { formLanguages } from "./languages";
 
 export function extractDateFrom(parent: HTMLDivElement): DataDate | null {
   let day = (parent.querySelector("#day") as HTMLInputElement)?.value;
@@ -37,5 +39,24 @@ export function fillDate(date?: DataDate, parent?: HTMLDivElement) {
     const monthInput = parent.querySelector("#month") as HTMLInputElement;
     dayInput.value = day;
     monthInput.value = month;
+  }
+}
+export function extractCoverInfo(coverInfoForm: HTMLFormElement, countriesSelect: HTMLSelectElement, streetInput: HTMLDivElement, objectInput: HTMLDivElement, contentInput: HTMLDivElement) {
+  const data: any = {};
+  data.firstName = (coverInfoForm.querySelector('[name=first-name]') as HTMLInputElement).value;
+  data.lastName = (coverInfoForm.querySelector('[name=last-name]') as HTMLInputElement).value;
+  data.lastName = (coverInfoForm.querySelector('[name=last-name]') as HTMLInputElement).value;
+  data.birthday = extractDateFrom(coverInfoForm.querySelector('#birthday') as HTMLInputElement);
+  data.email = (coverInfoForm.querySelector('[name=email]') as HTMLInputElement).value;
+  extractPhoneInto(data, coverInfoForm);
+  data.city = (coverInfoForm.querySelector('[name=city]') as HTMLInputElement).value;
+  data.zip = (coverInfoForm.querySelector('[name=postal-code]') as HTMLInputElement).value;
+  data.country = countriesSelect.value;
+
+  for (const language in formLanguages) {
+    data.language = language;
+    data.street = streetInput.innerText;
+    data.object = objectInput.innerText;
+    data.content = contentInput.innerText;
   }
 }

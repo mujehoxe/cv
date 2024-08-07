@@ -1,5 +1,10 @@
-import { originalLanguage } from "../../utils/languages";
+import { GenerateCoverLetter, GetAllFonts, GetDefaultFont, SetDefaultFont } from "../../../wailsjs/go/main/App";
+import { populateCountriesNames, populatePhoneExtentions } from "../../utils/countries";
+import { formLanguages, originalLanguage } from "../../utils/languages";
 import { elementTranslationsRendererFor } from "../common/translationsRenderer";
+import { renderPdfsPreviewSlideOver, renderPreviewPdf, showPdfsPreviewSlideOver } from "../common/pdfs-preview";
+import { exportCoverLanguageSpecificInfo, extractCoverLanguageAgnosticInfo } from "./dataExtraction";
+
 
 let formPage: HTMLDivElement;
 
@@ -19,7 +24,7 @@ export function renderForm() {
 			</button>
 			<div class="px-12 pt-4">
 				<div class="px-12 py-4" id="info-cover-container"></div>
-				<div id="cvs-preview" class="hidden"></div>
+				<div id="pdfs-preview" class="hidden"></div>
 			</div>
 		`;
 
@@ -30,11 +35,13 @@ export function renderForm() {
     .addEventListener("click", () => {
       hideFormPage();
     });
+
+  renderPdfsPreviewSlideOver(formPage)
 }
 
 function renderUserInfoForm() {
   document.querySelector("#info-cover-container")!.innerHTML = `
-<form id="info-form">
+<form id="cover-info-form">
   <div>
     <div
       class="text-lg pb-8 font-semibold leading-6 text-white cursor-pointer"
@@ -175,7 +182,7 @@ function renderUserInfoForm() {
         </div>
         <label
           for="phone-number"
-          class="block text-sm font-medium leading-6 text-white"
+          class="block text-sm font-medium leading-6 pt-4 text-white"
           >Numéro de téléphone 2</label
         >
         <div class="relative mt-2 rounded-md shadow-sm">
@@ -219,7 +226,7 @@ function renderUserInfoForm() {
 
             <div
               contenteditable="true"
-              id="street-cover-${originalLanguage.short}"
+              id="street-${originalLanguage.short}"
               name="street-address"
               class="single-line whitespace-nowrap overflow-hidden overflow-x-auto p-2 block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
             ></div>
@@ -326,6 +333,16 @@ function renderUserInfoForm() {
     </div>
   </div>
 
+  <div class="flex items-center gap-4">
+    <label for="phone-extention">Police</label>
+    <select
+        id="font"
+        name="font"
+        class="bg-transparent w-72 h-full rounded-md border-0 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+    >
+    </select>
+  </div>
+  
   <div class="my-6 flex flex-row items-center justify-end">
     <div id="loading"></div>
     <div class="flex gap-x-6">
@@ -347,22 +364,82 @@ function renderUserInfoForm() {
 </form>
 `;
 
-  const streetInput = document.getElementById(
-    `street-cover-${originalLanguage.short}`
+  const coverInfoForm = document.getElementById('cover-info-form') as HTMLFormElement;
+
+  const phoneExtentionSelects = coverInfoForm.querySelectorAll(
+    "#phone-extention"
+  ) as NodeListOf<HTMLSelectElement>;
+  phoneExtentionSelects.forEach((select) => {
+    populatePhoneExtentions(select);
+  });
+
+  const countriesSelect = coverInfoForm.querySelector("#country") as HTMLSelectElement;
+  populateCountriesNames(countriesSelect);
+
+  const fontsSelect = coverInfoForm.querySelector("#font") as HTMLSelectElement;
+  populateFonts(fontsSelect)
+
+  fontsSelect.addEventListener('change', async () => {
+    const selectedfont = JSON.parse(fontsSelect.value)
+    try {
+      await SetDefaultFont(selectedfont.family)
+    } catch (err) {
+      console.error('Error setting default font', err)
+    }
+  })
+
+  const streetInput = coverInfoForm.querySelector(
+    `#street-${originalLanguage.short}`
   ) as HTMLDivElement;
   elementTranslationsRendererFor(streetInput, true);
 
-  const objectInput = document.getElementById(
-    `object-${originalLanguage.short}`
+  const objectInput = coverInfoForm.querySelector(
+    `#object-${originalLanguage.short}`
   ) as HTMLDivElement;
   elementTranslationsRendererFor(objectInput, false);
 
-  const contentInput = document.getElementById(
-    `content-${originalLanguage.short}`
+  const contentInput = coverInfoForm.querySelector(
+    `#content-${originalLanguage.short}`
   ) as HTMLDivElement;
   elementTranslationsRendererFor(contentInput, false);
+
+  coverInfoForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = extractCoverLanguageAgnosticInfo(coverInfoForm);
+    data.font = JSON.parse(fontsSelect.value);
+    showPdfsPreviewSlideOver();
+    for (const language in formLanguages) {
+      exportCoverLanguageSpecificInfo(data, language, coverInfoForm);
+      const pdfPath = await GenerateCoverLetter(JSON.stringify(data));
+      renderPreviewPdf(pdfPath, language);
+    }
+  });
 }
 
 export function hideFormPage() {
   formPage.setAttribute("hidden", "true");
 }
+
+async function populateFonts(fontsSelect: HTMLSelectElement) {
+  const fonts = await GetAllFonts()
+
+  const uniqueFonts = fonts.filter((font, index) => {
+    return fonts.findIndex(f => f.family === font.family) === index
+  })
+
+  uniqueFonts.forEach((font) => {
+    const option = document.createElement('option')
+
+    option.innerText = font.family;
+
+    option.value = JSON.stringify(font)
+
+    fontsSelect.appendChild(option)
+  })
+
+
+  const def = await GetDefaultFont()
+  const defIndex = uniqueFonts.findIndex(font => font.family === def)
+  fontsSelect.selectedIndex = defIndex;
+}
+
