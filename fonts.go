@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -106,29 +107,34 @@ func (a *App) GetDefaultFont() string {
 }
 
 func (a *App) SetDefaultFont(font string) (err error) {
-	data, err := os.ReadFile(configPath)
+	file, err := os.OpenFile(configPath, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0644)
+	if err != nil {
+		return fmt.Errorf("error opening file: %s", err)
+	}
+	defer file.Close()
+
+	content, err := io.ReadAll(file)
 	if err != nil {
 		return fmt.Errorf("error reading file: %s", err)
 	}
 
 	var config Config
-	err = json.Unmarshal(data, &config)
-	if err != nil {
-		return fmt.Errorf("error parsing JSON: %s", err)
+	if err := json.Unmarshal(content, &config); err != nil {
+		fmt.Printf("error parsing JSON: %s", err)
+		config = Config{}
 	}
 
 	config.DefaultFont = font
 
-	data, err = json.Marshal(config)
+	data, err := json.Marshal(config)
 	if err != nil {
-		return fmt.Errorf("error marshalling JSON: %s", err)
+		return fmt.Errorf("error parsing JSON: %s", err)
 	}
 
-	err = os.WriteFile(configPath, data, 0644)
+	_, err = file.Write(data)
 	if err != nil {
-		return fmt.Errorf("error writing file: %s", err)
+		return fmt.Errorf("error writing to file: %s", err)
 	}
-
 	return nil
 }
 
