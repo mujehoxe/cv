@@ -338,7 +338,7 @@ function renderUserInfoForm() {
     <select
         id="font"
         name="font"
-        class="w-72 h-full rounded-md border-0 py-0 px-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
+        class="w-72 h-full rounded-md border-0 p-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs"
     >
     </select>
   </div>
