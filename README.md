@@ -1,19 +1,37 @@
-# README
+# CV Translator Desktop
 
-## About
+Cross-platform desktop app for building Europass-style CVs with multi-language translation, structured form editing, and PDF preview.
 
-This is the official Wails Vanilla-TS template.
+Built with **Wails** (Go + TypeScript/Vite).
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+## Screenshots
 
-## Live Development
+![CV Translator — French UI](docs/screenshots/cv-translator.png)
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+![CV Translator — English language selected](docs/screenshots/cv-translator-english.png)
 
-## Building
+## Features
 
-To build a redistributable, production mode package, use `wails build`.
+- Europass-oriented CV form (personal info, experience, education, skills, …)
+- Multi-language UI / content translation flows
+- Profile photo support
+- Desktop packaging via Wails
+
+## Development
+
+```bash
+# Live development (Wails + Vite)
+wails dev
+```
+
+## Build
+
+```bash
+wails build
+```
+
+Produces a redistributable package for your platform under `build/bin`.
+
+## Project config
+
+Edit `wails.json` for app settings. See [Wails project config](https://wails.io/docs/reference/project-config).
